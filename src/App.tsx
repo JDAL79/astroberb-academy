@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 // ==========================================
-// CONFIGURATION DES CODES D'ACCÈS
+// CONFIGURATION DES CODES D'ACCÈS SÉCURISÉS
 // ==========================================
 const ACCESS_CODES: Record<string, number[]> = {
-  'VIP-ASTRO-2026': [1, 2, 3, 4, 5, 6, 7],
-  BERBERB: [1, 2, 3, 4, 5, 6, 7],
+  'PACK-COMPLET-2026': [1, 2, 3, 4, 5, 6, 7],
+  'DAVID-ADMIN-2809': [1, 2, 3, 4, 5, 6, 7],
   'ASTRO-MOD1': [1],
   'ASTRO-MOD2': [2],
   'ASTRO-MOD3': [3],
@@ -324,8 +324,8 @@ export default function App() {
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
       vipDesc:
-        'Entrez votre code personnel (ex: BERBERB ou VIP-ASTRO-2026) pour débloquer instantanément vos formations :',
-      vipPlaceholder: 'Ex: BERBERB',
+        'Entrez votre code personnel reçu après votre achat pour débloquer instantanément vos formations :',
+      vipPlaceholder: 'Votre code (ex: ASTRO-XXXX)',
       viewUnlocked: 'Voir mes modules déverrouillés ➔',
       taxNotice:
         'Prix en dollars canadiens (CAD). Paiement 100% sécurisé — Accès immédiat.',
@@ -416,8 +416,8 @@ export default function App() {
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
       vipDesc:
-        'Enter your personal access code (ex: BERBERB) to instantly unlock your courses:',
-      vipPlaceholder: 'Ex: BERBERB',
+        'Enter the personal access code received after your purchase to instantly unlock your courses:',
+      vipPlaceholder: 'Your code (e.g., ASTRO-XXXX)',
       viewUnlocked: 'View my unlocked modules ➔',
       taxNotice:
         'Prices in Canadian Dollars (CAD). 100% secure checkout — Instant access.',
@@ -907,7 +907,7 @@ export default function App() {
               title: 'Gain HCG et Refroidissement Peltier',
               subtitle: 'Réduction drastique du bruit thermique',
               bullets: [
-                'Stabilisation à -10°C pour éliminer le courant d\'obscurité.',
+                "Stabilisation à -10°C pour éliminer le courant d'obscurité.",
                 'Utilisation du Gain 100 (HCG) sur capteurs IMX571/533.',
               ],
               proTip: 'Gardez la même bibliothèque de Darks pendant 6 mois.',
@@ -916,7 +916,7 @@ export default function App() {
           courseSections: [
             {
               heading: '1. Imagerie SHO & HOO',
-              body: "isolez les raies d'émission atomiques pour révéler les nébuleuses depuis la ville.",
+              body: "Isolez les raies d'émission atomiques pour révéler les nébuleuses depuis la ville.",
             },
           ],
           steps: [
@@ -2188,6 +2188,9 @@ export default function App() {
             <h2 className="text-2xl font-bold text-center">
               {currentT.vipSection}
             </h2>
+            <p className="text-xs md:text-sm text-slate-400 text-center leading-relaxed">
+              {currentT.vipDesc}
+            </p>
             <form onSubmit={handleValidateVip} className="space-y-4">
               <input
                 type="text"
