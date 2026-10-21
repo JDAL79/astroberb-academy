@@ -296,7 +296,7 @@ export default function App() {
       unlockBtn: 'Activer mon code',
       buyStripe: 'Carte bancaire',
       buyPayPal: 'PayPal',
-      buyPackFull: '🔥 Obtenir le Pack Intégral (199$ CAD)',
+      buyPackFull: '🔥 Obtenir le Pack Intégral (79$ CAD)',
       packBtnShort: '🔥 Pack Intégral',
       accessGranted: 'Code validé avec succès ! Cliquez sur votre formation :',
       invalidCode:
@@ -320,7 +320,7 @@ export default function App() {
       backupCodeNotice: 'CONSEIL : Conservez bien votre code multi-appareils :',
       packTitle: 'L’Offre Ultime : Le Pack Intégral 7-en-1',
       packDesc:
-        'Obtenez un accès immédiat, illimité et à vie à l’ensemble de nos 7 masterclasses avancées, simulateurs optiques et guides PDF (Valeur totale : 563$ CAD). Économisez 364$ !',
+        'Obtenez un accès immédiat, illimité et à vie à l’ensemble de nos 7 masterclasses avancées, simulateurs optiques et guides PDF (Valeur totale : 203$ CAD). Économisez 124$ !',
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
       vipDesc:
@@ -388,7 +388,7 @@ export default function App() {
       unlockBtn: 'Activate Code',
       buyStripe: 'Credit Card',
       buyPayPal: 'PayPal',
-      buyPackFull: '🔥 Get Full Bundle ($199 CAD)',
+      buyPackFull: '🔥 Get Full Bundle ($79 CAD)',
       packBtnShort: '🔥 Full Bundle',
       accessGranted: 'Code successfully validated! Click any course below:',
       invalidCode:
@@ -412,7 +412,7 @@ export default function App() {
       backupCodeNotice: 'IMPORTANT: Save your multi-device code:',
       packTitle: 'The Ultimate Offer: 7-in-1 Full Bundle',
       packDesc:
-        'Get immediate, lifetime access to all 7 advanced masterclasses, optical simulators, and PDF guides ($563 CAD value). Save $364!',
+        'Get immediate, lifetime access to all 7 advanced masterclasses, optical simulators, and PDF guides ($203 CAD value). Save $124!',
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
       vipDesc:
@@ -510,7 +510,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD1',
       titleFr: 'Module 1 : Choisir son Télescope & ses Optiques',
       titleEn: 'Module 1: Choosing Your Telescope & Optics',
-      price: 89,
+      price: 29,
       badgeFr: 'Fondamental Optique',
       badgeEn: 'Optical Foundations',
       descFr:
@@ -650,7 +650,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD2',
       titleFr: 'Module 2 : Montures Harmoniques & Mise en Station',
       titleEn: 'Module 2: Harmonic Mounts & Polar Alignment',
-      price: 79,
+      price: 29,
       badgeFr: 'Matériel & Suivi',
       badgeEn: 'Hardware & Tracking',
       descFr:
@@ -771,7 +771,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD3',
       titleFr: 'Module 3 : Acquisition Automatisée (ASIAIR & N.I.N.A.)',
       titleEn: 'Module 3: Automated Acquisition (ASIAIR & N.I.N.A.)',
-      price: 89,
+      price: 29,
       badgeFr: 'Automatisation',
       badgeEn: 'Automation',
       descFr:
@@ -895,7 +895,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD4',
       titleFr: 'Module 4 : Caméras Refroidies & Filtres Bande Étroite',
       titleEn: 'Module 4: Cooled Cameras & Narrowband Filters',
-      price: 79,
+      price: 29,
       badgeFr: 'Capteurs & Ville',
       badgeEn: 'Sensors & City Imaging',
       descFr:
@@ -1019,7 +1019,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD5',
       titleFr: 'Module 5 : Autofocus EAF & Autoguidage PHD2',
       titleEn: 'Module 5: EAF Autofocus & PHD2 Guiding',
-      price: 69,
+      price: 29,
       badgeFr: 'Précision & Suivi',
       badgeEn: 'Precision & Guiding',
       descFr:
@@ -1139,7 +1139,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD6',
       titleFr: 'Module 6 : Traitement Avancé (Siril, PixInsight & PS)',
       titleEn: 'Module 6: Advanced Processing (Siril, PixInsight & PS)',
-      price: 99,
+      price: 29,
       badgeFr: 'Traitement d’Art',
       badgeEn: 'Master Processing',
       descFr:
@@ -1264,7 +1264,7 @@ export default function App() {
       backupCode: 'ASTRO-MOD7',
       titleFr: 'Module Bonus : Setup Nomade & Grand Champ',
       titleEn: 'Bonus Module: Travel Setup & Widefield Milky Way',
-      price: 59,
+      price: 29,
       badgeFr: 'Bonus Exclusif',
       badgeEn: 'Exclusive Bonus',
       descFr:
@@ -2163,7 +2163,7 @@ export default function App() {
               {currentT.packDesc}
             </p>
             <div className="text-4xl md:text-5xl font-black text-cyan-400">
-              199,00 $ CAD
+              79,00 $ CAD
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
