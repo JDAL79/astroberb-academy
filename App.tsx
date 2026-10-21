@@ -124,14 +124,6 @@ export default function App() {
     setUnlockedModules(currentUnlocked);
   }, []);
 
-  const saveUnlockedModules = (newModules: number[]) => {
-    const cleanArray = Array.from(new Set(newModules.map((n) => Number(n))));
-    setUnlockedModules(cleanArray);
-    try {
-      localStorage.setItem('astroberb_unlocked', JSON.stringify(cleanArray));
-    } catch (e) {}
-  };
-
   // GÉNÉRATEUR DE PDF ROBUSTE (AVEC FALLBACK ANTI-POPUPS)
   const generateAndDownloadPDF = (doc: DownloadDoc, moduleTitle: string) => {
     const sectionsHtml = doc.sections
@@ -937,7 +929,7 @@ export default function App() {
               title: 'Gain HCG et Refroidissement Peltier',
               subtitle: 'Réduction drastique du bruit thermique',
               bullets: [
-                "Stabilisation à -10°C pour éliminer le courant d'obscurité.",
+                'Stabilisation à -10°C pour éliminer le courant d\'obscurité.',
                 'Utilisation du Gain 100 (HCG) sur capteurs IMX571/533.',
               ],
               proTip: 'Gardez la même bibliothèque de Darks pendant 6 mois.',
@@ -1610,6 +1602,14 @@ export default function App() {
     } else {
       setVipStatus('error');
     }
+  };
+
+  const saveUnlockedModules = (newModules: number[]) => {
+    const cleanArray = Array.from(new Set(newModules.map((n) => Number(n))));
+    setUnlockedModules(cleanArray);
+    try {
+      localStorage.setItem('astroberb_unlocked', JSON.stringify(cleanArray));
+    } catch (e) {}
   };
 
   const openModuleDetail = (id: number) => {
