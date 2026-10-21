@@ -45,19 +45,9 @@ interface DownloadDoc {
 }
 
 export default function App() {
-  const [lang, setLang] = useState<'fr' | 'en'>(() => {
-    try {
-      const saved = localStorage.getItem('astroberb_lang');
-      return saved === 'en' ? 'en' : 'fr';
-    } catch {
-      return 'fr';
-    }
-  });
-
-  const [nightVision, setNightVision] = useState<boolean>(false);
+  const [lang, setLang] = useState<'fr' | 'en'>('fr');
   const [vipCode, setVipCode] = useState('');
   const [unlockedModules, setUnlockedModules] = useState<number[]>([]);
-  const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [vipStatus, setVipStatus] = useState<'success' | 'error' | null>(null);
   const [activeTab, setActiveTab] = useState<
     'home' | 'vip' | 'pack' | 'success' | 'module-detail'
@@ -69,37 +59,26 @@ export default function App() {
     null
   );
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
-  // Calculateur interactif (Module 1)
+  // États pour le Calculateur interactif (Module 1)
   const [calcFocal, setCalcFocal] = useState<number>(500);
   const [calcPixel, setCalcPixel] = useState<number>(3.76);
 
-  // Quiz Interactif
+  // États pour le Quiz Interactif
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<number, number>
   >({});
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('astroberb_lang', lang);
-    } catch (e) {}
-  }, [lang]);
-
-  useEffect(() => {
     let currentUnlocked: number[] = [];
-    let currentCompleted: number[] = [];
     try {
       const saved = localStorage.getItem('astroberb_unlocked');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) currentUnlocked = parsed.map(Number);
-      }
-      const savedComp = localStorage.getItem('astroberb_completed');
-      if (savedComp) {
-        const parsedComp = JSON.parse(savedComp);
-        if (Array.isArray(parsedComp)) currentCompleted = parsedComp.map(Number);
+        if (Array.isArray(parsed)) {
+          currentUnlocked = parsed.map((n) => Number(n));
+        }
       }
     } catch (e) {
       console.error('Erreur de lecture locale', e);
@@ -143,80 +122,9 @@ export default function App() {
     }
 
     setUnlockedModules(currentUnlocked);
-    setCompletedModules(currentCompleted);
   }, []);
 
-  const saveUnlockedModules = (newModules: number[]) => {
-    const cleanArray = Array.from(new Set(newModules.map((n) => Number(n))));
-    setUnlockedModules(cleanArray);
-    try {
-      localStorage.setItem('astroberb_unlocked', JSON.stringify(cleanArray));
-    } catch (e) {}
-  };
-
-  const toggleCompleteModule = (id: number) => {
-    let updated: number[];
-    if (completedModules.includes(id)) {
-      updated = completedModules.filter((m) => m !== id);
-    } else {
-      updated = [...completedModules, id];
-    }
-    setCompletedModules(updated);
-    try {
-      localStorage.setItem('astroberb_completed', JSON.stringify(updated));
-    } catch (e) {}
-  };
-
-  // GÉNÉRATEUR DE CERTIFICAT OFFICIEL
-  const generateCertificate = () => {
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <title>Certificat de Maîtrise - Astroberb Academy</title>
-        <style>
-          @page { size: A4 landscape; margin: 15mm; }
-          body { font-family: 'Segoe UI', Roboto, sans-serif; background: #030712; color: #f8fafc; padding: 40px; text-align: center; border: 8px solid #06b6d4; height: 100%; box-sizing: border-box; }
-          .container { border: 2px solid #6366f1; padding: 40px; background: #0f172a; border-radius: 12px; }
-          h1 { font-size: 36px; color: #38bdf8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-          .sub { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 30px; }
-          .name { font-size: 32px; font-weight: bold; color: #ffffff; border-bottom: 2px solid #06b6d4; display: inline-block; padding-bottom: 5px; margin: 20px 0; }
-          p { font-size: 16px; color: #cbd5e1; max-width: 700px; margin: 0 auto 30px auto; line-height: 1.6; }
-          .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; border-top: 1px solid #334155; padding-top: 20px; font-size: 12px; color: #94a3b8; }
-          .signature { font-family: cursive; font-size: 22px; color: #38bdf8; }
-          .no-print { background: #1e293b; color: white; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: none; font-weight: bold; cursor: pointer; }
-          @media print { .no-print { display: none; } }
-        </style>
-      </head>
-      <body>
-        <button class="no-print" onclick="window.print()">🖨️ Imprimer ou Enregistrer le Certificat PDF</button>
-        <div class="container">
-          <div style="font-size: 40px; margin-bottom: 10px;">🪐</div>
-          <h1>Astroberb Academy</h1>
-          <div class="sub">Certificat Officiel de Maîtrise en Astrophotographie</div>
-          <p>Ce document certifie que l'élève passionné a complété avec succès le cursus avancé de la masterclass d'élite, comprenant l'optique, le traitement des données et l'automatisation des nuits d'observation.</p>
-          <div class="name">Élève d'Élite Astroberb</div>
-          <div class="footer">
-            <div>Délivré le : ${new Date().toLocaleDateString(
-              lang === 'fr' ? 'fr-FR' : 'en-US'
-            )}</div>
-            <div>Support : ${SUPPORT_EMAIL}</div>
-            <div><span class="signature">David Bérubé</span><br/>Fondateur & Formateur</div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-    const win = window.open('', '_blank', 'width=1000,height=700');
-    if (win) {
-      win.document.open();
-      win.document.write(htmlContent);
-      win.document.close();
-    }
-  };
-
-  // GÉNÉRATEUR DE PDF ROBUSTE
+  // GÉNÉRATEUR DE PDF ROBUSTE (AVEC FALLBACK ANTI-POPUPS)
   const generateAndDownloadPDF = (doc: DownloadDoc, moduleTitle: string) => {
     const sectionsHtml = doc.sections
       .map(
@@ -275,11 +183,25 @@ export default function App() {
       </body>
       </html>
     `;
-    const win = window.open('', '_blank', 'width=900,height=800');
-    if (win) {
-      win.document.open();
-      win.document.write(htmlContent);
-      win.document.close();
+
+    const printWindow = window.open('', '_blank', 'width=900,height=800');
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+    } else {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      const docRef = iframe.contentWindow?.document;
+      if (docRef) {
+        docRef.open();
+        docRef.write(htmlContent);
+        docRef.close();
+        setTimeout(() => {
+          iframe.contentWindow?.print();
+        }, 500);
+      }
     }
   };
 
@@ -355,26 +277,6 @@ export default function App() {
       quizRetry: 'Recommencer le quiz',
       correctAnswer: 'Excellente réponse !',
       wrongAnswer: 'Incorrect.',
-      markComplete: '✓ Marquer comme terminé',
-      markIncomplete: '↺ Reprendre la formation',
-      certTitle: '🏆 Obtenir mon Certificat Officiel',
-      certDesc:
-        'Terminez vos modules et téléchargez votre certificat personnalisé de réussite.',
-      faqTitle: '❓ Foire Aux Questions (FAQ)',
-      faq1Q: "Comment reçois-je mes accès après l'achat ?",
-      faq1A:
-        "L'accès est instantané ! Vous recevez un code de déverrouillage personnel et la plateforme débloque immédiatement vos modules.",
-      faq2Q: 'Puis-je suivre les cours sur tablette ou mobile ?',
-      faq2A:
-        'Oui, la plateforme est 100 % responsive et s’adapte à tous vos écrans, sur le terrain comme à la maison.',
-      faq3Q: 'Le contenu est-il mis à jour pour les nouvelles technologies ?',
-      faq3A:
-        'Absolument. Votre achat inclut les mises à jour à vie pour suivre l’évolution des montures harmoniques et des logiciels de traitement.',
-      testimonialsTitle: '⭐ Ce que disent nos étudiants passionnés',
-      t1: '“Grâce au module sur les montures harmoniques et N.I.N.A., mes nuits d’imagerie se déroulent désormais 100% en automatique pendant que je dors !”',
-      t1Author: 'Marc D., Astrophotographe amateur (Québec)',
-      t2: '“Le calculateur d’échantillonnage et les fiches PDF m’ont évité de commettre une grosse erreur de choix optique. Une masterclass indispensable.”',
-      t2Author: 'Stéphane L., Passionné de ciel profond',
     },
     en: {
       title: 'Astroberb Academy',
@@ -445,25 +347,6 @@ export default function App() {
       quizRetry: 'Retake Quiz',
       correctAnswer: 'Correct!',
       wrongAnswer: 'Incorrect.',
-      markComplete: '✓ Mark as completed',
-      markIncomplete: '↺ Resume training',
-      certTitle: '🏆 Get My Official Certificate',
-      certDesc: 'Complete your modules and download your personalized certificate.',
-      faqTitle: '❓ Frequently Asked Questions (FAQ)',
-      faq1Q: 'How do I receive my access after purchase?',
-      faq1A:
-        'Access is instant! You receive a personal unlock code and the platform unlocks your modules right away.',
-      faq2Q: 'Can I follow the courses on tablet or mobile?',
-      faq2A:
-        'Yes, the platform is 100% responsive and adapts to all your screens, in the field or at home.',
-      faq3Q: 'Is the content updated for new technologies?',
-      faq3A:
-        'Absolutely. Your purchase includes lifetime updates to keep pace with harmonic mounts and processing software.',
-      testimonialsTitle: '⭐ What our passionate students say',
-      t1: '“Thanks to the harmonic mount and N.I.N.A. module, my imaging nights now run 100% automatically while I sleep!”',
-      t1Author: 'Marc D., Amateur Astrophotographer (Quebec)',
-      t2: '“The pixel scale calculator and PDF guides saved me from making a costly optical mistake. An essential masterclass.”',
-      t2Author: 'Stéphane L., Deep Sky Enthusiast',
     },
   };
 
@@ -574,6 +457,30 @@ export default function App() {
               explanation:
                 'Le rapport f/D (Focale divisée par le Diamètre) indique la concentration de lumière par unité de surface sur le capteur.',
             },
+            {
+              question:
+                'Quel est l\'échantillonnage idéal visé sous un ciel standard (Seeing 2" à 3") ?',
+              options: [
+                'Entre 0,2" et 0,5" par pixel',
+                'Entre 0,8" et 2,0" par pixel',
+                'Exactement 5,0" par pixel',
+              ],
+              correct: 1,
+              explanation:
+                'Viser entre 0,8" et 2,0" par pixel garantit un piqué parfait sans gaspiller de résolution sous un Seeing classique.',
+            },
+            {
+              question:
+                'Que se passe-t-il si vos étoiles dans les coins pointent vers le centre ?',
+              options: [
+                'Le capteur est trop proche du correcteur',
+                'Le capteur est trop éloigné du correcteur',
+                'La mise au point est parfaite',
+              ],
+              correct: 0,
+              explanation:
+                'Des étoiles pointant vers le centre indiquent un backfocus trop court : le capteur est trop proche du correcteur.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -586,6 +493,8 @@ export default function App() {
                   title: '1. Formule Mathématique & Cibles de Seeing',
                   content: [
                     'Formule : Échantillonnage ("/px) = (206,265 × Taille du pixel en µm) / Focale en mm.',
+                    'Ciel turbulent (Seeing > 3,0") : Viser entre 1,5" et 2,5" par pixel.',
+                    'Ciel standard (Seeing 2,0" à 2,5") : Viser entre 0,9" et 1,6" par pixel.',
                   ],
                 },
               ],
@@ -631,6 +540,25 @@ export default function App() {
               correct: 1,
               explanation:
                 'Focal ratio (f/D) controls light concentration on the sensor.',
+            },
+            {
+              question:
+                'What is the ideal pixel scale under average seeing (2" - 3")?',
+              options: ['0.2" - 0.5" / px', '0.8" - 2.0" / px', '5.0" / px'],
+              correct: 1,
+              explanation:
+                '0.8" to 2.0" per pixel provides the best compromise.',
+            },
+            {
+              question:
+                'If corner stars point toward the center, what does it mean?',
+              options: [
+                'Sensor is too close to corrector',
+                'Sensor is too far',
+                'Perfect focus',
+              ],
+              correct: 0,
+              explanation: 'Pointing inward means backfocus is too short.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -708,6 +636,26 @@ export default function App() {
               explanation:
                 'Leur réducteur strainwave encaisse le couple sans contrepoids.',
             },
+            {
+              question:
+                'Quelle est la cadence de pose recommandée en autoguidage sur monture harmonique ?',
+              options: ['4,0 secondes', '0,5 s à 1,0 seconde', '10 secondes'],
+              correct: 1,
+              explanation:
+                "Des poses courtes (0.5s - 1s) sont indispensables pour corriger la pente rapide de l'erreur périodique.",
+            },
+            {
+              question:
+                'Que faut-il faire impérativement sur un trépied carbone sans contrepoids ?',
+              options: [
+                'Le laisser vide',
+                'Le lester avec un sac ou une batterie au crochet central',
+                'Le visser dans le béton',
+              ],
+              correct: 1,
+              explanation:
+                "Le lestage évite le basculement lorsque le tube pointe vers l'horizon.",
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -755,6 +703,24 @@ export default function App() {
               correct: 0,
               explanation:
                 'Strainwave gears hold payloads without counterweights.',
+            },
+            {
+              question: 'Recommended guide exposure for harmonic mounts?',
+              options: ['4.0s', '0.5s - 1.0s', '10s'],
+              correct: 1,
+              explanation:
+                'Fast cadence corrects harmonic periodic error slopes.',
+            },
+            {
+              question:
+                'What must be done with carbon tripods without counterweights?',
+              options: [
+                'Leave empty',
+                'Hang battery ballast from center hook',
+                'Bolt to concrete',
+              ],
+              correct: 1,
+              explanation: 'Ballasting prevents tipping when pointing low.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -824,6 +790,29 @@ export default function App() {
               explanation:
                 "Le Plate Solving analyse l'image pour recaler la monture aux coordonnées exactes.",
             },
+            {
+              question:
+                'Pourquoi configure-t-on un retournement au méridien (Meridian Flip) ?',
+              options: [
+                'Pour éviter que le télescope ne touche le trépied',
+                'Pour changer de filtre',
+                'Pour refroidir la caméra',
+              ],
+              correct: 0,
+              explanation:
+                "Le flip bascule la monture de l'autre côté pour éviter la collision au zénith.",
+            },
+            {
+              question: "Qu'est-ce que le Dithering ?",
+              options: [
+                'Un micro-déplacement entre les poses pour éliminer le bruit fixe',
+                'Une panne de courant',
+                'Un filtre anti-lune',
+              ],
+              correct: 0,
+              explanation:
+                "Le dithering décale l'image de quelques pixels pour lisser le bruit dans l'empilement.",
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -875,6 +864,28 @@ export default function App() {
               correct: 0,
               explanation:
                 'Plate solving computes exact coordinates from captured star fields.',
+            },
+            {
+              question: 'Why configure a Meridian Flip?',
+              options: [
+                'To prevent telescope-tripod collisions',
+                'To change filters',
+                'To cool the camera',
+              ],
+              correct: 0,
+              explanation:
+                'The flip swings the scope across the pier to prevent crashes.',
+            },
+            {
+              question: 'What is Dithering?',
+              options: [
+                'Micro-shifting between exposures to eliminate pattern noise',
+                'A power outage',
+                'A light pollution filter',
+              ],
+              correct: 0,
+              explanation:
+                'Dithering shifts the frame slightly to smooth sensor artifacts during stacking.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -948,6 +959,26 @@ export default function App() {
               explanation:
                 'Refroidir le capteur divise le bruit thermique par 2 tous les 6°C.',
             },
+            {
+              question:
+                'Sur les capteurs IMX571/533, quel est le gain idéal (HCG) ?',
+              options: ['Gain 0', 'Gain 100', 'Gain 600'],
+              correct: 1,
+              explanation:
+                'Le gain 100 active le mode HCG qui réduit le bruit de lecture.',
+            },
+            {
+              question:
+                'Que capture-t-on avec un filtre Dual-Band (ex: L-eXtreme) sur caméra couleur ?',
+              options: [
+                'Les raies Hydrogène-Alpha et Oxygène-III simultanément',
+                'Uniquement le rouge du soleil',
+                'Les ondes radio',
+              ],
+              correct: 0,
+              explanation:
+                'Les filtres Dual-Band laissent passer Ha et OIII en bloquant la pollution lumineuse.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -998,6 +1029,24 @@ export default function App() {
               ],
               correct: 0,
               explanation: 'Cooling cuts thermal dark current significantly.',
+            },
+            {
+              question: 'Ideal HCG gain on IMX571/533 sensors?',
+              options: ['Gain 0', 'Gain 100', 'Gain 600'],
+              correct: 1,
+              explanation:
+                'Gain 100 activates High Conversion Gain, dropping read noise.',
+            },
+            {
+              question: 'What does a Dual-Band filter isolate on OSC cameras?',
+              options: [
+                'Hydrogen-Alpha and Oxygen-III simultaneously',
+                'Sunlight only',
+                'Radio waves',
+              ],
+              correct: 0,
+              explanation:
+                'Dual-band filters pass Ha and OIII while blocking city light pollution.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1071,6 +1120,29 @@ export default function App() {
               explanation:
                 'Le HFR mesure la netteté des étoiles pour trouver le point focal optimal.',
             },
+            {
+              question:
+                'Pourquoi active-t-on le Multi-Star Guiding dans PHD2 ?',
+              options: [
+                'Pour moyenner la turbulence de plusieurs étoiles et stabiliser le suivi',
+                "Pour faire clignoter l'écran",
+                'Pour augmenter le gain',
+              ],
+              correct: 0,
+              explanation:
+                "Le multi-étoile supprime les erreurs de turbulence d'une étoile isolée.",
+            },
+            {
+              question: 'Où doit-on calibrer PHD2 en priorité ?',
+              options: [
+                "Près de l'Équateur céleste et du Méridien Sud",
+                "Sur l'Étoile Polaire",
+                "À l'horizon Ouest",
+              ],
+              correct: 0,
+              explanation:
+                'Près de DEC 0°, le mouvement apparent du ciel est maximal pour une calibration précise.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1122,6 +1194,28 @@ export default function App() {
               correct: 0,
               explanation:
                 'HFR evaluates star sharpness to find the focal point.',
+            },
+            {
+              question: 'Why enable Multi-Star Guiding in PHD2?',
+              options: [
+                'To average seeing turbulence across multiple stars for stable tracking',
+                'To flash the screen',
+                'To boost gain',
+              ],
+              correct: 0,
+              explanation:
+                'Multi-star averaging eliminates single-star seeing jitters.',
+            },
+            {
+              question: 'Where should PHD2 calibration be performed ideally?',
+              options: [
+                'Near Celestial Equator and Southern Meridian',
+                'On Polaris',
+                'Western horizon',
+              ],
+              correct: 0,
+              explanation:
+                'Near DEC 0°, sky motion is maximized for precise calibration.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1196,6 +1290,29 @@ export default function App() {
               explanation:
                 'Les algorithmes de calibration exigent des données linéaires pures.',
             },
+            {
+              question: "Quel est l'avantage du workflow 'Starless' avec GHS ?",
+              options: [
+                "Il permet d'étirer les faibles nébuleuses sans faire grossir les étoiles",
+                'Il supprime définitivement les étoiles',
+                'Il colore le ciel en bleu',
+              ],
+              correct: 0,
+              explanation:
+                "Traiter les étoiles à part évite leur saturation lors de la montée d'histogramme.",
+            },
+            {
+              question:
+                'Pourquoi ne doit-on pas avoir un fond de ciel noir absolu (0,0,0) ?',
+              options: [
+                'Car cela détruit les faibles extensions galactiques et donne un rendu artificiel',
+                "Car l'ordinateur va planter",
+                "Car la loi l'interdit",
+              ],
+              correct: 0,
+              explanation:
+                'Un fond gris anthracite naturel (valeur ~20) préserve les extensions externes.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1248,6 +1365,30 @@ export default function App() {
               ],
               correct: 0,
               explanation: 'Calibration algorithms require purely linear data.',
+            },
+            {
+              question:
+                'What is the advantage of a Starless workflow with GHS?',
+              options: [
+                'Stretches faint nebulae without bloating stars',
+                'Deletes stars permanently',
+                'Turns the sky blue',
+              ],
+              correct: 0,
+              explanation:
+                'Processing stars separately prevents core bloating during stretching.',
+            },
+            {
+              question:
+                'Why should the sky background never be pure absolute black (0,0,0)?',
+              options: [
+                'It destroys faint galactic extensions and looks unnatural',
+                'Computer will crash',
+                'Against regulations',
+              ],
+              correct: 0,
+              explanation:
+                'A natural anthracite background preserves outer faint tails.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1322,6 +1463,30 @@ export default function App() {
               explanation:
                 "Fermer d'un cran élimine les aberrations optiques des objectifs ouverts au max.",
             },
+            {
+              question:
+                'Que stipule la règle IATA concernant les batteries au lithium en voyage aérien ?',
+              options: [
+                'Elles doivent voyager en bagage cabine (< 100 Wh généralement)',
+                "Elles sont interdites dans l'avion",
+                'Elles doivent être jetées',
+              ],
+              correct: 0,
+              explanation:
+                'Les batteries au lithium < 100 Wh vont en cabine pour des raisons de sécurité.',
+            },
+            {
+              question:
+                'Comment obtient-on un premier plan terrestre net sous une Voie Lactée suivie ?',
+              options: [
+                'En réalisant une prise de vue composite (premier plan fixe + ciel suivi)',
+                'En floutant le ciel',
+                "En bougeant l'appareil pendant la pose",
+              ],
+              correct: 0,
+              explanation:
+                'Le suivi stellaire floute le sol : il faut fusionner une photo fixe du sol et une du ciel.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1376,6 +1541,30 @@ export default function App() {
               explanation:
                 'Stopping down cleans up optical aberrations at wide apertures.',
             },
+            {
+              question:
+                'What do IATA regulations say about lithium batteries on flights?',
+              options: [
+                'Must be in carry-on luggage (< 100Wh typically)',
+                'Banned entirely',
+                'Must be thrown away',
+              ],
+              correct: 0,
+              explanation:
+                'Lithium power banks under 100Wh must travel in the cabin.',
+            },
+            {
+              question:
+                'How do you get a sharp foreground beneath a tracked Milky Way sky?',
+              options: [
+                'By blending a composite image (fixed foreground + tracked sky)',
+                'By blurring the sky',
+                'By shaking the camera',
+              ],
+              correct: 0,
+              explanation:
+                'Star trackers blur the ground, requiring a separate static landscape shot.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1415,6 +1604,14 @@ export default function App() {
     }
   };
 
+  const saveUnlockedModules = (newModules: number[]) => {
+    const cleanArray = Array.from(new Set(newModules.map((n) => Number(n))));
+    setUnlockedModules(cleanArray);
+    try {
+      localStorage.setItem('astroberb_unlocked', JSON.stringify(cleanArray));
+    } catch (e) {}
+  };
+
   const openModuleDetail = (id: number) => {
     setSelectedModuleId(id);
     setCurrentSlideIndex(0);
@@ -1437,43 +1634,19 @@ export default function App() {
   else if (scaleNum > 2.0) calcVerdict = currentT.calcVerdictUnder;
 
   return (
-    <div
-      className={`min-h-screen font-sans flex flex-col justify-between transition-colors duration-300 ${
-        nightVision
-          ? 'bg-[#120101] text-rose-200 selection:bg-rose-600 selection:text-white'
-          : 'bg-[#030712] text-slate-100 selection:bg-cyan-500 selection:text-slate-950'
-      }`}
-    >
-      {/* EN-TÊTE ULTRA DESIGN AVEC MODE NUIT & GLASSMORPHISM */}
-      <header
-        className={`border-b sticky top-0 z-50 backdrop-blur-md ${
-          nightVision
-            ? 'border-rose-900/60 bg-[#120101]/95 text-rose-100'
-            : 'border-slate-800/80 bg-[#030712]/90'
-        }`}
-      >
+    <div className="min-h-screen bg-[#030712] text-slate-100 font-sans flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
+      {/* EN-TÊTE ULTRA DESIGN AVEC EFFET GLASSMORPHISM */}
+      <header className="border-b border-slate-800/80 bg-[#030712]/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3.5 md:h-20 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div className="flex items-center justify-between">
             <div
               className="flex items-center space-x-3 cursor-pointer group"
               onClick={() => setActiveTab('home')}
             >
-              <div
-                className={`w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-lg transition group-hover:scale-105 ${
-                  nightVision
-                    ? 'bg-rose-950 text-rose-400 border border-rose-800'
-                    : 'bg-gradient-to-tr from-indigo-600 via-cyan-500 to-indigo-400 text-white shadow-indigo-500/20'
-                }`}
-              >
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-cyan-500 to-indigo-400 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition">
                 🪐
               </div>
-              <h1
-                className={`font-extrabold text-lg tracking-tight ${
-                  nightVision
-                    ? 'text-rose-300'
-                    : 'bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent'
-                }`}
-              >
+              <h1 className="font-extrabold text-lg bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent tracking-tight">
                 {currentT.title}
               </h1>
             </div>
@@ -1482,30 +1655,14 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
-                  nightVision
-                    ? 'bg-rose-950 border-rose-800 text-rose-300'
-                    : 'bg-slate-900/90 border-slate-700/80'
-                }`}
+                className="px-2.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs font-bold hover:border-cyan-500 transition"
               >
                 🌐 {lang.toUpperCase()}
               </button>
               <button
                 type="button"
-                onClick={() => setNightVision(!nightVision)}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
-                  nightVision
-                    ? 'bg-rose-900 border-rose-700 text-white'
-                    : 'bg-slate-900/90 border-slate-700 text-rose-400'
-                }`}
-                title="Mode Nuit Rouge"
-              >
-                🔴
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveTab('pack')}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg text-white"
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg shadow-orange-500/20 text-white"
               >
                 {currentT.packBtnShort}
               </button>
@@ -1518,10 +1675,8 @@ export default function App() {
               onClick={() => setActiveTab('home')}
               className={
                 activeTab === 'home'
-                  ? `${
-                      nightVision ? 'text-rose-400' : 'text-cyan-400'
-                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
-                  : 'hover:opacity-80 transition'
+                  ? 'text-cyan-400 font-bold border-b-2 border-cyan-400 pb-1 md:pb-0 md:border-b-0 transition'
+                  : 'text-slate-300 hover:text-white transition'
               }
             >
               ✨ {currentT.catalog}
@@ -1534,10 +1689,8 @@ export default function App() {
               }}
               className={
                 activeTab === 'vip'
-                  ? `${
-                      nightVision ? 'text-rose-400' : 'text-cyan-400'
-                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
-                  : 'hover:opacity-80 transition'
+                  ? 'text-cyan-400 font-bold border-b-2 border-cyan-400 pb-1 md:pb-0 md:border-b-0 transition'
+                  : 'text-slate-300 hover:text-white transition'
               }
             >
               🔑 {currentT.vipSection}
@@ -1547,31 +1700,15 @@ export default function App() {
           <div className="hidden md:flex items-center space-x-3">
             <button
               type="button"
-              onClick={() => setNightVision(!nightVision)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
-                nightVision
-                  ? 'bg-rose-950 border-rose-700 text-white'
-                  : 'bg-slate-900 border-slate-700 text-rose-400 hover:border-rose-500'
-              }`}
-              title="Préserver la vision nocturne"
-            >
-              🔴 Mode Nuit
-            </button>
-            <button
-              type="button"
               onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition ${
-                nightVision
-                  ? 'bg-rose-950 border-rose-800 text-rose-300'
-                  : 'bg-slate-900/80 border-slate-700/80 hover:border-cyan-500'
-              }`}
+              className="px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs font-bold hover:bg-slate-800 hover:border-cyan-500 transition shadow-sm"
             >
               🌐 {lang.toUpperCase()}
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('pack')}
-              className="px-4.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg hover:opacity-95 transition text-white"
+              className="px-4.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg shadow-orange-500/25 hover:opacity-95 transition text-white"
             >
               {currentT.packBtnShort}
             </button>
@@ -1580,22 +1717,15 @@ export default function App() {
 
         {/* BANDEAU ACCÈS RAPIDE AUX COURS DÉVERROUILLÉS */}
         {unlockedModules.length > 0 && (
-          <div
-            className={`border-t py-2.5 px-4 ${
-              nightVision
-                ? 'bg-rose-950/80 border-rose-900 text-rose-200'
-                : 'bg-gradient-to-r from-emerald-950/90 via-slate-950 to-emerald-950/90 border-emerald-500/40 text-emerald-300'
-            }`}
-          >
+          <div className="bg-gradient-to-r from-emerald-950/90 via-slate-950 to-emerald-950/90 border-t border-emerald-500/40 py-2.5 px-4">
             <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2.5">
-              <span className="text-xs font-bold mr-2 flex items-center gap-1.5">
+              <span className="text-xs font-bold text-emerald-300 mr-2 flex items-center gap-1.5">
                 <span>⭐</span> {currentT.quickAccessTitle}
               </span>
               {modules.map((m) => {
                 if (!isModuleUnlocked(m.id)) return null;
                 const isSelected =
                   activeTab === 'module-detail' && selectedModuleId === m.id;
-                const isDone = completedModules.includes(m.id);
                 return (
                   <button
                     key={m.id}
@@ -1603,28 +1733,14 @@ export default function App() {
                     onClick={() => openModuleDetail(m.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5 ${
                       isSelected
-                        ? nightVision
-                          ? 'bg-rose-600 text-white ring-2 ring-white scale-105'
-                          : 'bg-cyan-400 text-slate-950 ring-2 ring-white scale-105'
-                        : isDone
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                        ? 'bg-cyan-400 text-slate-950 ring-2 ring-white scale-105'
+                        : 'bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/40'
                     }`}
                   >
-                    <span>{isDone ? '✓' : '🚀'}</span>{' '}
-                    {m.id === 7 ? 'Bonus' : `Mod. ${m.id}`}
+                    <span>🚀</span> {m.id === 7 ? 'Bonus' : `Mod. ${m.id}`}
                   </button>
                 );
               })}
-              {completedModules.length > 0 && (
-                <button
-                  type="button"
-                  onClick={generateCertificate}
-                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1 ml-2"
-                >
-                  🏆 Certificat
-                </button>
-              )}
             </div>
           </div>
         )}
@@ -1635,20 +1751,11 @@ export default function App() {
         {activeTab === 'home' && (
           <div className="space-y-16">
             {/* HERO SECTION DE CLASSE INTERNATIONALE */}
-            <div
-              className={`text-center py-16 px-4 md:px-12 rounded-3xl border space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-sm ${
-                nightVision
-                  ? 'bg-rose-950/30 border-rose-900/50'
-                  : 'bg-gradient-to-b from-indigo-950/50 via-slate-900/40 to-slate-950/20 border-indigo-500/30'
-              }`}
-            >
-              <div
-                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
-                  nightVision
-                    ? 'bg-rose-900/40 text-rose-300 border border-rose-800'
-                    : 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30'
-                }`}
-              >
+            <div className="text-center py-16 px-4 md:px-12 rounded-3xl bg-gradient-to-b from-indigo-950/50 via-slate-900/40 to-slate-950/20 border border-indigo-500/30 space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+              <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 uppercase tracking-widest shadow-inner">
                 {currentT.heroBadge}
               </div>
 
@@ -1656,11 +1763,7 @@ export default function App() {
                 {currentT.subtitle}
               </h2>
 
-              <p
-                className={`max-w-2xl mx-auto text-base md:text-lg leading-relaxed ${
-                  nightVision ? 'text-rose-200' : 'text-slate-300'
-                }`}
-              >
+              <p className="text-slate-300 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
                 {currentT.heroDesc}
               </p>
 
@@ -1670,11 +1773,7 @@ export default function App() {
                   onClick={() =>
                     handleOpenLink(paymentLinks.packIntegral.stripe)
                   }
-                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl ${
-                    nightVision
-                      ? 'bg-rose-600 text-white hover:bg-rose-500'
-                      : 'bg-gradient-to-r from-cyan-400 via-indigo-500 to-indigo-600 text-slate-950'
-                  }`}
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-indigo-500 to-indigo-600 font-extrabold text-slate-950 hover:opacity-95 transition shadow-xl shadow-cyan-500/20 text-sm flex items-center justify-center gap-2.5 scale-100 hover:scale-[1.02]"
                 >
                   <span>💳</span> {currentT.buyPackFull} ({currentT.buyStripe})
                 </button>
@@ -1683,58 +1782,34 @@ export default function App() {
                   onClick={() =>
                     handleOpenLink(paymentLinks.packIntegral.paypal)
                   }
-                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl ${
-                    nightVision
-                      ? 'bg-rose-800 text-white hover:bg-rose-700'
-                      : 'bg-cyan-600 hover:bg-cyan-500 text-white'
-                  }`}
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-extrabold text-white transition shadow-xl shadow-cyan-600/20 text-sm flex items-center justify-center gap-2.5"
                 >
                   <span>🅿️</span> {currentT.buyPackFull} ({currentT.buyPayPal})
                 </button>
               </div>
 
               <div className="pt-3 flex flex-col items-center gap-1.5">
-                <span
-                  className={`text-xs font-semibold ${
-                    nightVision ? 'text-rose-300' : 'text-amber-300'
-                  }`}
-                >
+                <span className="text-xs text-amber-300 font-semibold">
                   {currentT.trustBadge}
                 </span>
-                <span
-                  className={`text-xs ${
-                    nightVision ? 'text-rose-400/80' : 'text-slate-400'
-                  }`}
-                >
+                <span className="text-xs text-slate-400">
                   {currentT.taxNotice}
                 </span>
               </div>
             </div>
 
-            {/* CATALOGUE DES MODULES */}
+            {/* CATALOGUE DES MODULES AVEC DESIGN CARTES PREMIUM */}
             <div className="space-y-8">
-              <div
-                className={`flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-4 ${
-                  nightVision ? 'border-rose-900' : 'border-slate-800'
-                }`}
-              >
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
-                  <span
-                    className={`text-xs font-extrabold uppercase tracking-widest ${
-                      nightVision ? 'text-rose-400' : 'text-cyan-400'
-                    }`}
-                  >
+                  <span className="text-xs font-extrabold text-cyan-400 uppercase tracking-widest">
                     Programme Complet
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-black mt-1">
+                  <h3 className="text-2xl md:text-3xl font-black text-white mt-1">
                     Les 7 Modules d’Expertise
                   </h3>
                 </div>
-                <p
-                  className={`text-xs max-w-md ${
-                    nightVision ? 'text-rose-300' : 'text-slate-400'
-                  }`}
-                >
+                <p className="text-xs text-slate-400 max-w-md">
                   Chaque module inclut des masterclasses vidéo/diaporamas, des
                   simulateurs interactifs et des guides PDF imprimables.
                 </p>
@@ -1743,21 +1818,16 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {modules.map((mod) => {
                   const unlocked = isModuleUnlocked(mod.id);
-                  const isDone = completedModules.includes(mod.id);
                   return (
                     <div
                       key={mod.id}
                       onClick={() => {
                         if (unlocked) openModuleDetail(mod.id);
                       }}
-                      className={`group border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md ${
-                        nightVision
-                          ? 'bg-rose-950/20 border-rose-900/60'
-                          : 'bg-slate-900/70 border-slate-800/80'
-                      } ${
+                      className={`group bg-slate-900/70 border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md ${
                         unlocked
-                          ? 'hover:border-current cursor-pointer hover:-translate-y-1'
-                          : 'hover:-translate-y-1'
+                          ? 'border-emerald-500/80 hover:border-cyan-400 cursor-pointer hover:shadow-cyan-500/10 hover:-translate-y-1 bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950/20'
+                          : 'border-slate-800/80 hover:border-slate-700 hover:-translate-y-1'
                       }`}
                     >
                       <div>
@@ -1765,11 +1835,11 @@ export default function App() {
                           <img
                             src={mod.image}
                             alt={lang === 'fr' ? mod.titleFr : mod.titleEn}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90"
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
 
-                          <span className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-black/70 backdrop-blur-md text-[11px] font-bold text-white border border-white/20 shadow">
+                          <span className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-slate-950/80 backdrop-blur-md text-[11px] font-bold text-cyan-300 border border-slate-700/60 shadow">
                             {lang === 'fr' ? mod.badgeFr : mod.badgeEn}
                           </span>
 
@@ -1777,33 +1847,36 @@ export default function App() {
                             {mod.price}$ CAD
                           </span>
 
-                          {isDone && (
-                            <span className="absolute top-3 right-3 px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg">
-                              ✓ Terminé
-                            </span>
-                          )}
-                          {!isDone && unlocked && (
-                            <span className="absolute top-3 right-3 px-3 py-1 rounded-xl bg-cyan-600 text-white font-bold text-xs shadow-lg">
+                          {unlocked && (
+                            <span className="absolute top-3 right-3 px-3.5 py-1.5 rounded-xl bg-emerald-600/90 text-white font-black text-xs shadow-lg backdrop-blur-md animate-pulse">
                               🚀 Débloqué
                             </span>
                           )}
                         </div>
 
                         <div className="p-6 space-y-3">
-                          <h4 className="font-bold text-lg leading-snug">
+                          <h4 className="font-bold text-lg text-white group-hover:text-cyan-400 transition leading-snug">
                             {lang === 'fr' ? mod.titleFr : mod.titleEn}
                           </h4>
-                          <p
-                            className={`text-sm leading-relaxed ${
-                              nightVision ? 'text-rose-300' : 'text-slate-400'
-                            }`}
-                          >
+                          <p className="text-sm text-slate-400 leading-relaxed">
                             {lang === 'fr' ? mod.descFr : mod.descEn}
                           </p>
                         </div>
                       </div>
 
                       <div className="p-6 pt-0 flex flex-col gap-3">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          {unlocked ? (
+                            <span className="text-emerald-400 flex items-center gap-1 font-bold">
+                              <span>🔓</span> {currentT.unlockedBadge}
+                            </span>
+                          ) : (
+                            <span className="text-amber-400 flex items-center gap-1 font-bold">
+                              <span>🔒</span> {currentT.lockedBadge}
+                            </span>
+                          )}
+                        </div>
+
                         {unlocked ? (
                           <button
                             type="button"
@@ -1811,11 +1884,7 @@ export default function App() {
                               e.stopPropagation();
                               openModuleDetail(mod.id);
                             }}
-                            className={`w-full py-3.5 rounded-xl font-black text-xs shadow-lg transition text-center uppercase tracking-wider flex items-center justify-center gap-2 ${
-                              nightVision
-                                ? 'bg-rose-600 text-white hover:bg-rose-500'
-                                : 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950'
-                            }`}
+                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-95 font-black text-xs text-slate-950 shadow-lg shadow-emerald-500/20 transition text-center uppercase tracking-wider flex items-center justify-center gap-2"
                           >
                             <span>▶️</span> {currentT.accessCourse}
                           </button>
@@ -1827,7 +1896,7 @@ export default function App() {
                                 e.stopPropagation();
                                 handleOpenLink(mod.links.stripe);
                               }}
-                              className="py-3 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              className="py-3 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-md shadow-indigo-600/20 text-center transition flex items-center justify-center gap-1"
                             >
                               <span>💳</span> {currentT.buyStripe}
                             </button>
@@ -1837,7 +1906,7 @@ export default function App() {
                                 e.stopPropagation();
                                 handleOpenLink(mod.links.paypal);
                               }}
-                              className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md shadow-cyan-600/20 text-center transition flex items-center justify-center gap-1"
                             >
                               <span>🅿️</span> {currentT.buyPayPal}
                             </button>
@@ -1849,143 +1918,42 @@ export default function App() {
                 })}
               </div>
             </div>
-
-            {/* SECTION TÉMOIGNAGES */}
-            <div className="space-y-6 pt-6">
-              <h3 className="text-2xl font-black text-center">
-                {currentT.testimonialsTitle}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div
-                  className={`p-6 rounded-3xl border space-y-3 ${
-                    nightVision
-                      ? 'bg-rose-950/20 border-rose-900'
-                      : 'bg-slate-900/60 border-slate-800'
-                  }`}
-                >
-                  <p
-                    className={`italic text-sm ${
-                      nightVision ? 'text-rose-200' : 'text-slate-300'
-                    }`}
-                  >
-                    {currentT.t1}
-                  </p>
-                  <div className="text-xs font-bold text-cyan-400">
-                    {currentT.t1Author}
-                  </div>
-                </div>
-                <div
-                  className={`p-6 rounded-3xl border space-y-3 ${
-                    nightVision
-                      ? 'bg-rose-950/20 border-rose-900'
-                      : 'bg-slate-900/60 border-slate-800'
-                  }`}
-                >
-                  <p
-                    className={`italic text-sm ${
-                      nightVision ? 'text-rose-200' : 'text-slate-300'
-                    }`}
-                  >
-                    {currentT.t2}
-                  </p>
-                  <div className="text-xs font-bold text-cyan-400">
-                    {currentT.t2Author}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION FAQ ACCORDÉON */}
-            <div className="space-y-4 pt-6 max-w-3xl mx-auto">
-              <h3 className="text-2xl font-black text-center">
-                {currentT.faqTitle}
-              </h3>
-              {[
-                { q: currentT.faq1Q, a: currentT.faq1A },
-                { q: currentT.faq2Q, a: currentT.faq2A },
-                { q: currentT.faq3Q, a: currentT.faq3A },
-              ].map((faq, idx) => (
-                <div
-                  key={idx}
-                  className={`border rounded-2xl overflow-hidden transition ${
-                    nightVision
-                      ? 'bg-rose-950/30 border-rose-900'
-                      : 'bg-slate-900/80 border-slate-800'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenFaqIndex(openFaqIndex === idx ? null : idx)
-                    }
-                    className="w-full p-4 text-left font-bold text-sm md:text-base flex justify-between items-center"
-                  >
-                    <span>{faq.q}</span>
-                    <span>{openFaqIndex === idx ? '−' : '+'}</span>
-                  </button>
-                  {openFaqIndex === idx && (
-                    <div
-                      className={`p-4 pt-0 text-xs md:text-sm leading-relaxed border-t ${
-                        nightVision
-                          ? 'border-rose-900/50 text-rose-200'
-                          : 'border-slate-800 text-slate-300'
-                      }`}
-                    >
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
         {activeTab === 'module-detail' && currentModule && (
-          <div
-            className={`max-w-4xl mx-auto space-y-10 border rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md ${
-              nightVision
-                ? 'bg-rose-950/20 border-rose-900'
-                : 'bg-slate-900/90 border-slate-800/80'
-            }`}
-          >
+          <div className="max-w-4xl mx-auto space-y-10 bg-slate-900/90 border border-slate-800/80 rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setActiveTab('home')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                  nightVision
-                    ? 'bg-rose-900 text-white'
-                    : 'bg-slate-800 text-cyan-400 hover:bg-slate-700'
-                }`}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 transition flex items-center gap-1.5"
               >
                 {currentT.backToCatalog}
               </button>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => toggleCompleteModule(currentModule.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                    completedModules.includes(currentModule.id)
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {completedModules.includes(currentModule.id)
-                    ? currentT.markIncomplete
-                    : currentT.markComplete}
-                </button>
-              </div>
+              <span className="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                ⭐ {currentT.interactiveModule} • Code :{' '}
+                {currentModule.backupCode}
+              </span>
             </div>
 
+            {justPurchasedModule && (
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 text-sm font-bold flex flex-col sm:flex-row sm:items-center gap-3">
+                <span className="text-2xl">✅</span>
+                <div>
+                  <span>{currentT.paymentConfirmedModule}</span>
+                  <code className="px-2.5 py-1 rounded-lg bg-slate-950 text-cyan-300 font-mono border border-emerald-500/40 ml-1">
+                    {currentModule.backupCode}
+                  </code>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3">
-              <h2 className="text-2xl md:text-4xl font-black leading-tight">
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">
                 {lang === 'fr' ? currentModule.titleFr : currentModule.titleEn}
               </h2>
-              <p
-                className={`text-base md:text-lg leading-relaxed ${
-                  nightVision ? 'text-rose-200' : 'text-slate-300'
-                }`}
-              >
+              <p className="text-slate-300 text-base md:text-lg leading-relaxed">
                 {currentModule.content[lang].intro}
               </p>
             </div>
@@ -1993,35 +1961,58 @@ export default function App() {
             {/* STUDIO MASTERCLASS */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold flex items-center gap-2">
+                <h3 className="text-lg font-bold flex items-center gap-2 text-cyan-400">
                   <span>🎬</span> {currentT.studioHeader}
                 </h3>
-                <span className="text-xs font-mono px-3 py-1 rounded-lg bg-black/40 border border-white/10">
+                <span className="text-xs text-slate-400 font-mono px-3 py-1 rounded-lg bg-slate-950 border border-slate-800">
                   Chapitre {currentSlideIndex + 1} /{' '}
                   {currentModule.content[lang].slides.length}
                 </span>
               </div>
 
-              <div className="rounded-3xl bg-black/50 border border-white/10 p-6 md:p-10 shadow-2xl space-y-6">
-                <h4 className="text-xl md:text-2xl font-black">
-                  {
-                    currentModule.content[lang].slides[currentSlideIndex]
-                      .title
-                  }
-                </h4>
+              <div className="rounded-3xl bg-gradient-to-br from-[#070d21] via-[#0c1430] to-[#050814] border border-indigo-500/40 p-6 md:p-10 shadow-2xl space-y-6 relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                  <div>
+                    <span className="text-[11px] uppercase tracking-widest text-cyan-400 font-bold">
+                      🪐 Astroberb Studio
+                    </span>
+                    <h4 className="text-xl md:text-2xl font-black text-white mt-1">
+                      {
+                        currentModule.content[lang].slides[currentSlideIndex]
+                          .title
+                      }
+                    </h4>
+                    <p className="text-xs md:text-sm text-indigo-300 mt-0.5">
+                      {
+                        currentModule.content[lang].slides[currentSlideIndex]
+                          .subtitle
+                      }
+                    </p>
+                  </div>
+                </div>
+
                 <ul className="space-y-3">
                   {currentModule.content[lang].slides[
                     currentSlideIndex
                   ].bullets.map((b, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl text-sm md:text-base leading-relaxed"
+                      className="flex items-start gap-3.5 bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl text-sm md:text-base text-slate-200 leading-relaxed shadow-inner"
                     >
-                      <span className="text-cyan-400 font-bold mt-0.5">✦</span>
+                      <span className="text-cyan-400 font-bold mt-0.5 text-lg">
+                        ✦
+                      </span>
                       <span>{b}</span>
                     </li>
                   ))}
                 </ul>
+
+                <div className="p-4.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs md:text-sm text-amber-200 leading-relaxed shadow-sm">
+                  <strong className="text-amber-400 block mb-1 font-bold text-sm">
+                    {currentT.proTipLabel}
+                  </strong>
+                  {currentModule.content[lang].slides[currentSlideIndex].proTip}
+                </div>
 
                 <div className="flex items-center justify-between pt-2">
                   <button
@@ -2030,10 +2021,24 @@ export default function App() {
                     onClick={() =>
                       setCurrentSlideIndex((prev) => Math.max(0, prev - 1))
                     }
-                    className="px-5 py-2.5 rounded-xl bg-slate-800 disabled:opacity-30 text-xs font-bold transition"
+                    className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-xs font-bold transition shadow"
                   >
                     {currentT.prevSlide}
                   </button>
+                  <div className="flex space-x-2">
+                    {currentModule.content[lang].slides.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setCurrentSlideIndex(idx)}
+                        className={`w-3 h-3 rounded-full transition ${
+                          idx === currentSlideIndex
+                            ? 'bg-cyan-400 scale-125 ring-2 ring-cyan-400/30'
+                            : 'bg-slate-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
                   <button
                     type="button"
                     disabled={
@@ -2048,7 +2053,7 @@ export default function App() {
                         )
                       )
                     }
-                    className="px-5 py-2.5 rounded-xl bg-indigo-600 disabled:opacity-30 text-xs font-bold text-white transition"
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-xs font-bold text-white transition shadow"
                   >
                     {currentT.nextSlide}
                   </button>
@@ -2058,24 +2063,24 @@ export default function App() {
 
             {/* CALCULATEUR INTERACTIF */}
             {currentModule.hasCalculator && (
-              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
-                <h3 className="text-lg font-bold flex items-center gap-2">
+              <div className="space-y-5 bg-gradient-to-r from-indigo-950/60 via-slate-950 to-slate-950 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2 text-cyan-300">
                   <span>🧮</span> {currentT.calcTitle}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold mb-1.5">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       {currentT.calcFocalLabel}
                     </label>
                     <input
                       type="number"
                       value={calcFocal}
                       onChange={(e) => setCalcFocal(Number(e.target.value))}
-                      className="w-full px-4.5 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none"
+                      className="w-full px-4.5 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400 shadow-inner"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold mb-1.5">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       {currentT.calcPixelLabel}
                     </label>
                     <input
@@ -2083,12 +2088,12 @@ export default function App() {
                       step="0.1"
                       value={calcPixel}
                       onChange={(e) => setCalcPixel(Number(e.target.value))}
-                      className="w-full px-4.5 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none"
+                      className="w-full px-4.5 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400 shadow-inner"
                     />
                   </div>
                 </div>
-                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
-                  <div className="text-sm font-bold">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 text-center space-y-2 shadow-inner">
+                  <div className="text-sm font-bold text-slate-300">
                     {currentT.calcResult}
                     <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
                       {pixelScaleResult} &quot;/pixel
@@ -2101,6 +2106,172 @@ export default function App() {
               </div>
             )}
 
+            {/* COURS THÉORIQUE */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-white">
+                <span>📖</span> {currentT.fullCourseTitle}
+              </h3>
+              <div className="space-y-4">
+                {currentModule.content[lang].courseSections.map((sec, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-slate-950/80 border border-slate-800/80 p-6 md:p-8 rounded-3xl space-y-3 shadow-md"
+                  >
+                    <h4 className="font-bold text-lg text-cyan-300">
+                      {sec.heading}
+                    </h4>
+                    <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                      {sec.body}
+                    </p>
+                    {sec.highlight && (
+                      <div className="p-4 rounded-2xl bg-indigo-950/60 border border-indigo-500/40 text-xs md:text-sm font-mono text-indigo-200 shadow-inner">
+                        ⚡ {sec.highlight}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ÉTAPES CLÉS */}
+            <div className="space-y-4 bg-slate-950/60 border border-slate-800/80 p-6 md:p-8 rounded-3xl shadow-md">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-white">
+                <span>✅</span> {currentT.tutorialSteps}
+              </h3>
+              <ul className="space-y-3">
+                {currentModule.content[lang].steps.map((step, idx) => (
+                  <li
+                    key={idx}
+                    className="text-sm md:text-base text-slate-300 flex items-start gap-3.5 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 shadow-sm"
+                  >
+                    <span className="text-emerald-400 font-black text-lg">
+                      ✔
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* QUIZ INTERACTIF */}
+            <div className="space-y-6 bg-slate-950 border border-indigo-500/40 p-6 md:p-10 rounded-3xl shadow-2xl">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-indigo-300">
+                <span>📝</span> {currentT.quizTitle}
+              </h3>
+
+              <div className="space-y-6">
+                {currentModule.content[lang].quiz.map((q, qIdx) => {
+                  const isAnswered = selectedAnswers[qIdx] !== undefined;
+                  const isCorrect = selectedAnswers[qIdx] === q.correct;
+                  return (
+                    <div
+                      key={qIdx}
+                      className="space-y-3 bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-md"
+                    >
+                      <p className="text-sm md:text-base font-bold text-white">
+                        {qIdx + 1}. {q.question}
+                      </p>
+                      <div className="space-y-2.5">
+                        {q.options.map((opt, oIdx) => {
+                          let btnStyle =
+                            'bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300';
+                          if (quizSubmitted) {
+                            if (oIdx === q.correct) {
+                              btnStyle =
+                                'bg-emerald-950/90 border-emerald-500 text-emerald-200 font-bold shadow';
+                            } else if (selectedAnswers[qIdx] === oIdx) {
+                              btnStyle =
+                                'bg-rose-950/90 border-rose-500 text-rose-200';
+                            }
+                          } else if (selectedAnswers[qIdx] === oIdx) {
+                            btnStyle =
+                              'bg-indigo-950 border-indigo-500 text-white font-bold shadow';
+                          }
+
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={quizSubmitted}
+                              onClick={() =>
+                                setSelectedAnswers((prev) => ({
+                                  ...prev,
+                                  [qIdx]: oIdx,
+                                }))
+                              }
+                              className={`w-full text-left p-3.5 rounded-xl border text-xs md:text-sm transition flex items-center justify-between ${btnStyle}`}
+                            >
+                              <span>{opt}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {quizSubmitted && (
+                        <div
+                          className={`p-4 rounded-xl text-xs md:text-sm mt-3 leading-relaxed shadow-sm ${
+                            isCorrect
+                              ? 'bg-emerald-950/50 text-emerald-300 border border-emerald-500/40'
+                              : 'bg-rose-950/50 text-rose-300 border border-rose-500/40'
+                          }`}
+                        >
+                          <strong className="block mb-1">
+                            {isCorrect
+                              ? currentT.correctAnswer
+                              : currentT.wrongAnswer}
+                          </strong>{' '}
+                          {q.explanation}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="pt-2 flex items-center justify-between">
+                {!quizSubmitted ? (
+                  <button
+                    type="button"
+                    disabled={
+                      Object.keys(selectedAnswers).length <
+                      currentModule.content[lang].quiz.length
+                    }
+                    onClick={() => setQuizSubmitted(true)}
+                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-95 disabled:opacity-40 text-slate-950 font-black text-xs md:text-sm shadow-lg transition"
+                  >
+                    {currentT.quizSubmit}
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-between w-full">
+                    <div className="text-sm font-bold text-white">
+                      {currentT.quizScore}
+                      <span className="text-cyan-400 font-mono ml-1.5 text-base">
+                        {
+                          Object.entries(selectedAnswers).filter(
+                            ([idx, ans]) =>
+                              ans ===
+                              currentModule.content[lang].quiz[Number(idx)]
+                                .correct
+                          ).length
+                        }{' '}
+                        / {currentModule.content[lang].quiz.length}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedAnswers({});
+                        setQuizSubmitted(false);
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 transition"
+                    >
+                      {currentT.quizRetry}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* GÉNÉRATEUR PDF */}
             <div className="space-y-4">
               <h3 className="text-lg font-bold flex items-center gap-2">
@@ -2110,13 +2281,13 @@ export default function App() {
                 {currentModule.content[lang].downloads.map((doc) => (
                   <div
                     key={doc.id}
-                    className="p-6 rounded-3xl bg-black/50 border border-white/10 flex flex-col justify-between gap-5 shadow-xl"
+                    className="p-6 rounded-3xl bg-slate-950 border border-slate-800 flex flex-col justify-between gap-5 shadow-xl"
                   >
                     <div>
                       <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-extrabold">
                         PDF Officiel A4
                       </span>
-                      <h4 className="font-bold text-sm md:text-base mt-3 leading-snug">
+                      <h4 className="font-bold text-sm md:text-base text-white mt-3 leading-snug">
                         {doc.name}
                       </h4>
                     </div>
@@ -2130,7 +2301,7 @@ export default function App() {
                             : currentModule.titleEn
                         )
                       }
-                      className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition"
+                      className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-md transition"
                     >
                       <span>📥</span> {currentT.generatePdfBtn}
                     </button>
@@ -2142,83 +2313,158 @@ export default function App() {
         )}
 
         {activeTab === 'success' && (
-          <div className="max-w-2xl mx-auto bg-slate-900 border border-emerald-500/50 rounded-3xl p-8 md:p-12 text-center space-y-6 shadow-2xl">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-4xl">
+          <div className="max-w-2xl mx-auto bg-slate-900 border border-emerald-500/50 rounded-3xl p-8 md:p-12 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500" />
+            <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-4xl shadow-lg">
               ✨
             </div>
             <div className="space-y-2">
+              <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-widest">
+                {currentT.successBadge}
+              </span>
               <h2 className="text-3xl md:text-4xl font-black text-white">
                 {currentT.successTitle}
               </h2>
-              <p className="text-slate-300 text-sm md:text-base max-w-lg mx-auto">
+              <p className="text-slate-300 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
                 {currentT.successDesc}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={generateCertificate}
-              className="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg transition"
-            >
-              {currentT.certTitle}
-            </button>
+
+            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 max-w-md mx-auto space-y-2 shadow-inner">
+              <p className="text-xs text-slate-400">
+                {currentT.backupCodeNotice}
+              </p>
+              <div className="text-lg font-mono font-black text-cyan-400 tracking-wider">
+                VIP-ASTRO-2026
+              </div>
+            </div>
+
+            <div className="space-y-2.5 text-left max-w-md mx-auto pt-2">
+              {modules.map((mod) => (
+                <button
+                  key={mod.id}
+                  type="button"
+                  onClick={() => openModuleDetail(mod.id)}
+                  className="w-full p-4 rounded-2xl bg-slate-950 hover:bg-emerald-950/60 border border-emerald-500/40 hover:border-cyan-400 flex items-center justify-between text-xs font-bold text-white transition shadow"
+                >
+                  <span>▶️ {lang === 'fr' ? mod.titleFr : mod.titleEn}</span>
+                  <span className="text-cyan-400 font-extrabold">Ouvrir ➔</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {activeTab === 'pack' && (
-          <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl">
-            <h2 className="text-3xl font-black text-white">
-              {currentT.packTitle}
-            </h2>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              {currentT.packDesc}
-            </p>
-            <div className="text-4xl md:text-5xl font-black text-cyan-400">
+          <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-orange-500 to-indigo-600" />
+            <div className="w-18 h-18 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center mx-auto text-3xl shadow-lg">
+              🔥
+            </div>
+            <div className="space-y-2">
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest">
+                Offre Limitée • Économisez 364$
+              </span>
+              <h2 className="text-3xl font-black text-white">
+                {currentT.packTitle}
+              </h2>
+              <p className="text-slate-300 text-sm leading-relaxed max-w-md mx-auto">
+                {currentT.packDesc}
+              </p>
+            </div>
+            <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">
               199,00 $ CAD
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
-                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-600 font-extrabold text-slate-950 text-sm"
+                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-600 font-extrabold text-slate-950 text-sm shadow-lg shadow-cyan-500/20 hover:opacity-95 transition"
               >
                 {currentT.payCardStripe}
               </button>
               <button
                 type="button"
                 onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
-                className="flex-1 py-4 rounded-2xl bg-cyan-600 font-extrabold text-white text-sm"
+                className="flex-1 py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-extrabold text-white text-sm shadow-lg shadow-cyan-600/20 hover:opacity-95 transition"
               >
                 {currentT.payWithPaypal}
               </button>
             </div>
+            <p className="text-xs text-slate-400">{currentT.taxNotice}</p>
+            <button
+              type="button"
+              onClick={() => setActiveTab('home')}
+              className="text-xs text-slate-400 underline hover:text-white transition pt-2"
+            >
+              {currentT.backToCatalog}
+            </button>
           </div>
         )}
 
         {activeTab === 'vip' && (
           <div className="max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl space-y-6">
-            <h2 className="text-2xl font-bold text-center">
-              {currentT.vipSection}
-            </h2>
+            <div className="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center mx-auto text-2xl shadow">
+              🔑
+            </div>
+            <div className="space-y-1 text-center">
+              <h2 className="text-2xl font-bold text-white">
+                {currentT.vipSection}
+              </h2>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                {currentT.vipDesc}
+              </p>
+            </div>
             <form onSubmit={handleValidateVip} className="space-y-4">
               <input
                 type="text"
                 value={vipCode}
                 onChange={(e) => setVipCode(e.target.value)}
                 placeholder={currentT.vipPlaceholder}
-                className="w-full px-5 py-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-white font-mono text-center uppercase tracking-widest focus:outline-none"
+                className="w-full px-5 py-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-white font-mono text-center uppercase tracking-widest focus:outline-none focus:border-cyan-400 shadow-inner"
               />
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-600 font-bold text-white text-sm"
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-95 font-bold text-white transition shadow-lg shadow-indigo-600/25 text-sm"
               >
                 {currentT.unlockBtn}
               </button>
             </form>
-            {vipStatus === 'success' && (
-              <p className="text-emerald-400 text-sm font-bold text-center">
-                ✅ {currentT.accessGranted}
-              </p>
+
+            {(vipStatus === 'success' || unlockedModules.length > 0) && (
+              <div className="space-y-3.5 pt-4 border-t border-slate-800">
+                <p className="text-emerald-400 text-sm font-bold text-center">
+                  ✅ {currentT.accessGranted}
+                </p>
+                <div className="space-y-2">
+                  {modules
+                    .filter((m) => isModuleUnlocked(m.id))
+                    .map((mod) => (
+                      <button
+                        key={mod.id}
+                        type="button"
+                        onClick={() => openModuleDetail(mod.id)}
+                        className="w-full p-3.5 rounded-xl bg-slate-950 hover:bg-emerald-950/60 border border-emerald-500/50 hover:border-cyan-400 flex items-center justify-between text-xs font-bold text-white transition shadow"
+                      >
+                        <span className="text-left">
+                          ▶️ {lang === 'fr' ? mod.titleFr : mod.titleEn}
+                        </span>
+                        <span className="text-cyan-400 ml-2 shrink-0">
+                          Ouvrir ➔
+                        </span>
+                      </button>
+                    ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('home')}
+                  className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 transition"
+                >
+                  {currentT.viewUnlocked}
+                </button>
+              </div>
             )}
+
             {vipStatus === 'error' && (
               <p className="text-rose-400 text-xs text-center font-medium">
                 ⚠️ {currentT.invalidCode}
@@ -2229,17 +2475,11 @@ export default function App() {
       </main>
 
       {/* PIED DE PAGE */}
-      <footer
-        className={`border-t py-10 mt-20 text-xs ${
-          nightVision
-            ? 'border-rose-900 bg-[#120101] text-rose-300'
-            : 'border-slate-800/80 bg-[#010308] text-slate-400'
-        }`}
-      >
+      <footer className="border-t border-slate-800/80 bg-[#010308] py-10 mt-20 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-2.5">
             <span className="text-base">🪐</span>
-            <span className="font-bold">Astroberb Academy</span>
+            <span className="font-bold text-slate-200">Astroberb Academy</span>
             <span>
               — © {new Date().getFullYear()} {currentT.footerRights}
             </span>
@@ -2248,20 +2488,20 @@ export default function App() {
             <button
               type="button"
               onClick={() => setLegalModal('terms')}
-              className="hover:underline transition"
+              className="hover:text-cyan-400 underline transition"
             >
               {currentT.termsLink}
             </button>
             <button
               type="button"
               onClick={() => setLegalModal('privacy')}
-              className="hover:underline transition"
+              className="hover:text-cyan-400 underline transition"
             >
               {currentT.privacyLink}
             </button>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
-              className="hover:underline transition"
+              className="hover:text-cyan-400 underline transition"
             >
               ✉️ {currentT.contactSupport} ({SUPPORT_EMAIL})
             </a>
@@ -2272,7 +2512,7 @@ export default function App() {
       {/* MODALE LÉGALE */}
       {legalModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 md:p-8 space-y-4 max-h-[85vh] overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-2xl w-full p-6 md:p-8 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-lg font-bold text-white">
                 {legalModal === 'terms'
@@ -2287,11 +2527,38 @@ export default function App() {
                 ✕
               </button>
             </div>
-            <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              {legalModal === 'terms'
-                ? 'Produits numériques et formations en ligne accessibles immédiatement.'
-                : 'Paiements traités de manière 100% sécurisée par Stripe et PayPal.'}
-            </p>
+
+            {legalModal === 'terms' ? (
+              <div className="space-y-3 text-xs md:text-sm text-slate-300 leading-relaxed">
+                <p>
+                  <strong>1. Produits numériques :</strong> Formations
+                  numériques (diaporamas interactifs et guides PDF) accessibles
+                  immédiatement en ligne.
+                </p>
+                <p>
+                  <strong>2. Licence :</strong> Usage personnel et non
+                  transférable. Le partage des codes d'accès est strictement
+                  interdit.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs md:text-sm text-slate-300 leading-relaxed">
+                <p>
+                  <strong>1. Paiements :</strong> Traités de manière 100%
+                  sécurisée par Stripe ou PayPal.
+                </p>
+              </div>
+            )}
+
+            <div className="pt-4 text-right">
+              <button
+                type="button"
+                onClick={() => setLegalModal(null)}
+                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow"
+              >
+                {currentT.closeBtn}
+              </button>
+            </div>
           </div>
         </div>
       )}
