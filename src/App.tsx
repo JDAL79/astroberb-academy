@@ -531,11 +531,20 @@ export default function App() {
               subtitle: "Comprendre la vitesse photographique d'un instrument",
               bullets: [
                 'La longueur focale (ex: 400mm vs 1000mm) détermine uniquement le cadrage (champ de vision).',
-                "Le rapport d'ouverture (f/D) détermine la vitesse à laquelle les photons s'accumulent.",
-                'Passer de f/8 à f/4 divise par 4 le temps de pose nécessaire !',
+                "Le rapport d'ouverture (f/D) détermine la vitesse à laquelle les photons s'accumulent sur le capteur.",
+                'Passer de f/8 à f/4 divise par 4 le temps de pose nécessaire pour un même signal !',
               ],
-              proTip:
-                "Pour débuter, privilégiez un rapport f/4 à f/5.5 à l'aide d'un réducteur dédié.",
+              proTip: "Pour débuter, privilégiez un rapport f/4 à f/5.5 à l'aide d'un réducteur dédié.",
+            },
+            {
+              title: "Maîtriser le Backfocus & l'Aplanisseur",
+              subtitle: "L'alignement mécanique au millimètre près",
+              bullets: [
+                "Le backfocus est la distance mécanique exacte requise entre la lentille correctrice et le capteur CMOS.",
+                "Une erreur de seulement 1 mm se traduit par des étoiles étirées (aberrations) dans les coins de l'image.",
+                "Utilisez des bagues d'allongement micrométriques et un pied à coulisse numérique.",
+              ],
+              proTip: "La référence universelle pour la plupart des correcteurs et boîtiers est de 55,0 mm.",
             },
           ] as Slide[],
           courseSections: [
@@ -552,29 +561,27 @@ export default function App() {
           ],
           quiz: [
             {
-              question:
-                "Quel paramètre détermine la vitesse photographique pure d'un télescope ?",
+              question: "Quel paramètre détermine la vitesse photographique pure d'un télescope ?",
               options: [
                 'La longueur focale en millimètres',
                 "Le rapport d'ouverture f/D",
                 'Le diamètre du miroir secondaire uniquement',
               ],
               correct: 1,
-              explanation:
-                'Le rapport f/D (Focale divisée par le Diamètre) indique la concentration de lumière par unité de surface sur le capteur.',
+              explanation: 'Le rapport f/D (Focale divisée par le Diamètre) indique la concentration de lumière par unité de surface sur le capteur.',
             },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod1-pdf1',
               name: "Guide PDF - Calculateur d'échantillonnage & Backfocus",
-              title:
-                "Abaque d'Échantillonnage Optique & Diagnostic du Backfocus (55 mm)",
+              title: "Abaque d'Échantillonnage Optique & Diagnostic du Backfocus (55 mm)",
               sections: [
                 {
                   title: '1. Formule Mathématique & Cibles de Seeing',
                   content: [
                     'Formule : Échantillonnage ("/px) = (206,265 × Taille du pixel en µm) / Focale en mm.',
+                    "Voir le simulateur interactif intégré dans votre espace membre pour tester vos configurations de tubes.",
                   ],
                 },
               ],
@@ -591,35 +598,35 @@ export default function App() {
               bullets: [
                 'Focal length determines framing and field of view.',
                 'Focal ratio (f/D) determines photographic speed and photon accumulation rate.',
+                'Moving from f/8 to f/4 cuts required exposure time by 4x!',
               ],
-              proTip: 'For versatile deep-sky imaging, aim for f/4 to f/5.5.',
+              proTip: 'For versatile deep-sky imaging, aim for f/4 to f/5.5 using a dedicated reducer.',
+            },
+            {
+              title: 'Mastering Backfocus & Flatteners',
+              subtitle: 'Precise mechanical alignment',
+              bullets: [
+                'Backfocus is the exact mechanical distance between the optical corrector and the sensor.',
+                'A 1mm error results in distorted, smeared stars in the image corners.',
+                'Always use precise shims and digital calipers.',
+              ],
+              proTip: 'The universal standard for most flatteners and correctors is 55.0 mm.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. The Golden Rule of Pixel Scale',
               body: 'Match your pixel scale to atmospheric seeing conditions for optimal resolution.',
-              highlight:
-                'Formula: Scale = (206.265 × Pixel_µm) / Focal_Length_mm',
+              highlight: 'Formula: Scale = (206.265 × Pixel_µm) / Focal_Length_mm',
             },
           ] as LessonSection[],
-          steps: [
-            '1. Calculate pixel scale.',
-            '2. Check mount payload.',
-            '3. Set 55mm backfocus.',
-          ],
+          steps: ['1. Calculate pixel scale.', '2. Check mount payload.', '3. Set 55mm backfocus.'],
           quiz: [
             {
-              question:
-                'What parameter determines a telescope photographic speed?',
-              options: [
-                'Focal length',
-                'Focal ratio (f/D)',
-                'Aperture diameter alone',
-              ],
+              question: 'What parameter determines a telescope photographic speed?',
+              options: ['Focal length', 'Focal ratio (f/D)', 'Aperture diameter alone'],
               correct: 1,
-              explanation:
-                'Focal ratio (f/D) controls light concentration on the sensor.',
+              explanation: 'Focal ratio (f/D) controls light concentration on the sensor.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -630,9 +637,7 @@ export default function App() {
               sections: [
                 {
                   title: '1. Formula & Seeing Targets',
-                  content: [
-                    'Formula: Pixel Scale ("/px) = (206.265 × Pixel Size) / Focal Length.',
-                  ],
+                  content: ['Formula: Pixel Scale ("/px) = (206.265 × Pixel Size) / Focal Length.'],
                 },
               ],
             },
@@ -663,13 +668,23 @@ export default function App() {
           slides: [
             {
               title: "Anatomie d'un Réducteur Harmonique",
-              subtitle: 'Couple et zéro backlash',
+              subtitle: 'Couple élevé et légèreté nomade',
               bullets: [
-                'Capacité de charge élevée sans contrepoids pour une portabilité maximale.',
+                'Capacité de charge élevée sans contrepoids lourd pour une portabilité maximale en voyage.',
                 'Erreur périodique à pente rapide nécessitant un guidage court (0.5s - 1.0s).',
+                "Absence de jeu mécanique majeur (zero backlash) par rapport aux vis sans fin traditionnelles.",
               ],
-              proTip:
-                'Lestez toujours votre trépied carbone avec une batterie LiFePO4.',
+              proTip: 'Lestez toujours votre trépied carbone avec un sac de lestage ou votre batterie LiFePO4.',
+            },
+            {
+              title: "Mise en Station Zéro Défaut",
+              subtitle: 'Le secret des poses longues réussies',
+              bullets: [
+                "Utilisez le Polar Align intégré à votre ASIAIR ou N.I.N.A. pour un alignement en 3 étapes.",
+                "Affinez l'altitude et l'azimut sans forcer grâce aux vis micrométriques de la monture.",
+                "Vérifiez que les câbles n'exercent aucune tension mécanique parasite pendant le suivi.",
+              ],
+              proTip: "Une bonne mise en station éliminera la dérive en déclinaison (Dec).",
             },
           ] as Slide[],
           courseSections: [
@@ -679,23 +694,13 @@ export default function App() {
               highlight: 'Cadence de guidage : 0.5s - 1.0s',
             },
           ] as LessonSection[],
-          steps: [
-            '1. Mettre le trépied de niveau.',
-            '2. Fixer la monture.',
-            "3. Lancer l'alignement polaire astrométrique.",
-          ],
+          steps: ['1. Mettre le trépied de niveau.', '2. Fixer la monture.', "3. Lancer l'alignement polaire astrométrique."],
           quiz: [
             {
-              question:
-                'Quel est le principal avantage des montures harmoniques ?',
-              options: [
-                'Elles ne nécessitent aucun contrepoids',
-                'Elles pèsent 50 kg',
-                "Elles n'ont pas besoin d'électricité",
-              ],
+              question: 'Quel est le principal avantage des montures harmoniques ?',
+              options: ['Elles ne nécessitent aucun contrepoids', 'Elles pèsent 50 kg', "Elles n'ont pas besoin d'électricité"],
               correct: 0,
-              explanation:
-                'Leur réducteur strainwave encaisse le couple sans contrepoids.',
+              explanation: 'Leur réducteur strainwave encaisse le couple sans contrepoids.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -704,26 +709,33 @@ export default function App() {
               name: 'Checklist Mise en Station Zéro Défaut (PDF)',
               title: 'Protocole de Mise en Station Polaire & Sécurité',
               sections: [
-                {
-                  title: '1. Étapes',
-                  content: ['Vérifier le niveau et lancer le polar align.'],
-                },
+                { title: '1. Étapes Clés', content: ['Vérifier le niveau, caler la monture sur la Polaire et lancer le polar align logiciel.'] },
               ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro:
-            'Strainwave harmonic mounts offer unprecedented portability without counterweights.',
+          intro: 'Strainwave harmonic mounts offer unprecedented portability without counterweights.',
           slides: [
             {
               title: 'Inside a Strainwave Harmonic Drive',
               subtitle: 'High torque and zero backlash',
               bullets: [
-                'High payload capacity without counterweights.',
-                'Short guide exposures required.',
+                'High payload capacity without heavy counterweights for maximum portability.',
+                'Short guide exposures required (0.5s - 1.0s) due to fast periodic error slope.',
+                'Virtually zero backlash compared to traditional worm gears.',
               ],
-              proTip: 'Always ballast your carbon tripod.',
+              proTip: 'Always ballast your carbon tripod with a weight bag or battery.',
+            },
+            {
+              title: 'Flawless Polar Alignment',
+              subtitle: 'The foundation of long exposures',
+              bullets: [
+                'Use software-based polar alignment in ASIAIR or N.I.N.A. for precision.',
+                'Adjust altitude and azimuth smoothly using micro-adjustment knobs.',
+                'Ensure cables hang loosely with no tension during tracking.',
+              ],
+              proTip: 'Proper polar alignment eliminates DEC drift during imaging sessions.',
             },
           ] as Slide[],
           courseSections: [
@@ -736,14 +748,9 @@ export default function App() {
           quiz: [
             {
               question: 'Main advantage of harmonic mounts?',
-              options: [
-                'No counterweight needed',
-                'Weighs 50kg',
-                'No power required',
-              ],
+              options: ['No counterweight needed', 'Weighs 50kg', 'No power required'],
               correct: 0,
-              explanation:
-                'Strainwave gears hold payloads without counterweights.',
+              explanation: 'Strainwave gears hold payloads without counterweights.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -782,12 +789,23 @@ export default function App() {
           slides: [
             {
               title: 'Le Plate Solving Astrométrique',
-              subtitle: 'Centrage automatique en 2 secondes',
+              subtitle: 'Centrage automatique de cible en 2 secondes',
               bullets: [
-                "Reconnaissance du champ d'étoiles par catalogue hors-ligne.",
-                'Synchronisation et recentrage automatique de la cible.',
+                "Reconnaissance instantanée du champ d'étoiles par catalogue astrométrique hors-ligne.",
+                'Synchronisation et recentrage automatique de la cible sans intervention humaine.',
+                'Fini le pointage à l’aveugle : pointez n’importe quelle nébuleuse invisible.',
               ],
-              proTip: 'Installez le solveur ASTAP avec la base D50.',
+              proTip: 'Installez le solveur ASTAP avec la base de données D50 sur votre mini-PC ou tablette.',
+            },
+            {
+              title: 'Le Séquenceur Avancé & Méridien',
+              subtitle: 'Gérer la nuit du début à la fin',
+              bullets: [
+                'Programmation des conditions de départ (crépuscule astronomique, mise en température).',
+                'Gestion automatique du retournement au méridien (Meridian Flip) sans perte de cadrage.',
+                'Arrêt sécurisé au lever du jour et parcage automatique du télescope.',
+              ],
+              proTip: 'Testez toujours votre Meridian Flip à blanc en journée avant de lancer une nuit complète.',
             },
           ] as Slide[],
           courseSections: [
@@ -796,11 +814,7 @@ export default function App() {
               body: 'Automatisez le refroidissement, le pointage, le guidage et le retournement au méridien.',
             },
           ],
-          steps: [
-            '1. Configurer N.I.N.A.',
-            '2. Activer le Plate Solving',
-            '3. Programmer le retournement au méridien.',
-          ],
+          steps: ['1. Configurer N.I.N.A.', '2. Activer le Plate Solving', '3. Programmer le retournement au méridien.'],
           quiz: [
             {
               question: 'À quoi sert le Plate Solving ?',
@@ -810,8 +824,7 @@ export default function App() {
                 'À recharger la batterie',
               ],
               correct: 0,
-              explanation:
-                "Le Plate Solving analyse l'image pour recaler la monture aux coordonnées exactes.",
+              explanation: "Le Plate Solving analyse l'image pour recaler la monture aux coordonnées exactes.",
             },
           ] as QuizQuestion[],
           downloads: [
@@ -820,26 +833,33 @@ export default function App() {
               name: 'Architecture de Séquence N.I.N.A. & ASIAIR (PDF)',
               title: 'Structure de Séquence Automatisée',
               sections: [
-                {
-                  title: '1. Paramètres',
-                  content: ['Refroidissement -10°C, Plate solve, Dithering.'],
-                },
+                { title: '1. Paramètres', content: ['Refroidissement -10°C, Plate solve, Dithering actif, Meridian Flip.'] },
               ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro:
-            'Sleep while your rig captures photons using Plate Solving and N.I.N.A. automation.',
+          intro: 'Sleep while your rig captures photons using Plate Solving and N.I.N.A. automation.',
           slides: [
             {
               title: 'Astrometric Plate Solving',
               subtitle: 'Automatic target centering in 2 seconds',
               bullets: [
-                'Matches star patterns against offline catalogs.',
-                'Syncs and recenters automatically.',
+                'Instant star field recognition against offline astrometric catalogs.',
+                'Automatic sync and target re-centering without manual intervention.',
+                'No more blind pointing: accurately frame invisible deep-sky objects.',
               ],
-              proTip: 'Install ASTAP with D50 database.',
+              proTip: 'Install the ASTAP solver with the D50 star database on your system.',
+            },
+            {
+              title: 'Advanced Sequencing & Meridian Flip',
+              subtitle: 'Managing the night from dusk till dawn',
+              bullets: [
+                'Trigger sequences based on astronomical twilight and sensor cooling.',
+                'Automated Meridian Flip execution without framing loss.',
+                'Safe shutdown at dawn with automatic telescope parking.',
+              ],
+              proTip: 'Always test your meridian flip routine during daytime before running an overnight sequence.',
             },
           ] as Slide[],
           courseSections: [
@@ -848,22 +868,13 @@ export default function App() {
               body: 'Automate cooling, centering, guiding, and meridian flips.',
             },
           ],
-          steps: [
-            '1. Setup N.I.N.A.',
-            '2. Enable Plate Solving',
-            '3. Configure Meridian Flip.',
-          ],
+          steps: ['1. Setup N.I.N.A.', '2. Enable Plate Solving', '3. Configure Meridian Flip.'],
           quiz: [
             {
               question: 'What is Plate Solving used for?',
-              options: [
-                'Automatically centering the telescope using star patterns',
-                'Cleaning mirrors',
-                'Charging batteries',
-              ],
+              options: ['Automatically centering the telescope using star patterns', 'Cleaning mirrors', 'Charging batteries'],
               correct: 0,
-              explanation:
-                'Plate solving computes exact coordinates from captured star fields.',
+              explanation: 'Plate solving computes exact coordinates from captured star fields.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -872,10 +883,7 @@ export default function App() {
               name: 'N.I.N.A. & ASIAIR Sequence Blueprint (PDF)',
               title: 'Automated Sequence Architecture',
               sections: [
-                {
-                  title: '1. Settings',
-                  content: ['Cool -10°C, Plate solve, Dither.'],
-                },
+                { title: '1. Settings', content: ['Cool -10°C, Plate solve, Dither, Meridian Flip.'] },
               ],
             },
           ] as DownloadDoc[],
@@ -904,13 +912,24 @@ export default function App() {
             'Affranchissez-vous de la Lune et de la pollution lumineuse grâce aux capteurs CMOS refroidis et aux filtres interférentiels Ha, OIII, SII.',
           slides: [
             {
-              title: 'Gain HCG et Refroidissement Peltier',
-              subtitle: 'Réduction drastique du bruit thermique',
+              title: 'Gain HCG & Refroidissement Peltier',
+              subtitle: 'Éliminer drastiquement le bruit thermique',
               bullets: [
-                "Stabilisation à -10°C pour éliminer le courant d'obscurité.",
-                'Utilisation du Gain 100 (HCG) sur capteurs IMX571/533.',
+                "Stabilisation rigoureuse à -10°C ou -15°C pour supprimer le courant d'obscurité.",
+                "Utilisation du mode Gain 100 (HCG) sur les capteurs IMX571/533 pour maximiser la plage dynamique.",
+                "Création d'une bibliothèque de Darks cohérente pour le prétraitement.",
               ],
-              proTip: 'Gardez la même bibliothèque de Darks pendant 6 mois.',
+              proTip: 'Conservez votre bibliothèque de Darks pendant 6 mois sans la refaire si la température est stable.',
+            },
+            {
+              title: 'Imagerie en Bande Étroite (SHO & HOO)',
+              subtitle: 'Photographier en plein cœur de la ville',
+              bullets: [
+                "Utilisation de filtres bi-bandes (Ha/OIII) en one-shot color ou de filtres étroits séparés (mono).",
+                "Sélection des bandes atomiques Hydrogène-Alpha, Oxygène III et Soufre II.",
+                "Création de la célèbre Palette Hubble (SHO) pour révéler les contrastes de structures.",
+              ],
+              proTip: "Le filtre Ha est le roi incontesté pour faire ressortir les nébuleuses d'émission.",
             },
           ] as Slide[],
           courseSections: [
@@ -919,23 +938,17 @@ export default function App() {
               body: "Isolez les raies d'émission atomiques pour révéler les nébuleuses depuis la ville.",
             },
           ],
-          steps: [
-            '1. Régler Gain 100 / Offset 50.',
-            '2. Stabiliser à -10°C.',
-            '3. Capturer Darks et Flats.',
-          ],
+          steps: ['1. Régler Gain 100 / Offset 50.', '2. Stabiliser à -10°C.', '3. Capturer Darks et Flats.'],
           quiz: [
             {
-              question:
-                "Quel est l'avantage du refroidissement Peltier (-10°C) ?",
+              question: "Quel est l'avantage du refroidissement Peltier (-10°C) ?",
               options: [
                 "Il réduit drastiquement le bruit thermique (courant d'obscurité)",
                 'Il éclaire le premier plan',
                 'Il équilibre la monture',
               ],
               correct: 0,
-              explanation:
-                'Refroidir le capteur divise le bruit thermique par 2 tous les 6°C.',
+              explanation: 'Refroidir le capteur divise le bruit thermique par 2 tous les 6°C.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -944,26 +957,33 @@ export default function App() {
               name: 'Guide des Temps de Pose, Gain CMOS & Filtres (PDF)',
               title: 'Référence Gain & Temps de Pose',
               sections: [
-                {
-                  title: '1. Paramètres',
-                  content: ['Gain 100, Offset 50, -10°C.'],
-                },
+                { title: '1. Paramètres', content: ['Gain 100, Offset 50, -10°C, Filtres Dual-Band 7nm.'] },
               ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro:
-            'Defeat light pollution using TEC-cooled CMOS sensors and Ha, OIII, SII narrowband filters.',
+          intro: 'Defeat light pollution using TEC-cooled CMOS sensors and Ha, OIII, SII narrowband filters.',
           slides: [
             {
-              title: 'HCG Gain and Peltier Cooling',
+              title: 'HCG Gain & Peltier Cooling',
               subtitle: 'Drastically cutting thermal noise',
               bullets: [
-                'Stabilize at -10°C to eliminate dark current.',
-                'Use Gain 100 (HCG) on IMX571/533 sensors.',
+                'Stabilize sensors at -10°C or -15°C to eliminate dark current noise.',
+                'Use Gain 100 (HCG mode) on IMX571/533 sensors for optimal dynamic range.',
+                'Build a consistent master dark library for calibration.',
               ],
-              proTip: 'Reuse your Master Dark library for 6 months.',
+              proTip: 'Reuse your Master Dark library for up to 6 months if temperatures are consistent.',
+            },
+            {
+              title: 'Narrowband Imaging (SHO & HOO)',
+              subtitle: 'Imaging deep sky objects from urban zones',
+              bullets: [
+                'Use dual-band (Ha/OIII) filters on color cameras or individual narrowband filters for mono.',
+                'Isolate Hydrogen-Alpha, Oxygen-III, and Sulfur-II atomic emission lines.',
+                'Create the famous Hubble Palette (SHO) to highlight complex nebula gas structures.',
+              ],
+              proTip: 'Hydrogen-Alpha is your primary weapon for capturing emission nebulae details.',
             },
           ] as Slide[],
           courseSections: [
@@ -972,19 +992,11 @@ export default function App() {
               body: 'Isolate atomic emission lines to image nebulae from the city.',
             },
           ],
-          steps: [
-            '1. Set Gain 100 / Offset 50.',
-            '2. Cool to -10°C.',
-            '3. Capture Darks and Flats.',
-          ],
+          steps: ['1. Set Gain 100 / Offset 50.', '2. Cool to -10°C.', '3. Capture Darks and Flats.'],
           quiz: [
             {
               question: 'Advantage of Peltier cooling (-10°C)?',
-              options: [
-                'Drastically cuts thermal noise (dark current)',
-                'Illuminates foreground',
-                'Balances mount',
-              ],
+              options: ['Drastically cuts thermal noise (dark current)', 'Illuminates foreground', 'Balances mount'],
               correct: 0,
               explanation: 'Cooling cuts thermal dark current significantly.',
             },
@@ -995,10 +1007,7 @@ export default function App() {
               name: 'CMOS Gain & Exposure Reference Chart (PDF)',
               title: 'Gain & Exposure Reference',
               sections: [
-                {
-                  title: '1. Settings',
-                  content: ['Gain 100, Offset 50, -10°C.'],
-                },
+                { title: '1. Settings', content: ['Gain 100, Offset 50, -10°C.'] },
               ],
             },
           ] as DownloadDoc[],
@@ -1030,11 +1039,21 @@ export default function App() {
               title: 'La Courbe en V (Autofocus EAF)',
               subtitle: 'Mise au point automatique au micron près',
               bullets: [
-                'Mesure du HFR (Half Flux Radius) à chaque pas du moteur.',
-                'Utilisation du mode Overshoot pour éliminer le jeu mécanique (Backlash).',
+                'Mesure du HFR (Half Flux Radius) à chaque pas du moteur pas-à-pas.',
+                'Utilisation de la méthode Overshoot pour éliminer définitivement le jeu mécanique (Backlash).',
+                'Automatisation du recentrage de mise au point en cours de nuit selon les variations thermiques.',
               ],
-              proTip:
-                'Programmez un refocus automatique tous les 1,5°C de baisse thermique.',
+              proTip: 'Programmez un autofocus automatique dès que la température chute de 1,5°C.',
+            },
+            {
+              title: 'Autoguidage PHD2 & Multi-Star',
+              subtitle: 'Lisser la turbulence atmosphérique',
+              bullets: [
+                "Activation du guidage multi-étoiles pour moyenner la scintillation et le seeing.",
+                "Calibrer l'autoguidage près du méridien et de l'équateur céleste pour une précision optimale.",
+                "Analyser le graphe de suivi (RMS Error) pour s'assurer d'un suivi sub-arcseconde.",
+              ],
+              proTip: 'Sur les montures harmoniques, testez une exposition de guidage courte de 0.5s à 1.0s.',
             },
           ] as Slide[],
           courseSections: [
@@ -1043,22 +1062,13 @@ export default function App() {
               body: 'Activez le guidage multi-étoiles pour lisser la turbulence atmosphérique.',
             },
           ],
-          steps: [
-            "1. Installer l'EAF et régler le backlash.",
-            '2. Calibrer PHD2 près du méridien.',
-            '3. Activer le Multi-Star.',
-          ],
+          steps: ["1. Installer l'EAF et régler le backlash.", '2. Calibrer PHD2 près du méridien.', '3. Activer le Multi-Star.'],
           quiz: [
             {
               question: "Que mesure-t-on lors d'une courbe en V autofocus ?",
-              options: [
-                'Le HFR (rayon de focalisation des étoiles)',
-                'La température extérieure',
-                'Le poids du tube',
-              ],
+              options: ['Le HFR (rayon de focalisation des étoiles)', 'La température extérieure', 'Le poids du tube'],
               correct: 0,
-              explanation:
-                'Le HFR mesure la netteté des étoiles pour trouver le point focal optimal.',
+              explanation: 'Le HFR mesure la netteté des étoiles pour trouver le point focal optimal.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1067,26 +1077,33 @@ export default function App() {
               name: 'Fiche Pratique - Réglages Fins PHD2 Guiding (PDF)',
               title: 'Guide PHD2 Guiding & EAF',
               sections: [
-                {
-                  title: '1. Paramètres',
-                  content: ['Exposition 0.5s-1s sur harmonique.'],
-                },
+                { title: '1. Paramètres', content: ['Exposition 0.5s-1s, Multi-star activé, Algorithme PPEC.'] },
               ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro:
-            'Achieve pinpoint stars using motorized EAF autofocus V-curves and PHD2 multi-star guiding.',
+          intro: 'Achieve pinpoint stars using motorized EAF autofocus V-curves and PHD2 multi-star guiding.',
           slides: [
             {
               title: 'The V-Curve (EAF Autofocus)',
-              subtitle: 'Micron-level automated focus',
+              subtitle: 'Micron-level automated focus precision',
               bullets: [
-                'Measures star HFR at each motor step.',
-                'Uses overshoot backlash compensation.',
+                'Measures star HFR (Half Flux Radius) at each stepper motor step.',
+                'Uses overshoot compensation to eliminate mechanical gear backlash.',
+                'Automates refocusing routines during night temperature drops.',
               ],
-              proTip: 'Trigger autofocus every 1.5°C temperature drop.',
+              proTip: 'Trigger an autofocus run whenever temperature drops by 1.5°C.',
+            },
+            {
+              title: 'PHD2 Multi-Star Guiding',
+              subtitle: 'Smoothing atmospheric seeing',
+              bullets: [
+                'Enable multi-star guiding to average out scintillation and atmospheric turbulence.',
+                'Calibrate near the celestial equator and meridian for best algorithm results.',
+                'Monitor RMS error graphs to ensure sub-arcsecond tracking.',
+              ],
+              proTip: 'On harmonic mounts, test short guide exposure times of 0.5s to 1.0s.',
             },
           ] as Slide[],
           courseSections: [
@@ -1095,22 +1112,13 @@ export default function App() {
               body: 'Enable multi-star tracking to smooth atmospheric seeing.',
             },
           ],
-          steps: [
-            '1. Install EAF and set backlash.',
-            '2. Calibrate PHD2 near meridian.',
-            '3. Enable Multi-Star.',
-          ],
+          steps: ['1. Install EAF and set backlash.', '2. Calibrating PHD2 near meridian.', '3. Enable Multi-Star.'],
           quiz: [
             {
               question: 'What is measured during an autofocus V-curve?',
-              options: [
-                'Star HFR (Half Flux Radius)',
-                'Outside temperature',
-                'Tube weight',
-              ],
+              options: ['Star HFR (Half Flux Radius)', 'Outside temperature', 'Tube weight'],
               correct: 0,
-              explanation:
-                'HFR evaluates star sharpness to find the focal point.',
+              explanation: 'HFR evaluates star sharpness to find the focal point.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1119,10 +1127,7 @@ export default function App() {
               name: 'Cheat Sheet - PHD2 Settings for Harmonic Mounts (PDF)',
               title: 'PHD2 & EAF Guide',
               sections: [
-                {
-                  title: '1. Settings',
-                  content: ['0.5s-1s exposure on harmonic mounts.'],
-                },
+                { title: '1. Settings', content: ['0.5s-1s exposure, Multi-star enabled.'] },
               ],
             },
           ] as DownloadDoc[],
@@ -1152,13 +1157,23 @@ export default function App() {
           slides: [
             {
               title: 'Le Stade Linéaire (GraXpert & SPCC)',
-              subtitle: 'Nettoyage et calibration colorimétrique rigoureuse',
+              subtitle: 'Nettoyage des gradients & calibration colorimétrique',
               bullets: [
-                'Suppression des gradients de pollution lumineuse avec GraXpert AI.',
-                'Calibration colorimétrique par astrométrie (SPCC).',
+                'Suppression des gradients de pollution lumineuse avec les réseaux de neurones GraXpert AI.',
+                'Calibration photométrique des couleurs par astrométrie (SPCC / PCC) pour retrouver les vraies teintes stellaires.',
+                'Extraction des images sans étoiles (Starless) pour traiter le fond de ciel et les nébuleuses séparément.',
               ],
-              proTip:
-                "Ne touchez jamais à l'étirement tant que le traitement linéaire n'est pas terminé.",
+              proTip: "Ne touchez jamais à l'étirement d'histogramme tant que le traitement linéaire n'est pas finalisé.",
+            },
+            {
+              title: 'Étirement GHS & Finitions',
+              subtitle: 'Révéler les détails sans brûler les cœurs',
+              bullets: [
+                "Utilisation de la Transformation Hyperbolique Généralisée (GHS) pour un contrôle chirurgical des hautes lumières.",
+                "Renforcement des détails fins par déconvolution sur images stellaires et starless.",
+                "Ajustement final des saturations et réduction du bruit chromatique.",
+              ],
+              proTip: "Le GHS remplace avantageusement l'ancien étirement de Histogram Transformation.",
             },
           ] as Slide[],
           courseSections: [
@@ -1167,23 +1182,17 @@ export default function App() {
               body: 'Séparez les étoiles pour étirer la nébuleuse ou la galaxie en douceur.',
             },
           ],
-          steps: [
-            '1. Retirer le gradient.',
-            '2. Calibrer les couleurs (SPCC).',
-            '3. Extraire les étoiles et appliquer GHS.',
-          ],
+          steps: ['1. Retirer le gradient.', '2. Calibrer les couleurs (SPCC).', '3. Extraire les étoiles et appliquer GHS.'],
           quiz: [
             {
-              question:
-                'À quel moment doit-on effectuer le retrait de gradient et la calibration des couleurs ?',
+              question: 'À quel moment doit-on effectuer le retrait de gradient et la calibration des couleurs ?',
               options: [
                 "Strictement au stade linéaire (avant tout étirement d'histogramme)",
                 'À la toute fin du traitement',
                 "Avant l'empilement des Darks",
               ],
               correct: 0,
-              explanation:
-                'Les algorithmes de calibration exigent des données linéaires pures.',
+              explanation: 'Les algorithmes de calibration exigent des données linéaires pures.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1192,10 +1201,7 @@ export default function App() {
               name: 'Workflow Complet PixInsight & Siril Étape par Étape (PDF)',
               title: 'Mémento Workflow Linéaire & Non-Linéaire',
               sections: [
-                {
-                  title: '1. Séquence',
-                  content: ['Crop -> GraXpert -> SPCC -> GHS.'],
-                },
+                { title: '1. Séquence', content: ['Empilement -> Crop -> GraXpert AI -> SPCC -> StarNet -> GHS.'] },
               ],
             },
           ] as DownloadDoc[],
@@ -1208,11 +1214,21 @@ export default function App() {
               title: 'Linear Stage (GraXpert & SPCC)',
               subtitle: 'Gradient removal and rigorous color calibration',
               bullets: [
-                'Remove light pollution gradients with GraXpert AI.',
-                'Calibrate true astrophysical colors via SPCC.',
+                'Remove light pollution gradients with advanced GraXpert AI neural networks.',
+                'Calibrate true astrophysical star colors via Spectrophotometric Color Calibration (SPCC).',
+                'Create starless images to isolate nebulosity and faint galaxy arms from star clutter.',
               ],
-              proTip:
-                'Never stretch until linear processing is fully complete.',
+              proTip: 'Never stretch your image histogram until all linear processing steps are complete.',
+            },
+            {
+              title: 'GHS Stretching & Final Touches',
+              subtitle: 'Revealing details without blowing highlights',
+              bullets: [
+                'Use Generalized Hyperbolic Stretch (GHS) for surgical control over dynamic range.',
+                'Apply deconvolution to sharpen fine details on starless master layers.',
+                'Final color saturation adjustments and chromatic noise reduction.',
+              ],
+              proTip: 'GHS is the modern, superior alternative to legacy histogram stretches.',
             },
           ] as Slide[],
           courseSections: [
@@ -1221,20 +1237,11 @@ export default function App() {
               body: 'Separate stars to stretch nebulae and galaxies gently.',
             },
           ],
-          steps: [
-            '1. Remove gradient.',
-            '2. Calibrate colors (SPCC).',
-            '3. Extract stars and apply GHS.',
-          ],
+          steps: ['1. Remove gradient.', '2. Calibrate colors (SPCC).', '3. Extract stars and apply GHS.'],
           quiz: [
             {
-              question:
-                'When should gradient removal and color calibration be performed?',
-              options: [
-                'Strictly in the linear stage (before histogram stretching)',
-                'At the very end',
-                'Before dark calibration',
-              ],
+              question: 'When should gradient removal and color calibration be performed?',
+              options: ['Strictly in the linear stage (before histogram stretching)', 'At the very end', 'Before dark calibration'],
               correct: 0,
               explanation: 'Calibration algorithms require purely linear data.',
             },
@@ -1245,10 +1252,7 @@ export default function App() {
               name: 'Complete PixInsight & Siril Step-by-Step Workflow (PDF)',
               title: 'Linear to Non-Linear Workflow Checklist',
               sections: [
-                {
-                  title: '1. Sequence',
-                  content: ['Crop -> GraXpert -> SPCC -> GHS.'],
-                },
+                { title: '1. Sequence', content: ['Stack -> Crop -> GraXpert -> SPCC -> Starless -> GHS.'] },
               ],
             },
           ] as DownloadDoc[],
@@ -1280,11 +1284,21 @@ export default function App() {
               title: 'Objectifs Rapides & Règle NPF',
               subtitle: 'Maîtriser le grand champ nomade',
               bullets: [
-                "Fermer d'un cran les objectifs lumineux (ex: f/1.4 à f/2.2) pour éliminer la coma.",
-                "Utiliser la règle NPF pour calculer le temps de pose sans filé d'étoiles sur trépied fixe.",
+                "Fermer d'un cran les objectifs lumineux (ex: passer de f/1.4 à f/2.2) pour éliminer la coma dans les coins.",
+                "Utiliser la règle NPF pour calculer le temps de pose idéal sans filé d'étoiles sur trépied fixe.",
+                "Optimiser le transport en bagage cabine (objectifs et batteries Li-ion conformes < 100Wh).",
               ],
-              proTip:
-                'Le Samyang 135mm f/2 est le roi incontesté du grand champ nomade.',
+              proTip: 'Le téléobjectif Samyang 135mm f/2 est le choix suprême pour capturer les nébuleuses en grand champ nomade.',
+            },
+            {
+              title: 'Fusion Paysage & Ciel Suivi',
+              subtitle: 'Créer des panoramas spectaculaires',
+              bullets: [
+                'Photographier le premier plan terrestre au crépuscule (bleu hour) avec une mise au point fixe.',
+                'Activer le mini-traqueur pour capturer plusieurs poses empilées de la Voie Lactée.',
+                "Assembler et fusionner le tout sous Photoshop ou Starstax/PTGui.",
+              ],
+              proTip: "Ne shootez jamais le premier plan en pose longue de nuit sans lumière d'appoint naturelle.",
             },
           ] as Slide[],
           courseSections: [
@@ -1293,23 +1307,17 @@ export default function App() {
               body: 'Photographiez le premier plan au crépuscule puis fusionnez-le avec le ciel suivi.',
             },
           ],
-          steps: [
-            '1. Planifier avec Stellarium.',
-            '2. Capturer le premier plan.',
-            '3. Activer le traqueur pour le ciel.',
-          ],
+          steps: ['1. Planifier avec Stellarium.', '2. Capturer le premier plan.', '3. Activer le traqueur pour le ciel.'],
           quiz: [
             {
-              question:
-                "Pourquoi ferme-t-on d'un cran un objectif photo très lumineux (ex: de f/1.4 à f/2.2) ?",
+              question: "Pourquoi ferme-t-on d'un cran un objectif photo très lumineux (ex: de f/1.4 à f/2.2) ?",
               options: [
                 'Pour supprimer la coma dans les coins et augmenter le piqué',
                 'Pour économiser la batterie',
                 'Pour zoomer',
               ],
               correct: 0,
-              explanation:
-                "Fermer d'un cran élimine les aberrations optiques des objectifs ouverts au max.",
+              explanation: "Fermer d'un cran élimine les aberrations optiques des objectifs ouverts au max.",
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1318,27 +1326,33 @@ export default function App() {
               name: 'Checklist Bagage Cabine & Astrovoyage (PDF)',
               title: 'Checklist Expédition Astro',
               sections: [
-                {
-                  title: '1. Bagages',
-                  content: ['Cabine : Optiques et batteries Li < 100Wh.'],
-                },
+                { title: '1. Bagages', content: ['Cabine : Objectifs, boîtier, batteries Li < 100Wh, trépied en soute.'] },
               ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro:
-            'Travel under pristine dark skies with a carry-on rig and capture stunning Milky Way panoramas.',
+          intro: 'Travel under pristine dark skies with a carry-on rig and capture stunning Milky Way panoramas.',
           slides: [
             {
               title: 'Fast Lenses & NPF Rule',
               subtitle: 'Mastering portable widefield imaging',
               bullets: [
-                'Stop down fast lenses by 1 stop to eliminate corner coma.',
-                'Use the NPF rule for pinpoint stars on fixed tripods.',
+                'Stop down fast lenses by 1 stop (e.g., f/1.4 to f/2.2) to eliminate corner coma and aberrations.',
+                'Use the NPF rule to calculate precise untracked exposure limits without star trails.',
+                'Pack efficiently for airline carry-on regulations (batteries under 100Wh).',
               ],
-              proTip:
-                'The Samyang 135mm f/2 is the king of widefield nebula lenses.',
+              proTip: 'The Samyang 135mm f/2 is widely considered the king of widefield astro lenses.',
+            },
+            {
+              title: 'Landscape & Tracked Sky Blending',
+              subtitle: 'Creating breathtaking astro panoramas',
+              bullets: [
+                'Shoot the terrestrial foreground during blue hour with a static tripod.',
+                'Engage your portable star tracker to capture stacked exposures of the Milky Way core.',
+                'Blend foreground and sky layers seamlessly in post-processing.',
+              ],
+              proTip: 'Always capture your landscape layer during twilight for natural lighting and low noise.',
             },
           ] as Slide[],
           courseSections: [
@@ -1347,23 +1361,13 @@ export default function App() {
               body: 'Shoot foreground during blue hour, then blend with tracked sky frames.',
             },
           ],
-          steps: [
-            '1. Plan with Stellarium.',
-            '2. Capture foreground.',
-            '3. Turn on tracker for sky.',
-          ],
+          steps: ['1. Plan with Stellarium.', '2. Capture foreground.', '3. Turn on tracker for sky.'],
           quiz: [
             {
-              question:
-                'Why stop down a fast lens by 1 stop (e.g., f/1.4 to f/2.2)?',
-              options: [
-                'To eliminate corner coma and sharpen stars',
-                'To save battery',
-                'To zoom in',
-              ],
+              question: 'Why stop down a fast lens by 1 stop (e.g., f/1.4 to f/2.2)?',
+              options: ['To eliminate corner coma and sharpen stars', 'To save battery', 'To zoom in'],
               correct: 0,
-              explanation:
-                'Stopping down cleans up optical aberrations at wide apertures.',
+              explanation: 'Stopping down cleans up optical aberrations at wide apertures.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1372,10 +1376,7 @@ export default function App() {
               name: 'Carry-On Astro Travel Gear Checklist (PDF)',
               title: 'Astro Expedition Checklist',
               sections: [
-                {
-                  title: '1. Luggage',
-                  content: ['Cabin: Optics and Li batteries < 100Wh.'],
-                },
+                { title: '1. Luggage', content: ['Cabin: Camera, lenses, Li-ion batteries < 100Wh.'] },
               ],
             },
           ] as DownloadDoc[],
