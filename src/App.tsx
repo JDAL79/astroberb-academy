@@ -17,6 +17,8 @@ const ACCESS_CODES: Record<string, number[]> = {
 
 const SUPPORT_EMAIL = 'contact@astroberb.com';
 
+type CalculatorType = 'sampling' | 'torque' | 'exposure' | 'focus' | 'compare' | 'npf' | 'none';
+
 interface Slide {
   title: string;
   subtitle: string;
@@ -62,18 +64,36 @@ export default function App() {
   const [vipStatus, setVipStatus] = useState<'success' | 'error' | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'vip' | 'pack' | 'success' | 'module-detail'>('home');
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
   const [justPurchasedModule, setJustPurchasedModule] = useState<boolean>(false);
   const [legalModal, setLegalModal] = useState<'terms' | 'privacy' | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  // Calculateur interactif Module 1 (Echantillonnage)
+  // Simulateur Module 1 (Echantillonnage)
   const [calcFocal, setCalcFocal] = useState<number>(500);
   const [calcPixel, setCalcPixel] = useState<number>(3.76);
 
-  // Calculateur interactif Module 5 (Zone Critique de Focus CFZ & EAF)
+  // Simulateur Module 2 (Couple Monture Harmonique & Contrepoids)
+  const [calcPayloadKg, setCalcPayloadKg] = useState<number>(9.5);
+  const [calcTubeRadiusCm, setCalcTubeRadiusCm] = useState<number>(14);
+
+  // Simulateur Module 4 (Temps de Pose Unitaire & Pollution Lumineuse)
+  const [calcBortle, setCalcBortle] = useState<number>(5);
+  const [calcFilterBand, setCalcFilterBand] = useState<'broadband' | 'dualband' | 'sho'>('dualband');
+
+  // Simulateur Module 5 (Zone Critique de Focus CFZ & EAF)
   const [calcFokusFD, setCalcFokusFD] = useState<number>(4.8);
   const [calcMicronStep, setCalcMicronStep] = useState<number>(2.5);
+
+  // Simulateur Module 6 (Comparateur Avant / Apres Traitement)
+  const [compareSlider, setCompareSlider] = useState<number>(65);
+
+  // Simulateur Module 7 (Regle NPF Trepied Statique)
+  const [npfFocal, setNpfFocal] = useState<number>(24);
+  const [npfAperture, setNpfAperture] = useState<number>(2.0);
+  const [npfPixel, setNpfPixel] = useState<number>(3.76);
 
   // Quiz Interactif
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
@@ -126,6 +146,7 @@ export default function App() {
           } catch (e) {}
         }
         setSelectedModuleId(modId);
+        setIsPreviewMode(false);
         setJustPurchasedModule(true);
         setActiveTab('module-detail');
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -161,6 +182,14 @@ export default function App() {
     setStudentName(val);
     try {
       localStorage.setItem('astroberb_student_name', val);
+    } catch (e) {}
+  };
+
+  const handleCopyCode = (code: string) => {
+    try {
+      navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2500);
     } catch (e) {}
   };
 
@@ -294,13 +323,19 @@ export default function App() {
       buyPayPal: 'PayPal',
       buyPackFull: '🔥 Obtenir le Pack Intégral (79$ CAD)',
       packBtnShort: '🔥 Pack Intégral',
+      freePreviewBtn: '👁️ Essayer la Démo Gratuite (Simulateur + Chapitre 1)',
+      previewBannerTitle: '👁️ MODE APERÇU GRATUIT — Module 1',
+      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Débloquez ce module ou le Pack Intégral pour accéder aux 3 chapitres, au cours complet, au quiz et aux fiches PDF A4.",
       accessGranted: 'Code validé avec succès ! Cliquez sur vos formations débloquées :',
       invalidCode: "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
       accessCourse: '🚀 ACCÉDER À LA MASTERCLASS',
       lockedBadge: '🔒 Module verrouillé',
       unlockedBadge: '🔓 Déverrouillé (Cliquer pour lancer)',
       backToCatalog: '← Retour au catalogue des formations',
-      paymentConfirmedModule: '🎉 Accès débloqué ! Notez précieusement votre code de sauvegarde multi-appareils : ',
+      paymentConfirmedModule: '🎉 Accès débloqué ! Votre code de sauvegarde multi-appareils : ',
+      copyBtn: '📋 Copier le code',
+      copiedBtn: '✅ Code copié !',
+      progressLabel: 'Progression de votre cursus :',
       interactiveModule: 'Studio Pédagogique & Masterclass',
       studioHeader: 'Diaporama Interactif & Conseils de Terrain',
       fullCourseTitle: 'Cours Théorique Approfondi & Études de Cas',
@@ -309,10 +344,10 @@ export default function App() {
       generatePdfBtn: 'Générer & Télécharger le PDF',
       successBadge: 'Paiement Validé avec Succès',
       successTitle: "Bienvenue dans l'élite de l'Astroberb Academy !",
-      successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant des 7 modules complets, des simulateurs optiques, des quiz et des guides PDF.',
+      successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant des 7 modules complets, des 6 simulateurs optiques, des quiz et des guides PDF.',
       backupCodeNotice: "IMPORTANT — Votre code d'accès multi-appareils à conserver :",
       packTitle: "L'Offre Ultime : Le Pack Intégral 7-en-1",
-      packDesc: "Obtenez un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses complètes, nos 2 simulateurs optiques, nos quiz interactifs et nos guides PDF (Valeur : 203$ CAD). Économisez 124$ !",
+      packDesc: "Obtenez un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses complètes, nos 6 simulateurs interactifs, nos quiz et nos guides PDF (Valeur : 203$ CAD). Économisez 124$ !",
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
       vipDesc: 'Entrez votre code personnel reçu après votre achat (ou votre code de sauvegarde) pour débloquer instantanément vos formations sur cet appareil :',
@@ -335,11 +370,24 @@ export default function App() {
       calcVerdictGreat: "✨ Optimal (0.8'' à 2.0''/px) ! Vos pixels sont parfaitement accordés au seeing moyen (2'' à 3'') pour maximiser la finesse sans perdre en rapport signal/bruit.",
       calcVerdictOver: "⚠️ Sur-échantillonnage (< 0.8''/px) : Vous grossissez la turbulence atmosphérique. Nécessite un ciel exceptionnel et un guidage sub-0.4'', ou utilisez le Binning 2x2.",
       calcVerdictUnder: "⚠️ Sous-échantillonnage (> 2.0''/px) : Grand champ idéal pour les vastes nébuleuses, mais les petites étoiles peuvent paraître légèrement carrées (privilégiez le Drizzle au traitement).",
+      calcTorqueTitle: '⚖️ Simulateur Mécanique : Couple Harmonique & Contrepoids (Juwei-17 / UMi-17S / AM5)',
+      calcPayloadLabel: 'Poids total équipé du tube optique (kg) :',
+      calcRadiusLabel: "Déport du centre de gravité par rapport à l'axe AD (cm) :",
+      calcTorqueResult: 'Couple exercé sur le réducteur harmonique : ',
       calcFocusTitle: '🔬 Simulateur EAF : Zone Critique de Mise au Point (CFZ)',
       calcFocusFDLabel: "Rapport d'ouverture du tube (f/D) :",
       calcFocusStepLabel: 'Déplacement EAF par pas (µm/pas) :',
       calcFocusResult: 'Tolérance de mise au point (CFZ) : ',
-      calcFocusAdvice: 'Pas maximum recommandés entre deux mesures de la courbe en V : ',
+      calcFocusAdvice: 'Pas recommandés (Step Size) pour la courbe en V : ',
+      calcExpTitle: '⏱️ Simulateur CMOS : Temps de Pose Unitaire Optimal (Swamp Factor)',
+      calcBortleLabel: 'Qualité de votre ciel (Échelle de Bortle 1 à 9) :',
+      calcFilterLabel: 'Type de filtre utilisé :',
+      calcExpResult: 'Temps de pose unitaire recommandé (à f/5, Gain 100) : ',
+      calcCompareTitle: '🎨 Comparateur Interactif : Brute Linéaire vs Traitement Final (GraXpert + SPCC + GHS)',
+      calcNpfTitle: '📸 Simulateur Grand Champ : Calculateur de la Règle NPF (Trépied Statique)',
+      calcNpfFocalLabel: "Focale de l'objectif photo (mm) :",
+      calcNpfApertureLabel: 'Ouverture du diaphragme (f/) :',
+      calcNpfResult: "Temps de pose max sans filé d'étoiles (étoiles ponctuelles) : ",
       quizTitle: '📝 Quiz de Validation des Connaissances',
       quizSubmit: 'Valider mes réponses',
       quizScore: 'Votre Score : ',
@@ -376,13 +424,19 @@ export default function App() {
       buyPayPal: 'PayPal',
       buyPackFull: '🔥 Get Full Bundle ($79 CAD)',
       packBtnShort: '🔥 Full Bundle',
+      freePreviewBtn: '👁️ Try Free Demo (Simulator + Chapter 1)',
+      previewBannerTitle: '👁️ FREE PREVIEW MODE — Module 1',
+      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Unlock this module or the Full Bundle to access all chapters, theoretical courses, quizzes, and printable A4 PDF sheets.',
       accessGranted: 'Code validated! Click any unlocked course below:',
       invalidCode: 'Invalid access code. Please check your email or contact support.',
       accessCourse: '🚀 START MASTERCLASS',
       lockedBadge: '🔒 Locked Module',
       unlockedBadge: '🔓 Unlocked (Click to launch)',
       backToCatalog: '← Back to course catalog',
-      paymentConfirmedModule: '🎉 Access unlocked! Please save your multi-device backup code: ',
+      paymentConfirmedModule: '🎉 Access unlocked! Your multi-device backup code: ',
+      copyBtn: '📋 Copy code',
+      copiedBtn: '✅ Copied!',
+      progressLabel: 'Your curriculum progress:',
       interactiveModule: 'Pedagogical Studio & Masterclass',
       studioHeader: 'Interactive Slides & Field Pro Tips',
       fullCourseTitle: 'In-Depth Theoretical Course & Case Studies',
@@ -391,10 +445,10 @@ export default function App() {
       generatePdfBtn: 'Generate & Download PDF',
       successBadge: 'Payment Successful',
       successTitle: 'Welcome to the Elite Astroberb Academy!',
-      successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, interactive optical simulators, quizzes, and printable PDF guides.',
+      successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, 6 interactive optical simulators, quizzes, and printable PDF guides.',
       backupCodeNotice: 'IMPORTANT — Save your multi-device backup code:',
       packTitle: 'The Ultimate Offer: 7-in-1 Full Bundle',
-      packDesc: 'Get immediate, lifetime access to all 7 complete masterclasses, 2 interactive optical calculators, quizzes, and PDF field guides ($203 CAD value). Save $124!',
+      packDesc: 'Get immediate, lifetime access to all 7 complete masterclasses, 6 interactive optical calculators, quizzes, and PDF field guides ($203 CAD value). Save $124!',
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
       vipDesc: 'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
@@ -417,11 +471,24 @@ export default function App() {
       calcVerdictGreat: "✨ Optimal (0.8'' to 2.0''/px)! Your sensor is well matched to typical atmospheric seeing (2'' to 3'') for sharp details and high SNR.",
       calcVerdictOver: "⚠️ Oversampled (< 0.8''/px): Magnifying atmospheric turbulence without extra resolution. Requires exceptional seeing and sub-0.4'' guiding, or 2x2 Binning.",
       calcVerdictUnder: "⚠️ Undersampled (> 2.0''/px): Great widefield framing for large nebulae, though small stars may look slightly blocky (use Drizzle integration when stacking).",
+      calcTorqueTitle: '⚖️ Mechanical Simulator: Harmonic Mount Torque & Counterweight (Juwei-17 / UMi-17S / AM5)',
+      calcPayloadLabel: 'Total Rigged Payload Weight (kg):',
+      calcRadiusLabel: 'Center of Gravity Offset from RA Axis (cm):',
+      calcTorqueResult: 'Torque Load on Strainwave Gear: ',
       calcFocusTitle: '🔬 EAF Simulator: Critical Focus Zone (CFZ)',
       calcFocusFDLabel: 'Telescope Focal Ratio (f/D):',
       calcFocusStepLabel: 'Focuser Travel per Step (µm/step):',
       calcFocusResult: 'Critical Focus Zone Tolerance (CFZ): ',
       calcFocusAdvice: 'Recommended EAF step size for V-Curve autofocus: ',
+      calcExpTitle: '⏱️ CMOS Simulator: Optimal Sub-Exposure Calculator (Swamp Factor)',
+      calcBortleLabel: 'Sky Darkness (Bortle Scale 1 to 9):',
+      calcFilterLabel: 'Filter Type:',
+      calcExpResult: 'Recommended Sub-Exposure (at f/5, Gain 100): ',
+      calcCompareTitle: '🎨 Interactive Before / After: Raw Linear Stack vs. Final Processed (GraXpert + SPCC + GHS)',
+      calcNpfTitle: '📸 Widefield Simulator: NPF Rule Untracked Exposure Calculator',
+      calcNpfFocalLabel: 'Camera Lens Focal Length (mm):',
+      calcNpfApertureLabel: 'Lens Aperture (f/):',
+      calcNpfResult: 'Max Untracked Exposure (Pinpoint Stars): ',
       quizTitle: '📝 Knowledge Validation Quiz',
       quizSubmit: 'Submit Answers',
       quizScore: 'Your Score: ',
@@ -497,7 +564,7 @@ export default function App() {
       descEn: 'Apochromatic refractors (ED Triplet), Newtonian, Ritchey-Chrétien: optical designs, pixel scale, 55mm backfocus, and sensor tilt.',
       image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module1,
-      calculatorType: 'sampling' as const,
+      calculatorType: 'sampling' as CalculatorType,
       content: {
         fr: {
           intro: "Le choix du tube optique détermine 80 % de votre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques et mécaniques.",
@@ -510,7 +577,7 @@ export default function App() {
                 "Le rapport d'ouverture (f/D = Focale ÷ Diamètre) agit comme l'ouverture d'un objectif photo : il dicte la vitesse à laquelle les photons s'accumulent sur chaque pixel.",
                 'Règle du carré : Passer de f/8 à f/4 concentre 4 fois plus de lumière ! Une pose de 1 heure à f/4 équivaut à 4 heures de pose à f/8.',
               ],
-              proTip: "Pour débuter sans frustration, choisissez une lunette apochromatique de 300 à 500 mm de focale ouverte entre f/4.5 et f/5.5 grâce à son réducteur-aplanisseur dédié.",
+              proTip: 'Pour débuter sans frustration, choisissez une lunette apochromatique de 300 à 500 mm de focale ouverte entre f/4.5 et f/5.5 grâce à son réducteur-aplanisseur dédié.',
             },
             {
               title: 'Chapitre 2 : Comparatif des Formules Optiques',
@@ -732,10 +799,10 @@ export default function App() {
       descEn: 'Master strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) and sub-arcminute polar alignment.',
       image: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module2,
-      calculatorType: 'none' as const,
+      calculatorType: 'torque' as CalculatorType,
       content: {
         fr: {
-          intro: "La monture équatoriale est le cœur battant de votre setup. L'arrivée des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a révolutionné la discipline : découvrez comment dompter leur mécanique unique pour un suivi chirurgical.",
+          intro: "La monture équatoriale est le cœur battant de votre setup. L'arrivée des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a révolutionné la discipline : découvrez comment dompter leur mécanique unique et testez votre couple mécanique ci-dessous.",
           slides: [
             {
               title: 'Chapitre 1 : Vis sans fin vs Réducteur Harmonique (Strainwave)',
@@ -837,7 +904,7 @@ export default function App() {
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Your equatorial mount is the beating heart of your rig. Strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) have revolutionized portable imaging—learn how to master their unique mechanics for sub-arcsecond tracking.',
+          intro: 'Your equatorial mount is the beating heart of your rig. Strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) have revolutionized portable imaging—test your mechanical torque load in our simulator below.',
           slides: [
             {
               title: 'Chapter 1: Worm Gears vs. Strainwave Harmonic Drives',
@@ -948,7 +1015,7 @@ export default function App() {
       descEn: 'Automate 100% of your night: ASTAP astrometry, Plate Solving, advanced sequencer, Dithering, and Meridian Flip.',
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module3,
-      calculatorType: 'none' as const,
+      calculatorType: 'none' as CalculatorType,
       content: {
         fr: {
           intro: "Pourquoi passer la nuit dehors par -10°C à vérifier votre cadrage alors qu'un mini-PC sous N.I.N.A. ou un boîtier ZWO ASIAIR peut tout orchestrer au pixel près ? Apprenez à programmer une nuit complète, du crépuscule jusqu'au parcage à l'aube.",
@@ -1158,10 +1225,10 @@ export default function App() {
       descEn: 'CMOS sensors (IMX533, IMX571), HCG Gain, Darks/Flats/Bias, and SHO (Hubble Palette) or Dual-Band HOO city imaging.',
       image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module4,
-      calculatorType: 'none' as const,
+      calculatorType: 'exposure' as CalculatorType,
       content: {
         fr: {
-          intro: "Photographier des nébuleuses d'une finesse spectaculaire depuis un jardin en pleine ville (Bortle 7-8) ou sous la Pleine Lune est aujourd'hui une réalité grâce aux capteurs CMOS refroidis par effet Peltier et aux filtres interférentiels à bande étroite.",
+          intro: "Photographier des nébuleuses d'une finesse spectaculaire depuis un jardin en pleine ville (Bortle 7-8) ou sous la Pleine Lune est aujourd'hui une réalité grâce aux capteurs CMOS refroidis et aux filtres interférentiels. Testez notre calculateur de temps de pose unitaire ci-dessous !",
           slides: [
             {
               title: 'Chapitre 1 : Capteurs CMOS Refroidis, Gain HCG & Offset',
@@ -1269,7 +1336,7 @@ export default function App() {
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Capturing breathtaking nebulae from light-polluted city backyards (Bortle 7-8) or under a bright Moon is completely achievable using TEC-cooled CMOS cameras and narrowband interference filters.',
+          intro: 'Capturing breathtaking nebulae from light-polluted city backyards (Bortle 7-8) or under a bright Moon is completely achievable using TEC-cooled CMOS cameras and narrowband filters. Test our sub-exposure calculator below!',
           slides: [
             {
               title: 'Chapter 1: Cooled CMOS Sensors, HCG Gain & Offset',
@@ -1374,7 +1441,7 @@ export default function App() {
       descEn: 'Achieve pinpoint stars: V-curve autofocus (HFR), CFZ calculation, backlash compensation, and sub-arcsecond PHD2 guiding.',
       image: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module5,
-      calculatorType: 'focus' as const,
+      calculatorType: 'focus' as CalculatorType,
       content: {
         fr: {
           intro: "Même la meilleure optique du monde produira une image empâtée si la mise au point dérive de 40 microns avec le froid nocturne ou si le guidage oscille. Maîtrisez l'Autofocus motorisé (EAF) et le calibrage chirurgical de PHD2 Guiding (testez le calculateur de Zone Critique CFZ ci-dessous !).",
@@ -1584,7 +1651,7 @@ export default function App() {
       descEn: 'From raw stack to masterpiece (galaxies like NGC 7331 & nebulae): GraXpert AI, SPCC, deconvolution, Starless, and GHS.',
       image: 'https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module6,
-      calculatorType: 'none' as const,
+      calculatorType: 'compare' as CalculatorType,
       content: {
         fr: {
           intro: "L'acquisition sur le terrain ne représente que 50 % d'une astrophoto : l'autre moitié se joue devant l'écran ! Que vous traitiez une galaxie spirale complexe (comme NGC 7331 et son groupe Deer Lick) ou une nébuleuse SHO, maîtrisez le workflow moderne Siril & PixInsight.",
@@ -1796,10 +1863,10 @@ export default function App() {
       descEn: 'Travel light under Bortle 1 skies: portable star trackers, NPF rule, Samyang 135mm f/2, and Milky Way arches.',
       image: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.bonus,
-      calculatorType: 'none' as const,
+      calculatorType: 'npf' as CalculatorType,
       content: {
         fr: {
-          intro: "Rien ne remplace l'émotion d'une nuit sous un ciel pur de montagne ou de réserve de ciel étoilé (Bortle 1-2). Découvrez comment concevoir un setup ultra-compact tenant dans un sac à dos cabine d'avion pour capturer des arches de la Voie Lactée et de grands champs nébulaires.",
+          intro: "Rien ne remplace l'émotion d'une nuit sous un ciel pur de montagne ou de réserve de ciel étoilé (Bortle 1-2). Découvrez comment concevoir un setup ultra-compact tenant dans un sac à dos cabine d'avion et calculez vos temps de pose NPF ci-dessous !",
           slides: [
             {
               title: 'Chapitre 1 : Objectifs Rapides, Coma & Règle NPF',
@@ -1899,7 +1966,7 @@ export default function App() {
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Nothing beats a night under pristine Bortle 1-2 mountain skies. Learn how to pack an airline-compliant carry-on astro rig to capture sweeping Milky Way arches and widefield nebulae.',
+          intro: 'Nothing beats a night under pristine Bortle 1-2 mountain skies. Learn how to pack an airline-compliant carry-on astro rig and calculate your exact NPF exposure limits below!',
           slides: [
             {
               title: 'Chapter 1: Fast Lenses, Coma & The NPF Rule',
@@ -2014,8 +2081,9 @@ export default function App() {
     }
   };
 
-  const openModuleDetail = (id: number) => {
+  const openModuleDetail = (id: number, preview = false) => {
     setSelectedModuleId(id);
+    setIsPreviewMode(preview);
     setCurrentSlideIndex(0);
     setSelectedAnswers({});
     setQuizSubmitted(false);
@@ -2028,7 +2096,7 @@ export default function App() {
   const isModuleUnlocked = (id: number) =>
     unlockedModules.map(Number).includes(Number(id));
 
-  // Calculateur Optique Module 1 (Echantillonnage)
+  // 1. Calculateur Optique Module 1 (Echantillonnage)
   const safeFocal = calcFocal > 0 ? calcFocal : 1;
   const pixelScaleResult = ((206.265 * calcPixel) / safeFocal).toFixed(2);
   let calcVerdict = currentT.calcVerdictGreat;
@@ -2036,17 +2104,37 @@ export default function App() {
   if (scaleNum < 0.8) calcVerdict = currentT.calcVerdictOver;
   else if (scaleNum > 2.0) calcVerdict = currentT.calcVerdictUnder;
 
-  // Calculateur EAF Module 5 (Zone Critique CFZ & Step Size)
+  // 2. Calculateur Couple Module 2 (Monture Harmonique)
+  const torqueNm = (calcPayloadKg * 9.81 * (calcTubeRadiusCm / 100)).toFixed(1);
+  const torqueNum = parseFloat(torqueNm);
+  const needsCounterweight = torqueNum > 14.5 || calcPayloadKg > 12;
+
+  // 3. Calculateur Temps de Pose Module 4 (Swamp Factor CMOS)
+  const baseDarkSkySec =
+    calcFilterBand === 'broadband' ? 180 : calcFilterBand === 'dualband' ? 300 : 360;
+  const bortleFactor = Math.pow(1.42, calcBortle - 3);
+  const recommendedSubSec = Math.max(
+    15,
+    Math.min(600, Math.round(baseDarkSkySec / bortleFactor / 15) * 15)
+  );
+
+  // 4. Calculateur EAF Module 5 (Zone Critique CFZ & Step Size)
   const safeFD = calcFokusFD > 0 ? calcFokusFD : 1;
   const safeMicronStep = calcMicronStep > 0 ? calcMicronStep : 1;
   const cfzMicrons = Math.round(2.68 * safeFD * safeFD);
   const recommendedSteps = Math.max(5, Math.round((cfzMicrons * 1.6) / safeMicronStep));
+
+  // 5. Calculateur Regle NPF Module 7
+  const safeNpfFocal = npfFocal > 0 ? npfFocal : 1;
+  const npfSeconds = ((35 * npfAperture + 30 * npfPixel) / safeNpfFocal).toFixed(1);
 
   // Calcul du score Quiz du module actif
   const activeQuizList = currentModule ? currentModule.content[lang].quiz : [];
   const correctQuizCount = activeQuizList.reduce((acc, q, idx) => {
     return selectedAnswers[idx] === q.correct ? acc + 1 : acc;
   }, 0);
+
+  const progressPercentage = Math.round((completedModules.length / 7) * 100);
 
   return (
     <div
@@ -2190,7 +2278,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* BANDEAU ACCES RAPIDE AUX COURS DEVERROUILLES */}
+        {/* BANDEAU ACCES RAPIDE AUX COURS DEVERROUILLES + PROGRESSION */}
         {unlockedModules.length > 0 && (
           <div
             className={`border-t py-2.5 px-4 ${
@@ -2212,7 +2300,7 @@ export default function App() {
                   <button
                     key={m.id}
                     type="button"
-                    onClick={() => openModuleDetail(m.id)}
+                    onClick={() => openModuleDetail(m.id, false)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5 ${
                       isSelected
                         ? nightVision
@@ -2228,11 +2316,14 @@ export default function App() {
                   </button>
                 );
               })}
+              <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 ml-1">
+                {completedModules.length}/7 ({progressPercentage}%)
+              </span>
               {completedModules.length > 0 && (
                 <button
                   type="button"
                   onClick={generateCertificate}
-                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1 ml-2"
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1"
                 >
                   🏆 {lang === 'fr' ? 'Certificat' : 'Certificate'}
                 </button>
@@ -2305,6 +2396,19 @@ export default function App() {
                 </button>
               </div>
 
+              {/* BOUTON DEMO GRATUite MODULE 1 POUR LES NOUVEAUX VISITEURS */}
+              {!isModuleUnlocked(1) && (
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => openModuleDetail(1, true)}
+                    className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-xs font-bold text-cyan-300 transition"
+                  >
+                    {currentT.freePreviewBtn}
+                  </button>
+                </div>
+              )}
+
               <div className="pt-3 flex flex-col items-center gap-1.5">
                 <span
                   className={`text-xs font-semibold ${
@@ -2322,6 +2426,37 @@ export default function App() {
                 </span>
               </div>
             </div>
+
+            {/* BARRE DE PROGRESSION DU CURSUS SI AU MOINS 1 MODULE DEBLOQUE */}
+            {unlockedModules.length > 0 && (
+              <div
+                className={`p-6 rounded-3xl border space-y-3 ${
+                  nightVision
+                    ? 'bg-rose-950/20 border-rose-900'
+                    : 'bg-slate-900/70 border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between text-xs md:text-sm font-bold">
+                  <span>
+                    📈 {currentT.progressLabel} {completedModules.length} / 7{' '}
+                    {lang === 'fr' ? 'modules validés' : 'modules completed'}
+                  </span>
+                  <span className="text-cyan-400 font-mono">
+                    {progressPercentage}%
+                  </span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-black/60 overflow-hidden border border-white/10">
+                  <div
+                    className={`h-full transition-all duration-500 ${
+                      nightVision
+                        ? 'bg-rose-600'
+                        : 'bg-gradient-to-r from-cyan-400 to-emerald-400'
+                    }`}
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* CATALOGUE DES MODULES */}
             <div className="space-y-8">
@@ -2350,8 +2485,8 @@ export default function App() {
                   }`}
                 >
                   {lang === 'fr'
-                    ? 'Chaque module inclut des diaporamas interactifs, des cours théoriques détaillés, des quiz de validation et des guides PDF A4 imprimables.'
-                    : 'Every module includes interactive slides, deep theoretical lessons, validation quizzes, and printable A4 PDF field guides.'}
+                    ? 'Chaque module inclut des diaporamas interactifs, des simulateurs optiques, des cours détaillés, des quiz et des guides PDF A4 imprimables.'
+                    : 'Every module includes interactive slides, optical simulators, deep theoretical lessons, quizzes, and printable A4 PDF field guides.'}
                 </p>
               </div>
 
@@ -2363,7 +2498,7 @@ export default function App() {
                     <div
                       key={mod.id}
                       onClick={() => {
-                        if (unlocked) openModuleDetail(mod.id);
+                        if (unlocked) openModuleDetail(mod.id, false);
                       }}
                       className={`group border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md ${
                         nightVision
@@ -2423,13 +2558,13 @@ export default function App() {
                         </div>
                       </div>
 
-                      <div className="p-6 pt-0 flex flex-col gap-3">
+                      <div className="p-6 pt-0 flex flex-col gap-2.5">
                         {unlocked ? (
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              openModuleDetail(mod.id);
+                              openModuleDetail(mod.id, false);
                             }}
                             className={`w-full py-3.5 rounded-xl font-black text-xs shadow-lg transition text-center uppercase tracking-wider flex items-center justify-center gap-2 ${
                               nightVision
@@ -2440,28 +2575,42 @@ export default function App() {
                             <span>▶️</span> {currentT.accessCourse}
                           </button>
                         ) : (
-                          <div className="grid grid-cols-2 gap-2.5">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenLink(mod.links.stripe);
-                              }}
-                              className="py-3 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
-                            >
-                              <span>💳</span> {currentT.buyStripe}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenLink(mod.links.paypal);
-                              }}
-                              className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
-                            >
-                              <span>🅿️</span> {currentT.buyPayPal}
-                            </button>
-                          </div>
+                          <>
+                            <div className="grid grid-cols-2 gap-2.5">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenLink(mod.links.stripe);
+                                }}
+                                className="py-3 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              >
+                                <span>💳</span> {currentT.buyStripe}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenLink(mod.links.paypal);
+                                }}
+                                className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              >
+                                <span>🅿️</span> {currentT.buyPayPal}
+                              </button>
+                            </div>
+                            {mod.id === 1 && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openModuleDetail(1, true);
+                                }}
+                                className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-cyan-300 transition"
+                              >
+                                {currentT.freePreviewBtn}
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
@@ -2569,14 +2718,63 @@ export default function App() {
                 : 'bg-slate-900/90 border-slate-800/80'
             }`}
           >
-            {/* BANNIERE DE CONFIRMATION D'ACHAT INDIVIDUEL + CODE DE SAUVEGARDE */}
+            {/* BANNIERE MODE APERÇU GRATUIT (DEMO) */}
+            {isPreviewMode && !isModuleUnlocked(currentModule.id) && (
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/80 via-indigo-950/80 to-slate-900 border border-amber-500/50 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-300">
+                    {currentT.previewBannerTitle}
+                  </span>
+                  <span className="text-xs font-bold text-cyan-300">
+                    {currentModule.price}$ CAD (ou Pack 7-en-1 à 79$ CAD)
+                  </span>
+                </div>
+                <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
+                  {currentT.previewBannerDesc}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenLink(currentModule.links.stripe)}
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow"
+                  >
+                    💳 {currentT.buyStripe} ({currentModule.price}$ CAD)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenLink(currentModule.links.paypal)}
+                    className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow"
+                  >
+                    🅿️ {currentT.buyPayPal} ({currentModule.price}$ CAD)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('pack')}
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow"
+                  >
+                    {currentT.buyPackFull}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* BANNIERE DE CONFIRMATION D'ACHAT INDIVIDUEL + COPIE CODE */}
             {justPurchasedModule && (
               <div className="p-5 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200 text-sm flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
-                <div>
+                <div className="flex flex-wrap items-center gap-2">
                   <span>{currentT.paymentConfirmedModule}</span>
-                  <span className="font-mono font-black text-white bg-black/50 px-3 py-1 rounded-lg border border-emerald-400/40 ml-1">
+                  <span className="font-mono font-black text-white bg-black/50 px-3 py-1 rounded-lg border border-emerald-400/40">
                     {currentModule.backupCode}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(currentModule.backupCode)}
+                    className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold"
+                  >
+                    {copiedCode === currentModule.backupCode
+                      ? currentT.copiedBtn
+                      : currentT.copyBtn}
+                  </button>
                 </div>
                 <button
                   type="button"
@@ -2601,24 +2799,34 @@ export default function App() {
               >
                 {currentT.backToCatalog}
               </button>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-black/40 border border-white/10">
-                  🔑 Code : <strong>{currentModule.backupCode}</strong>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => toggleCompleteModule(currentModule.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                    completedModules.includes(currentModule.id)
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {completedModules.includes(currentModule.id)
-                    ? currentT.markIncomplete
-                    : currentT.markComplete}
-                </button>
-              </div>
+              {isModuleUnlocked(currentModule.id) && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(currentModule.backupCode)}
+                    className="text-xs font-mono px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/10 transition"
+                  >
+                    🔑 {currentModule.backupCode} (
+                    {copiedCode === currentModule.backupCode
+                      ? currentT.copiedBtn
+                      : currentT.copyBtn}
+                    )
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleCompleteModule(currentModule.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      completedModules.includes(currentModule.id)
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {completedModules.includes(currentModule.id)
+                      ? currentT.markIncomplete
+                      : currentT.markComplete}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* TITRE & INTRODUCTION DU MODULE */}
@@ -2719,6 +2927,7 @@ export default function App() {
                       <button
                         key={idx}
                         type="button"
+                        disabled={isPreviewMode && !isModuleUnlocked(currentModule.id) && idx > 0}
                         onClick={() => setCurrentSlideIndex(idx)}
                         className={`w-2.5 h-2.5 rounded-full transition ${
                           currentSlideIndex === idx
@@ -2733,8 +2942,9 @@ export default function App() {
                   <button
                     type="button"
                     disabled={
+                      (isPreviewMode && !isModuleUnlocked(currentModule.id)) ||
                       currentSlideIndex ===
-                      currentModule.content[lang].slides.length - 1
+                        currentModule.content[lang].slides.length - 1
                     }
                     onClick={() =>
                       setCurrentSlideIndex((prev) =>
@@ -2746,13 +2956,15 @@ export default function App() {
                     }
                     className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-xs font-bold text-white transition"
                   >
-                    {currentT.nextSlide}
+                    {isPreviewMode && !isModuleUnlocked(currentModule.id)
+                      ? '🔒 Chapitre 2'
+                      : currentT.nextSlide}
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* 2. SIMULATEUR OPTIQUE MODULE 1 (ECHANTILLONNAGE) */}
+            {/* SIMULATEUR 1 : ECHANTILLONNAGE OPTIQUE (MODULE 1) */}
             {currentModule.calculatorType === 'sampling' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -2801,7 +3013,130 @@ export default function App() {
               </div>
             )}
 
-            {/* 2B. SIMULATEUR EAF MODULE 5 (ZONE CRITIQUE CFZ) */}
+            {/* SIMULATEUR 2 : COUPLE MONTURE HARMONIQUE & CONTREPOIDS (MODULE 2) */}
+            {currentModule.calculatorType === 'torque' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcTorqueTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcPayloadLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      min="1"
+                      max="30"
+                      value={calcPayloadKg}
+                      onChange={(e) => setCalcPayloadKg(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcRadiusLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="5"
+                      max="40"
+                      value={calcTubeRadiusCm}
+                      onChange={(e) =>
+                        setCalcTubeRadiusCm(Number(e.target.value))
+                      }
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcTorqueResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {torqueNm} N·m
+                    </span>
+                  </div>
+                  <p
+                    className={`text-xs font-bold ${
+                      needsCounterweight ? 'text-amber-400' : 'text-emerald-400'
+                    }`}
+                  >
+                    {needsCounterweight
+                      ? lang === 'fr'
+                        ? '⚠️ Couple élevé : Ajoutez un contrepoids de 3 à 5 kg sur la barre pour soulager le réducteur et stabiliser le trépied.'
+                        : '⚠️ High torque load: Add a 3kg to 5kg counterweight to stabilize your tripod and assist the strainwave gear.'
+                      : lang === 'fr'
+                      ? '✨ Charge nominale parfaite : Aucun contrepoids requis sur Juwei-17 / UMi-17S / AM5 (lestez uniquement le trépied).'
+                      : '✨ Optimal torque load: No counterweight needed on Juwei-17 / UMi-17S / AM5 (ballast tripod center only).'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* SIMULATEUR 3 : TEMPS DE POSE UNITAIRE CMOS (MODULE 4) */}
+            {currentModule.calculatorType === 'exposure' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcExpTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcBortleLabel} (Bortle {calcBortle})
+                    </label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="9"
+                      value={calcBortle}
+                      onChange={(e) => setCalcBortle(Number(e.target.value))}
+                      className="w-full accent-cyan-400 mt-3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcFilterLabel}
+                    </label>
+                    <select
+                      value={calcFilterBand}
+                      onChange={(e) =>
+                        setCalcFilterBand(
+                          e.target.value as 'broadband' | 'dualband' | 'sho'
+                        )
+                      }
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white text-xs font-bold focus:outline-none"
+                    >
+                      <option value="broadband">
+                        UV/IR Cut — Large Bande (Galaxies / Amas)
+                      </option>
+                      <option value="dualband">
+                        Dual-Band 7nm (Ha/OIII Couleur)
+                      </option>
+                      <option value="sho">
+                        Bande Étroite 3nm (SHO Monochrome)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcExpResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {recommendedSubSec} sec
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-400 font-bold">
+                    {lang === 'fr'
+                      ? '✨ Ce temps de pose submerge le bruit de lecture (Gain 100) sans saturer le cœur des étoiles.'
+                      : '✨ This sub-exposure swamps sensor read noise (Gain 100) without clipping bright star cores.'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* SIMULATEUR 4 : ZONE CRITIQUE DE MISE AU POINT EAF (MODULE 5) */}
             {currentModule.calculatorType === 'focus' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -2856,204 +3191,313 @@ export default function App() {
               </div>
             )}
 
-            {/* 3. COURS THEORIQUE APPROFONDI & ETUDES DE CAS */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <span>📚</span> {currentT.fullCourseTitle}
-              </h3>
-              <div className="space-y-4">
-                {currentModule.content[lang].courseSections.map((sec, idx) => (
-                  <div
-                    key={idx}
-                    className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3"
-                  >
-                    <h4 className="font-black text-base md:text-lg text-white">
-                      {sec.heading}
-                    </h4>
-                    <p
-                      className={`text-sm md:text-base leading-relaxed ${
-                        nightVision ? 'text-rose-200' : 'text-slate-300'
-                      }`}
-                    >
-                      {sec.body}
-                    </p>
-                    {sec.highlight && (
-                      <div
-                        className={`p-3.5 rounded-xl font-mono text-xs md:text-sm font-bold border ${
-                          nightVision
-                            ? 'bg-rose-950/60 border-rose-800 text-rose-300'
-                            : 'bg-cyan-950/40 border-cyan-500/30 text-cyan-300'
-                        }`}
-                      >
-                        ⚡ {sec.highlight}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 4. CHECKLIST TERRAIN & PROTOCOLE OPERATIONNEL */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <span>✅</span> {currentT.tutorialSteps}
-              </h3>
-              <div className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3">
-                {currentModule.content[lang].steps.map((step, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 text-sm md:text-base"
-                  >
-                    <span className="text-emerald-400 font-black">✔</span>
-                    <span>{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 5. QUIZ INTERACTIF D'AUTO-EVALUATION */}
-            <div className="space-y-5 bg-black/50 border border-indigo-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  {currentT.quizTitle}
+            {/* SIMULATEUR 5 : COMPARATEUR AVANT / APRES TRAITEMENT (MODULE 6) */}
+            {currentModule.calculatorType === 'compare' && (
+              <div className="space-y-4 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold">
+                  {currentT.calcCompareTitle}
                 </h3>
-                {quizSubmitted && (
-                  <span className="px-3.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
-                    {currentT.quizScore} {correctQuizCount} /{' '}
-                    {activeQuizList.length}
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-6">
-                {activeQuizList.map((q, qIdx) => (
+                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden border border-white/15 select-none">
+                  {/* Image Finale Traitee */}
+                  <img
+                    src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
+                    alt="Final Processed"
+                    className="w-full h-full object-cover saturate-150 contrast-125"
+                  />
+                  {/* Image Brute Lineaire sombre */}
                   <div
-                    key={qIdx}
-                    className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3"
+                    className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-cyan-400"
+                    style={{ width: `${compareSlider}%` }}
                   >
-                    <p className="font-bold text-sm md:text-base">
-                      {qIdx + 1}. {q.question}
-                    </p>
-                    <div className="space-y-2">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = selectedAnswers[qIdx] === oIdx;
-                        const isCorrect = q.correct === oIdx;
-                        let btnStyle =
-                          'bg-black/50 border-white/10 hover:border-white/30';
-                        if (quizSubmitted) {
-                          if (isCorrect) {
-                            btnStyle =
-                              'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold';
-                          } else if (isSelected && !isCorrect) {
-                            btnStyle =
-                              'bg-rose-950/80 border-rose-500 text-rose-200';
-                          }
-                        } else if (isSelected) {
-                          btnStyle =
-                            'bg-indigo-600/40 border-cyan-400 text-white font-bold';
-                        }
+                    <img
+                      src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
+                      alt="Raw Linear"
+                      className="w-full h-full object-cover brightness-[0.18] contrast-75 saturate-0"
+                    />
+                  </div>
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 text-[10px] font-bold text-slate-300">
+                    {lang === 'fr' ? 'AVANT : Brute Linéaire' : 'BEFORE: Linear Stack'}
+                  </span>
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded bg-cyan-500/90 text-[10px] font-black text-slate-950">
+                    {lang === 'fr'
+                      ? 'APRÈS : GraXpert + SPCC + GHS'
+                      : 'AFTER: GraXpert + SPCC + GHS'}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="95"
+                  value={compareSlider}
+                  onChange={(e) => setCompareSlider(Number(e.target.value))}
+                  className="w-full accent-cyan-400 cursor-ew-resize"
+                />
+              </div>
+            )}
 
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={quizSubmitted}
-                            onClick={() =>
-                              setSelectedAnswers((prev) => ({
-                                ...prev,
-                                [qIdx]: oIdx,
-                              }))
-                            }
-                            className={`w-full text-left p-3.5 rounded-xl border text-xs md:text-sm transition flex items-center justify-between ${btnStyle}`}
-                          >
-                            <span>{opt}</span>
-                            {quizSubmitted && isCorrect && <span>✓</span>}
-                          </button>
-                        );
-                      })}
-                    </div>
+            {/* SIMULATEUR 6 : REGLE NPF GRAND CHAMP (MODULE 7) */}
+            {currentModule.calculatorType === 'npf' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold">{currentT.calcNpfTitle}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcNpfFocalLabel}
+                    </label>
+                    <input
+                      type="number"
+                      min="8"
+                      max="200"
+                      value={npfFocal}
+                      onChange={(e) => setNpfFocal(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcNpfApertureLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.2"
+                      min="1.2"
+                      max="11"
+                      value={npfAperture}
+                      onChange={(e) => setNpfAperture(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcPixelLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="1"
+                      max="12"
+                      value={npfPixel}
+                      onChange={(e) => setNpfPixel(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-1">
+                  <div className="text-sm font-bold">
+                    {currentT.calcNpfResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {npfSeconds} sec
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
-                    {quizSubmitted && (
-                      <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 text-xs leading-relaxed">
-                        <strong
-                          className={
-                            selectedAnswers[qIdx] === q.correct
-                              ? 'text-emerald-400'
-                              : 'text-rose-400'
-                          }
+            {/* SECTIONS RESERVEES AUX ELEVES AYANT DEBLOQUE LE MODULE */}
+            {isModuleUnlocked(currentModule.id) && (
+              <>
+                {/* 3. COURS THEORIQUE APPROFONDI & ETUDES DE CAS */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>📚</span> {currentT.fullCourseTitle}
+                  </h3>
+                  <div className="space-y-4">
+                    {currentModule.content[lang].courseSections.map(
+                      (sec, idx) => (
+                        <div
+                          key={idx}
+                          className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3"
                         >
-                          {selectedAnswers[qIdx] === q.correct
-                            ? currentT.correctAnswer
-                            : currentT.wrongAnswer}
-                        </strong>{' '}
-                        {q.explanation}
-                      </div>
+                          <h4 className="font-black text-base md:text-lg text-white">
+                            {sec.heading}
+                          </h4>
+                          <p
+                            className={`text-sm md:text-base leading-relaxed ${
+                              nightVision ? 'text-rose-200' : 'text-slate-300'
+                            }`}
+                          >
+                            {sec.body}
+                          </p>
+                          {sec.highlight && (
+                            <div
+                              className={`p-3.5 rounded-xl font-mono text-xs md:text-sm font-bold border ${
+                                nightVision
+                                  ? 'bg-rose-950/60 border-rose-800 text-rose-300'
+                                  : 'bg-cyan-950/40 border-cyan-500/30 text-cyan-300'
+                              }`}
+                            >
+                              ⚡ {sec.highlight}
+                            </div>
+                          )}
+                        </div>
+                      )
                     )}
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="flex justify-end">
-                {!quizSubmitted ? (
-                  <button
-                    type="button"
-                    onClick={() => setQuizSubmitted(true)}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg"
-                  >
-                    {currentT.quizSubmit}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedAnswers({});
-                      setQuizSubmitted(false);
-                    }}
-                    className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs"
-                  >
-                    {currentT.quizRetry}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* 6. GENERATEUR DE FICHES PDF A4 */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <span>📄</span> {currentT.resourcesPdf}
-              </h3>
-              <div className="grid grid-cols-1 gap-4">
-                {currentModule.content[lang].downloads.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="p-6 rounded-3xl bg-black/50 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xl"
-                  >
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-extrabold">
-                        PDF Officiel A4 Imprimable
-                      </span>
-                      <h4 className="font-bold text-sm md:text-base leading-snug pt-1">
-                        {doc.name}
-                      </h4>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        generateAndDownloadPDF(
-                          doc,
-                          lang === 'fr'
-                            ? currentModule.titleFr
-                            : currentModule.titleEn
-                        )
-                      }
-                      className="shrink-0 py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition hover:opacity-95 shadow-lg"
-                    >
-                      <span>📥</span> {currentT.generatePdfBtn}
-                    </button>
+                {/* 4. CHECKLIST TERRAIN & PROTOCOLE OPERATIONNEL */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>✅</span> {currentT.tutorialSteps}
+                  </h3>
+                  <div className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3">
+                    {currentModule.content[lang].steps.map((step, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 text-sm md:text-base"
+                      >
+                        <span className="text-emerald-400 font-black">✔</span>
+                        <span>{step}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+
+                {/* 5. QUIZ INTERACTIF D'AUTO-EVALUATION */}
+                <div className="space-y-5 bg-black/50 border border-indigo-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                      {currentT.quizTitle}
+                    </h3>
+                    {quizSubmitted && (
+                      <span className="px-3.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
+                        {currentT.quizScore} {correctQuizCount} /{' '}
+                        {activeQuizList.length}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-6">
+                    {activeQuizList.map((q, qIdx) => (
+                      <div
+                        key={qIdx}
+                        className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3"
+                      >
+                        <p className="font-bold text-sm md:text-base">
+                          {qIdx + 1}. {q.question}
+                        </p>
+                        <div className="space-y-2">
+                          {q.options.map((opt, oIdx) => {
+                            const isSelected = selectedAnswers[qIdx] === oIdx;
+                            const isCorrect = q.correct === oIdx;
+                            let btnStyle =
+                              'bg-black/50 border-white/10 hover:border-white/30';
+                            if (quizSubmitted) {
+                              if (isCorrect) {
+                                btnStyle =
+                                  'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold';
+                              } else if (isSelected && !isCorrect) {
+                                btnStyle =
+                                  'bg-rose-950/80 border-rose-500 text-rose-200';
+                              }
+                            } else if (isSelected) {
+                              btnStyle =
+                                'bg-indigo-600/40 border-cyan-400 text-white font-bold';
+                            }
+
+                            return (
+                              <button
+                                key={oIdx}
+                                type="button"
+                                disabled={quizSubmitted}
+                                onClick={() =>
+                                  setSelectedAnswers((prev) => ({
+                                    ...prev,
+                                    [qIdx]: oIdx,
+                                  }))
+                                }
+                                className={`w-full text-left p-3.5 rounded-xl border text-xs md:text-sm transition flex items-center justify-between ${btnStyle}`}
+                              >
+                                <span>{opt}</span>
+                                {quizSubmitted && isCorrect && <span>✓</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {quizSubmitted && (
+                          <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 text-xs leading-relaxed">
+                            <strong
+                              className={
+                                selectedAnswers[qIdx] === q.correct
+                                  ? 'text-emerald-400'
+                                  : 'text-rose-400'
+                              }
+                            >
+                              {selectedAnswers[qIdx] === q.correct
+                                ? currentT.correctAnswer
+                                : currentT.wrongAnswer}
+                            </strong>{' '}
+                            {q.explanation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex justify-end">
+                    {!quizSubmitted ? (
+                      <button
+                        type="button"
+                        onClick={() => setQuizSubmitted(true)}
+                        className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg"
+                      >
+                        {currentT.quizSubmit}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedAnswers({});
+                          setQuizSubmitted(false);
+                        }}
+                        className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs"
+                      >
+                        {currentT.quizRetry}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 6. GENERATEUR DE FICHES PDF A4 */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>📄</span> {currentT.resourcesPdf}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {currentModule.content[lang].downloads.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="p-6 rounded-3xl bg-black/50 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xl"
+                      >
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-extrabold">
+                            PDF Officiel A4 Imprimable
+                          </span>
+                          <h4 className="font-bold text-sm md:text-base leading-snug pt-1">
+                            {doc.name}
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            generateAndDownloadPDF(
+                              doc,
+                              lang === 'fr'
+                                ? currentModule.titleFr
+                                : currentModule.titleEn
+                            )
+                          }
+                          className="shrink-0 py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition hover:opacity-95 shadow-lg"
+                        >
+                          <span>📥</span> {currentT.generatePdfBtn}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -3075,13 +3519,24 @@ export default function App() {
               </p>
             </div>
 
-            {/* CODE DE SAUVEGARDE PACK INTEGRAL */}
-            <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 space-y-2">
+            {/* CODE DE SAUVEGARDE PACK INTEGRAL + BOUTON COPIER */}
+            <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 space-y-3">
               <p className="text-xs text-slate-300 font-semibold">
                 {currentT.backupCodeNotice}
               </p>
-              <div className="text-xl font-mono font-black text-cyan-400 tracking-widest">
-                PACK-COMPLET-2026
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-xl font-mono font-black text-cyan-400 tracking-widest">
+                  PACK-COMPLET-2026
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyCode('PACK-COMPLET-2026')}
+                  className="px-3.5 py-1.5 rounded-xl bg-cyan-500 text-slate-950 text-xs font-black"
+                >
+                  {copiedCode === 'PACK-COMPLET-2026'
+                    ? currentT.copiedBtn
+                    : currentT.copyBtn}
+                </button>
               </div>
             </div>
 
@@ -3119,7 +3574,7 @@ export default function App() {
         {activeTab === 'pack' && (
           <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl">
             <span className="inline-block px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold uppercase tracking-widest">
-              7 Modules + 2 Simulateurs + PDF
+              7 Modules + 6 Simulateurs + PDF
             </span>
             <h2 className="text-3xl font-black text-white">
               {currentT.packTitle}
