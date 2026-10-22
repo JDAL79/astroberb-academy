@@ -2396,7 +2396,7 @@ export default function App() {
                 </button>
               </div>
 
-              {/* BOUTON DEMO GRATUite MODULE 1 POUR LES NOUVEAUX VISITEURS */}
+              {/* BOUTON DEMO GRATUITE MODULE 1 */}
               {!isModuleUnlocked(1) && (
                 <div className="pt-2">
                   <button
@@ -2427,7 +2427,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* BARRE DE PROGRESSION DU CURSUS SI AU MOINS 1 MODULE DEBLOQUE */}
+            {/* BARRE DE PROGRESSION DU CURSUS */}
             {unlockedModules.length > 0 && (
               <div
                 className={`p-6 rounded-3xl border space-y-3 ${
@@ -2718,7 +2718,7 @@ export default function App() {
                 : 'bg-slate-900/90 border-slate-800/80'
             }`}
           >
-            {/* BANNIERE MODE APERÇU GRATUIT (DEMO) */}
+            {/* BANNIERE MODE APERÇU GRATUIT */}
             {isPreviewMode && !isModuleUnlocked(currentModule.id) && (
               <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/80 via-indigo-950/80 to-slate-900 border border-amber-500/50 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -2758,7 +2758,7 @@ export default function App() {
               </div>
             )}
 
-            {/* BANNIERE DE CONFIRMATION D'ACHAT INDIVIDUEL + COPIE CODE */}
+            {/* BANNIERE DE CONFIRMATION D'ACHAT + COPIE CODE */}
             {justPurchasedModule && (
               <div className="p-5 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200 text-sm flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
                 <div className="flex flex-wrap items-center gap-2">
@@ -2852,7 +2852,7 @@ export default function App() {
               </p>
             </div>
 
-            {/* 1. STUDIO DIAPORAMA INTERACTIF + PRO TIP */}
+            {/* 1. STUDIO DIAPORAMA INTERACTIF */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -2897,7 +2897,6 @@ export default function App() {
                   ))}
                 </ul>
 
-                {/* ENCADRE ASTUCE D'EXPERT (PRO TIP) */}
                 <div
                   className={`p-4 rounded-2xl border text-xs md:text-sm leading-relaxed ${
                     nightVision
@@ -2964,7 +2963,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* SIMULATEUR 1 : ECHANTILLONNAGE OPTIQUE (MODULE 1) */}
+            {/* SIMULATEURS (1 à 6 selon le module) */}
             {currentModule.calculatorType === 'sampling' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -3013,7 +3012,6 @@ export default function App() {
               </div>
             )}
 
-            {/* SIMULATEUR 2 : COUPLE MONTURE HARMONIQUE & CONTREPOIDS (MODULE 2) */}
             {currentModule.calculatorType === 'torque' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -3075,7 +3073,6 @@ export default function App() {
               </div>
             )}
 
-            {/* SIMULATEUR 3 : TEMPS DE POSE UNITAIRE CMOS (MODULE 4) */}
             {currentModule.calculatorType === 'exposure' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -3136,7 +3133,6 @@ export default function App() {
               </div>
             )}
 
-            {/* SIMULATEUR 4 : ZONE CRITIQUE DE MISE AU POINT EAF (MODULE 5) */}
             {currentModule.calculatorType === 'focus' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold flex items-center gap-2">
@@ -3191,20 +3187,17 @@ export default function App() {
               </div>
             )}
 
-            {/* SIMULATEUR 5 : COMPARATEUR AVANT / APRES TRAITEMENT (MODULE 6) */}
             {currentModule.calculatorType === 'compare' && (
               <div className="space-y-4 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold">
                   {currentT.calcCompareTitle}
                 </h3>
                 <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden border border-white/15 select-none">
-                  {/* Image Finale Traitee */}
                   <img
                     src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
                     alt="Final Processed"
                     className="w-full h-full object-cover saturate-150 contrast-125"
                   />
-                  {/* Image Brute Lineaire sombre */}
                   <div
                     className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-cyan-400"
                     style={{ width: `${compareSlider}%` }}
@@ -3235,7 +3228,6 @@ export default function App() {
               </div>
             )}
 
-            {/* SIMULATEUR 6 : REGLE NPF GRAND CHAMP (MODULE 7) */}
             {currentModule.calculatorType === 'npf' && (
               <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                 <h3 className="text-lg font-bold">{currentT.calcNpfTitle}</h3>
@@ -3293,10 +3285,9 @@ export default function App() {
               </div>
             )}
 
-            {/* SECTIONS RESERVEES AUX ELEVES AYANT DEBLOQUE LE MODULE */}
+            {/* SECTIONS RESERVEES AUX ELEVES DEBLOQUES */}
             {isModuleUnlocked(currentModule.id) && (
               <>
-                {/* 3. COURS THEORIQUE APPROFONDI & ETUDES DE CAS */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold flex items-center gap-2">
                     <span>📚</span> {currentT.fullCourseTitle}
@@ -3335,7 +3326,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 4. CHECKLIST TERRAIN & PROTOCOLE OPERATIONNEL */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold flex items-center gap-2">
                     <span>✅</span> {currentT.tutorialSteps}
@@ -3353,7 +3343,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 5. QUIZ INTERACTIF D'AUTO-EVALUATION */}
                 <div className="space-y-5 bg-black/50 border border-indigo-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-lg font-bold flex items-center gap-2">
@@ -3459,7 +3448,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 6. GENERATEUR DE FICHES PDF A4 */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold flex items-center gap-2">
                     <span>📄</span> {currentT.resourcesPdf}
@@ -3501,7 +3489,6 @@ export default function App() {
           </div>
         )}
 
-        {/* PAGE DE CONFIRMATION PACK INTEGRAL + CERTIFICAT PERSONNALISE */}
         {activeTab === 'success' && (
           <div className="max-w-2xl mx-auto bg-slate-900 border border-emerald-500/50 rounded-3xl p-8 md:p-12 text-center space-y-6 shadow-2xl">
             <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-4xl">
@@ -3519,7 +3506,6 @@ export default function App() {
               </p>
             </div>
 
-            {/* CODE DE SAUVEGARDE PACK INTEGRAL + BOUTON COPIER */}
             <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 space-y-3">
               <p className="text-xs text-slate-300 font-semibold">
                 {currentT.backupCodeNotice}
@@ -3540,7 +3526,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* PERSONNALISATION DU NOM SUR LE CERTIFICAT */}
             <div className="space-y-3 pt-2 max-w-md mx-auto">
               <input
                 type="text"
@@ -3570,7 +3555,6 @@ export default function App() {
           </div>
         )}
 
-        {/* PAGE PACK INTEGRAL */}
         {activeTab === 'pack' && (
           <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl">
             <span className="inline-block px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold uppercase tracking-widest">
@@ -3610,7 +3594,6 @@ export default function App() {
           </div>
         )}
 
-        {/* PAGE ACCES MEMBRE / CODE VIP */}
         {activeTab === 'vip' && (
           <div className="max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl space-y-6">
             <h2 className="text-2xl font-bold text-center">
@@ -3654,7 +3637,6 @@ export default function App() {
               </p>
             )}
 
-            {/* SECTION CERTIFICAT DANS L'ESPACE MEMBRE */}
             {unlockedModules.length > 0 && (
               <div className="pt-6 border-t border-slate-800 space-y-3 text-center">
                 <h3 className="text-sm font-bold text-amber-400">
@@ -3680,7 +3662,6 @@ export default function App() {
         )}
       </main>
 
-      {/* PIED DE PAGE */}
       <footer
         className={`border-t py-10 mt-20 text-xs ${
           nightVision
@@ -3721,7 +3702,6 @@ export default function App() {
         </div>
       </footer>
 
-      {/* MODALE LEGALE COMPLETE */}
       {legalModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 md:p-8 space-y-4 max-h-[85vh] overflow-y-auto">
