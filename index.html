@@ -1,19 +1,35 @@
-<!doctype html>
-<html lang="fr">
+<!DOCTYPE html>
+<html lang="fr" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Astroberb Academy - Maîtrisez l'Astrophotographie du Ciel Profond</title>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FGHKHPHSTF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-FGHKHPHSTF');
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Astroberb Academy | Masterclass d'Astrophotographie du Ciel Profond</title>
+    <meta
+      name="description"
+      content="Formations expertes en astrophotographie de A à Z : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril."
+    />
+    <meta name="theme-color" content="#030712" />
+
+    <!-- Balises OpenGraph pour un partage professionnel sur Facebook / Réseaux Sociaux -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Astroberb Academy | Masterclass d'Astrophotographie (Édition 2026)" />
+    <meta
+      property="og:description"
+      content="7 modules complets, 6 simulateurs optiques interactifs, quiz et guides PDF A4 pour maîtriser l'astrophotographie du ciel profond."
+    />
+    <meta
+      property="og:image"
+      content="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1200&q=80"
+    />
+
+    <!-- Manifeste PWA (Application installable sur téléphone/tablette) -->
+    <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>"
+    />
   </head>
-  <body class="bg-[#030712] text-slate-100">
+  <body class="bg-[#030712] text-slate-100 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
