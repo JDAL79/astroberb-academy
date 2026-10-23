@@ -196,6 +196,57 @@ export default function App() {
     } catch (e) {}
   };
 
+  // COMPOSANT LOGO VECTORIEL VECTOR (Option 1)
+  const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
+    <svg
+      viewBox="0 0 100 100"
+      className={`transition-transform duration-300 group-hover:scale-105 ${className}`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="astroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={nightVision ? '#f43f5e' : '#38bdf8'} />
+          <stop offset="50%" stopColor={nightVision ? '#be123c' : '#6366f1'} />
+          <stop offset="100%" stopColor={nightVision ? '#881337' : '#a855f7'} />
+        </linearGradient>
+      </defs>
+      <rect
+        x="4"
+        y="4"
+        width="92"
+        height="92"
+        rx="24"
+        fill={nightVision ? '#1f0308' : '#090d16'}
+        stroke="url(#astroGrad)"
+        strokeWidth="3"
+      />
+      <circle
+        cx="50"
+        cy="50"
+        r="31"
+        stroke={nightVision ? '#9f1239' : '#334155'}
+        strokeWidth="1.5"
+        strokeDasharray="4 4"
+      />
+      <circle cx="50" cy="50" r="15" fill="url(#astroGrad)" />
+      <ellipse
+        cx="50"
+        cy="50"
+        rx="36"
+        ry="11"
+        transform="rotate(-28 50 50)"
+        stroke={nightVision ? '#fda4af' : '#22d3ee'}
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M74 22 L76 28 L82 30 L76 32 L74 38 L72 32 L66 30 L72 28 Z"
+        fill="#ffffff"
+      />
+    </svg>
+  );
+
   // GENERATEUR DE CERTIFICAT OFFICIEL
   const generateCertificate = () => {
     const displayName =
@@ -2179,15 +2230,7 @@ export default function App() {
               className="flex items-center space-x-3 cursor-pointer group"
               onClick={() => setActiveTab('home')}
             >
-              <div
-                className={`w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-lg transition group-hover:scale-105 ${
-                  nightVision
-                    ? 'bg-rose-950 text-rose-400 border border-rose-800'
-                    : 'bg-gradient-to-tr from-indigo-600 via-cyan-500 to-indigo-400 text-white shadow-indigo-500/20'
-                }`}
-              >
-                🪐
-              </div>
+              <AstroberbLogo className="w-10 h-10" />
               <h1
                 className={`font-extrabold text-lg tracking-tight ${
                   nightVision
@@ -2388,9 +2431,7 @@ export default function App() {
                 {currentT.heroDesc}
               </p>
 
-              {/* ==================================================== */}
-              {/* LECTEUR VIDEO DE BIENVENUE OFFICIEL (FR / EN)        */}
-              {/* ==================================================== */}
+              {/* LECTEUR VIDEO DE BIENVENUE OFFICIEL (FR / EN) */}
               <div
                 className={`max-w-4xl mx-auto mt-8 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-5 ${
                   nightVision
@@ -3806,7 +3847,7 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-2.5">
-            <span className="text-base">🪐</span>
+            <AstroberbLogo className="w-6 h-6" />
             <span className="font-bold">Astroberb Academy</span>
             <span>
               — © {new Date().getFullYear()} {currentT.footerRights}
