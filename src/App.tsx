@@ -17,6 +17,9 @@ const ACCESS_CODES: Record<string, number[]> = {
 
 const SUPPORT_EMAIL = 'contact@astroberb.com';
 
+// Chemin de la vidéo placée dans votre dossier public/ (public/welcome.mp4)
+const WELCOME_VIDEO_URL = '/welcome.mp4';
+
 type CalculatorType = 'sampling' | 'torque' | 'exposure' | 'focus' | 'compare' | 'npf' | 'none';
 
 interface Slide {
@@ -315,6 +318,15 @@ export default function App() {
       subtitle: "Maîtrisez l'Astrophotographie du Ciel Profond",
       heroBadge: "✨ Masterclass d'élite • Édition 2026",
       heroDesc: "Du débutant passionné à l'astrophotographe chevronné : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
+      videoSectionBadge: '🎬 Vidéo de Bienvenue Officielle (FR / EN)',
+      videoSectionTitle: 'Votre Compagnon Avant, Pendant et Après votre Nuit d’Astronomie',
+      videoSectionSub: 'Découvrez comment nos modules interactifs et nos simulateurs vous guident étape par étape, de la préparation du matériel jusqu’au traitement final.',
+      phase1Badge: '1. AVANT LA NUIT',
+      phase1Desc: 'Calcul d’échantillonnage, backfocus 55 mm & équilibrage harmonique.',
+      phase2Badge: '2. PENDANT LA NUIT',
+      phase2Desc: 'Mise en station polaire, séquenceur N.I.N.A./ASIAIR, EAF & guidage PHD2.',
+      phase3Badge: '3. APRÈS LA NUIT',
+      phase3Desc: 'Calibration DOF, GraXpert AI, SPCC & étirement GHS (Siril / PixInsight).',
       trustBadge: "⭐ Noté 4.9/5 par plus de 320 passionnés d'astronomie",
       catalog: 'Catalogue des Cours',
       vipSection: 'Accès Membre / Code',
@@ -416,6 +428,15 @@ export default function App() {
       subtitle: 'Master Deep Sky Astrophotography',
       heroBadge: '✨ Elite Masterclass • 2026 Edition',
       heroDesc: 'From complete beginner to seasoned imager: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
+      videoSectionBadge: '🎬 Official Welcome Video (FR / EN)',
+      videoSectionTitle: 'Your Companion Before, During, and After Your Astronomy Night',
+      videoSectionSub: 'Discover how our interactive modules and simulators guide you step-by-step from equipment setup to final image processing.',
+      phase1Badge: '1. BEFORE THE NIGHT',
+      phase1Desc: 'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
+      phase2Badge: '2. DURING THE NIGHT',
+      phase2Desc: 'Polar alignment, N.I.N.A./ASIAIR sequencing, EAF autofocus & PHD2 guiding.',
+      phase3Badge: '3. AFTER THE NIGHT',
+      phase3Desc: 'Calibration frames, GraXpert AI, SPCC & GHS stretching (Siril / PixInsight).',
       trustBadge: '⭐ Rated 4.9/5 by over 320 astronomy enthusiasts',
       catalog: 'Course Catalog',
       vipSection: 'Member Access / Code',
@@ -2339,7 +2360,7 @@ export default function App() {
           <div className="space-y-16">
             {/* HERO SECTION */}
             <div
-              className={`text-center py-16 px-4 md:px-12 rounded-3xl border space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-sm ${
+              className={`text-center py-14 px-4 md:px-12 rounded-3xl border space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-sm ${
                 nightVision
                   ? 'bg-rose-950/30 border-rose-900/50'
                   : 'bg-gradient-to-b from-indigo-950/50 via-slate-900/40 to-slate-950/20 border-indigo-500/30'
@@ -2366,6 +2387,120 @@ export default function App() {
               >
                 {currentT.heroDesc}
               </p>
+
+              {/* ==================================================== */}
+              {/* LECTEUR VIDEO DE BIENVENUE OFFICIEL (FR / EN)        */}
+              {/* ==================================================== */}
+              <div
+                className={`max-w-4xl mx-auto mt-8 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-5 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div>
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-widest ${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      }`}
+                    >
+                      {currentT.videoSectionBadge}
+                    </span>
+                    <h3 className="text-lg md:text-xl font-black text-white mt-0.5">
+                      {currentT.videoSectionTitle}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300 shrink-0 self-start sm:self-center">
+                    🔊 FR / EN
+                  </span>
+                </div>
+
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={WELCOME_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+
+                <p
+                  className={`text-xs md:text-sm text-center leading-relaxed ${
+                    nightVision ? 'text-rose-200' : 'text-slate-300'
+                  }`}
+                >
+                  {currentT.videoSectionSub}
+                </p>
+
+                {/* LES 3 PILIERS : AVANT, PENDANT & APRES LA NUIT */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-cyan-400'
+                      }`}
+                    >
+                      🔭 {currentT.phase1Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase1Desc}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-indigo-400'
+                      }`}
+                    >
+                      🌌 {currentT.phase2Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase2Desc}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-emerald-400'
+                      }`}
+                    >
+                      🎨 {currentT.phase3Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase3Desc}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
                 <button
