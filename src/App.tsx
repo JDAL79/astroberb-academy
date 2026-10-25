@@ -19,7 +19,7 @@ const SUPPORT_EMAIL = 'contact@astroberb.com';
 
 // Chemins des fichiers multimédias dans public/
 const WELCOME_VIDEO_URL = '/welcome.mp4';
-const LOGO_URL = '/logo.png'; // Enregistrez votre logo ici dans public/
+const LOGO_URL = '/logo.png'; // Placez votre logo ici dans public/
 
 type CalculatorType = 'sampling' | 'torque' | 'exposure' | 'focus' | 'compare' | 'npf' | 'none';
 
@@ -197,9 +197,9 @@ export default function App() {
     } catch (e) {}
   };
 
-  // COMPOSANT LOGO OFFICIEL AVEC ADAPTATION MODE NUIT
+  // COMPOSANT LOGO OFFICIEL AVEC MISE EN VALEUR SUR FOND SOMBRE
   const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
-    <div className={`relative rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 group-hover:scale-105 shrink-0 ${className}`}>
+    <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 ${className}`}>
       <img
         src={LOGO_URL}
         alt="Astroberb Academy Logo"
