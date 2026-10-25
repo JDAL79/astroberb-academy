@@ -17,8 +17,9 @@ const ACCESS_CODES: Record<string, number[]> = {
 
 const SUPPORT_EMAIL = 'contact@astroberb.com';
 
-// Chemin de la vidéo placée dans votre dossier public/ (public/welcome.mp4)
+// Chemins des assets placés dans le dossier public/
 const WELCOME_VIDEO_URL = '/welcome.mp4';
+const LOGO_URL = '/logo.png';
 
 type CalculatorType = 'sampling' | 'torque' | 'exposure' | 'focus' | 'compare' | 'npf' | 'none';
 
@@ -196,55 +197,17 @@ export default function App() {
     } catch (e) {}
   };
 
-  // COMPOSANT LOGO VECTORIEL VECTOR (Option 1)
+  // COMPOSANT LOGO OFFICIEL (IMAGE /LOGO.PNG) AVEC FILTRE MODE NUIT ROUGE
   const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
-    <svg
-      viewBox="0 0 100 100"
-      className={`transition-transform duration-300 group-hover:scale-105 ${className}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="astroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={nightVision ? '#f43f5e' : '#38bdf8'} />
-          <stop offset="50%" stopColor={nightVision ? '#be123c' : '#6366f1'} />
-          <stop offset="100%" stopColor={nightVision ? '#881337' : '#a855f7'} />
-        </linearGradient>
-      </defs>
-      <rect
-        x="4"
-        y="4"
-        width="92"
-        height="92"
-        rx="24"
-        fill={nightVision ? '#1f0308' : '#090d16'}
-        stroke="url(#astroGrad)"
-        strokeWidth="3"
+    <div className={`relative rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 group-hover:scale-105 shrink-0 ${className}`}>
+      <img
+        src={LOGO_URL}
+        alt="Astroberb Academy Logo"
+        className={`w-full h-full object-cover ${
+          nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+        }`}
       />
-      <circle
-        cx="50"
-        cy="50"
-        r="31"
-        stroke={nightVision ? '#9f1239' : '#334155'}
-        strokeWidth="1.5"
-        strokeDasharray="4 4"
-      />
-      <circle cx="50" cy="50" r="15" fill="url(#astroGrad)" />
-      <ellipse
-        cx="50"
-        cy="50"
-        rx="36"
-        ry="11"
-        transform="rotate(-28 50 50)"
-        stroke={nightVision ? '#fda4af' : '#22d3ee'}
-        strokeWidth="3.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M74 22 L76 28 L82 30 L76 32 L74 38 L72 32 L66 30 L72 28 Z"
-        fill="#ffffff"
-      />
-    </svg>
+    </div>
   );
 
   // GENERATEUR DE CERTIFICAT OFFICIEL
@@ -319,7 +282,7 @@ export default function App() {
       '<style>',
       '@page { size: A4; margin: 16mm; }',
       "body { font-family: 'Segoe UI', Roboto, sans-serif; color: #0f172a; line-height: 1.55; padding: 15px; background: white; }",
-      '.header { border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }',
+      '.header { border-bottom: 3px solid #6366f1; padding-bottom: 12mm; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }',
       '.brand { font-size: 22px; font-weight: 900; color: #312e81; }',
       '.sub { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: bold; }',
       'h1 { font-size: 22px; color: #0f172a; margin-bottom: 8px; margin-top: 0; }',
