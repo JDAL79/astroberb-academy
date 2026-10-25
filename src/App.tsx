@@ -197,13 +197,13 @@ export default function App() {
     } catch (e) {}
   };
 
-  // COMPOSANT LOGO OFFICIEL AVEC MISE EN VALEUR SUR FOND SOMBRE
+  // COMPOSANT LOGO OFFICIEL (AFFICHAGE ENTIER / OBJECT-CONTAIN)
   const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
-    <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 ${className}`}>
+    <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 flex items-center justify-center ${className}`}>
       <img
         src={LOGO_URL}
         alt="Astroberb Academy Logo"
-        className={`w-full h-full object-cover ${
+        className={`w-full h-full object-contain ${
           nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
         }`}
       />
