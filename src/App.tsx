@@ -351,7 +351,7 @@ export default function App() {
       packBtnShort: '🔥 Pack Intégral',
       freePreviewBtn: '👁️ Essayer la Démo Gratuite (Simulateur + Chapitre 1)',
       previewBannerTitle: '👁️ MODE APERÇU GRATUIT — Module 1',
-      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Débloquez ce module ou le Pack Intégral pour accéder aux 3 chapitres, au cours complet, au quiz et aux fiches PDF A4.",
+      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Débloquez ce module ou le Pack Intégral pour accéder aux chapitres approfondis, au cours complet, au quiz et aux fiches PDF A4.",
       accessGranted: 'Code validé avec succès ! Cliquez sur vos formations débloquées :',
       invalidCode: "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
       accessCourse: '🚀 ACCÉDER À LA MASTERCLASS',
@@ -461,7 +461,7 @@ export default function App() {
       packBtnShort: '🔥 Full Bundle',
       freePreviewBtn: '👁️ Try Free Demo (Simulator + Chapter 1)',
       previewBannerTitle: '👁️ FREE PREVIEW MODE — Module 1',
-      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Unlock this module or the Full Bundle to access all chapters, theoretical courses, quizzes, and printable A4 PDF sheets.',
+      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Unlock this module or the Full Bundle to access detailed chapters, theoretical courses, quizzes, and printable A4 PDF sheets.',
       accessGranted: 'Code validated! Click any unlocked course below:',
       invalidCode: 'Invalid access code. Please check your email or contact support.',
       accessCourse: '🚀 START MASTERCLASS',
@@ -602,7 +602,7 @@ export default function App() {
       calculatorType: 'sampling' as CalculatorType,
       content: {
         fr: {
-          intro: "Le choix du tube optique détermine 80 % de votre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques et mécaniques.",
+          intro: "Le choix du tube optique détermine 80 % de votre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques, physiques et mécaniques.",
           slides: [
             {
               title: "Chapitre 1 : Focale vs Rapport d'ouverture (f/D)",
@@ -634,6 +634,26 @@ export default function App() {
               ],
               proTip: "Si vous insérez un filtre de 2 mm d'épaisseur dans votre train optique, ajoutez +0,67 mm (1/3 de l'épaisseur du verre) à votre distance de backfocus cible (soit 55,7 mm).",
             },
+            {
+              title: 'Chapitre 4 : Aberrations Chromatiques & Triplet ED vs Doublet',
+              subtitle: 'Gérer la pureté spectrale des étoiles brillantes',
+              bullets: [
+                "Une lentille simple disperse la lumière en plusieurs couleurs (aberration chromatique). Un doublet ED (Extra-low Dispersion) réduit ce défaut, mais seuls les triplets ED apochromatiques alignent parfaitement les longueurs d'onde rouge, verte et bleue au même foyer.",
+                "Conséquence en astrophotographie : Les doublets laissent un petit halo violet (purple fringe) autour des étoiles brillantes (type Véga ou Sirius) qui s'élimine difficilement au traitement.",
+                "Privilégiez toujours un verre FPL-53 ou FPL-55 combiné à de l'Lanthanum pour un piqué irréprochable sans frange colorée.",
+              ],
+              proTip: "Le verre FPL-53 possède des propriétés optiques proches de la fameuse fluorite calcique naturelle, garantissant un piqué hors du commun.",
+            },
+            {
+              title: 'Chapitre 5 : Tenue Mécanique & Flexions Différentielles',
+              subtitle: 'Pourquoi la rigidité de votre tube prime sur le reste',
+              bullets: [
+                "Un tube optique en aluminium se dilate ou se rétracte légèrement selon la température nocturne, ce qui peut faire dériver la mise au point de quelques dizaines de microns.",
+                "Les tubes en carbone (CFRP) sont insensibles aux variations thermiques, mais nécessitent tout de même une attention particulière sur la liaison porte-oculaire / queue d'aronde.",
+                "Chaque élément du train optique doit être boulonné et vissé sans aucun jeu radial pour éliminer la flexion différentielle.",
+              ],
+              proTip: "Utilisez systématiquement des colliers de fixation surdimensionnés et une queue d'aronde de type Losmandy (3 pouces) plutôt qu'un format Vixen dès que votre tube dépasse les 7 kg.",
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -651,6 +671,11 @@ export default function App() {
               body: "Bannissez définitivement les coulants à serrage annulaire (1.25'' ou 2'' à vis latérales) pour l'imagerie : sous le poids de la caméra refroidie et de la roue à filtres, ils provoquent de la flexion différentielle et du tilt lorsque le télescope change d'orientation dans le ciel. Privilégiez une chaîne 100 % vissée (filetages M42, M48 ou M54) du porte-oculaire jusqu'au capteur.",
               highlight: 'Empilement standard 55 mm : Caméra (17,5 mm) + Tiroir à filtre (21 mm) + Bague M48 (16,5 mm) = 55,0 mm',
             },
+            {
+              heading: '4. Étude Avancée : Correction du Tilt Mécanique par Bague Ajustable',
+              body: "Le tilt (inclinaison du plan du capteur par rapport au plan focal de l'optique) se manifeste par une zone floue localisée dans un seul coin de l'image, tandis que les trois autres coins sont parfaitement piqués. L'installation d'une bague de tilt micrométrique (Tilt Adjuster) insérée juste devant la caméra permet de corriger l'orthogonalité au centième de millimètre près à l'aide de vis de poussée/tirage.",
+              highlight: "Protocole : Réaliser une pose de 30s, identifier le coin le plus lointain du foyer, et ajuster la micro-vis correspondante.",
+            },
           ] as LessonSection[],
           steps: [
             "1. Calculer son échantillonnage dans le simulateur ci-dessus pour viser la plage optimale de 0,8'' à 2,0'' par pixel.",
@@ -658,6 +683,7 @@ export default function App() {
             "3. Ajouter +0,67 mm en rondelles micrométriques (shims) si un filtre de 2 mm d'épaisseur est présent dans le chemin optique.",
             '4. Inspecter la forme des étoiles dans les 4 coins sur une pose test de 10 secondes (HFR / Aberration Inspector).',
             "5. Équilibrer le tube optique équipé (pare-buée déployé et câbles branchés) sur la queue d'aronde.",
+            '6. Valider l’absence de tilt mécanique sur un champ stellaire riche avant de lancer les acquisitions principales.',
           ],
           quiz: [
             {
@@ -679,6 +705,16 @@ export default function App() {
               ],
               correct: 0,
               explanation: 'Des étoiles étirées radialement vers le centre indiquent une sous-correction : augmentez la distance correcteur-capteur avec une bague fine de 0,5 mm ou 1 mm.',
+            },
+            {
+              question: "Quel type de verre est généralement privilégié pour concevoir une lunette apochromat de haute qualité exempte de chromatisme ?",
+              options: [
+                'Verre sodocalcique standard',
+                'Verre ED bas dispersion (type FPL-53 ou FPL-55)',
+                'Verre teinté de lunettes de soleil',
+              ],
+              correct: 1,
+              explanation: 'Les verres ED spéciaux (comme le FPL-53) permettent de concentrer les trois couleurs primaires au même foyer exact.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -837,7 +873,7 @@ export default function App() {
       calculatorType: 'torque' as CalculatorType,
       content: {
         fr: {
-          intro: "La monture équatoriale est le cœur battant de votre setup. L'arrivée des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a révolutionné la discipline : découvrez comment dompter leur mécanique unique et testez votre couple mécanique ci-dessous.",
+          intro: "La monture équatoriale est le cœur battant de votre setup nomade ou fixe. L'avènement des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a redéfini les standards de portabilité et de charge utile. Ce module détaille la mécanique de précision de ces montures.",
           slides: [
             {
               title: 'Chapitre 1 : Vis sans fin vs Réducteur Harmonique (Strainwave)',
@@ -853,7 +889,7 @@ export default function App() {
               title: "Chapitre 2 : Dompter l'Erreur Périodique (PE) Harmonique",
               subtitle: "Le secret des poses courtes d'autoguidage (0.5s à 1.0s)",
               bullets: [
-                "Contrairement aux vis sans fin qui ont une erreur périodique faible mais parfois saccadée, les réducteurs harmoniques ont une erreur périodique d'amplitude plus large (±10'' à ±20'') mais parfaitement sinusoïdale.",
+                "Contrairement aux vis sans fin qui ont une erreur périodique lente (8 à 12 minutes), les réducteurs harmoniques ont une période de rotation moteur plus courte (généralement 100 à 400 secondes) avec une amplitude sinusoïdale marquée (±10'' à ±20'').",
                 "Cependant, la pente de dérive (dérivée temporelle en ''/seconde) peut être rapide à certains angles de la couronne elliptique.",
                 "Pour figer cette dérive, il est impératif d'autoguider avec des poses courtes de 0,5 s à 1,0 s (au lieu de 2 s ou 3 s sur une monture classique).",
               ],
@@ -868,6 +904,16 @@ export default function App() {
                 'Attention au Cable Snag (accrochage de câble) : avec le couple énorme d’une Juwei-17 ou AM5, un câble bloqué sera arraché sans que la monture ne ralentisse !',
               ],
               proTip: "Visez une erreur totale de mise en station inférieure à 1 minute d'arc (< 60'') : au-delà de cette précision, serrer les vis de blocage risque de fausser le réglage plus que de l'améliorer.",
+            },
+            {
+              title: 'Chapitre 4 : Freins Électromagnétiques & Sécurité Alimentaire',
+              subtitle: 'Protéger votre matériel en cas de coupure de courant',
+              bullets: [
+                "Contrairement aux montures à vis sans fin traditionnelles qui bloquent souvent d'elles-mêmes hors tension, les réducteurs harmoniques peuvent rétro-pédaler sous le poids du télescope si l'alimentation 12V est coupée.",
+                "C'est pourquoi les modèles haut de gamme (comme les Juwei-17 ou UMi-17S) intègrent un frein électromagnétique à manque de courant (Fail-Safe Brake) sur l'axe d'Ascension Droite.",
+                "Dès que l'alimentation s'interrompt, le frein se verrouille instantanément, empêchant tout basculement destructeur du tube optique.",
+              ],
+              proTip: 'Vérifiez toujours que votre connecteur d’alimentation 12V possède un système à vis ou de verrouillage pour éviter tout débranchement intempestif.',
             },
           ] as Slide[],
           courseSections: [
@@ -1053,7 +1099,7 @@ export default function App() {
       calculatorType: 'none' as CalculatorType,
       content: {
         fr: {
-          intro: "Pourquoi passer la nuit dehors par -10°C à vérifier votre cadrage alors qu'un mini-PC sous N.I.N.A. ou un boîtier ZWO ASIAIR peut tout orchestrer au pixel près ? Apprenez à programmer une nuit complète, du crépuscule jusqu'au parcage à l'aube.",
+          intro: "Pourquoi passer la nuit dehors par -10°C à vérifier votre cadrage alors qu'un mini-PC sous N.I.N.A. ou un boîtier ZWO ASIAIR peut tout orchestrer au pixel près ? Apprenez à programmer une nuit complète, du crépuscule jusqu'au parcage à l'aube sans intervention humaine.",
           slides: [
             {
               title: 'Chapitre 1 : Plate Solving Astrométrique (ASTAP)',
@@ -1084,6 +1130,16 @@ export default function App() {
                 'En fin de nuit, la séquence réchauffe doucement le capteur (Warm-up), parque la monture en position Home et coupe le suivi.',
               ],
               proTip: "Dans vos paramètres de Meridian Flip, ajoutez un délai de 5 minutes APRÈS le passage du méridien (Post-Meridian Delay) pour éviter que la monture n'hésite pile sur la ligne des 0°.",
+            },
+            {
+              title: 'Chapitre 4 : Gestion des Déclencheurs Intelligents (Triggers)',
+              subtitle: 'Automatiser la mise au point selon la température',
+              bullets: [
+                "Un bon séquenceur ne se contente pas d'enchaîner des poses : il surveille l'environnement grâce à des déclencheurs conditionnels.",
+                "Déclencheur thermique : Lancer un autofocus dès que la température extérieure chute de plus de 1,5°C.",
+                "Déclencheur de qualité : Re-centrer la cible par astrométrie si la dérive dépasse 1 minute d'arc suite à une légère flexion.",
+              ],
+              proTip: 'Configurez toujours une pause de sécurité météo si vous possédez un capteur de nuages (SkyQualityMeter / CloudWatcher).',
             },
           ] as Slide[],
           courseSections: [
@@ -1263,7 +1319,7 @@ export default function App() {
       calculatorType: 'exposure' as CalculatorType,
       content: {
         fr: {
-          intro: "Photographier des nébuleuses d'une finesse spectaculaire depuis un jardin en pleine ville (Bortle 7-8) ou sous la Pleine Lune est aujourd'hui une réalité grâce aux capteurs CMOS refroidis et aux filtres interférentiels. Testez notre calculateur de temps de pose unitaire ci-dessous !",
+          intro: "Photographier des nébuleuses d'une finesse spectaculaire depuis un jardin en pleine ville (Bortle 7-8) ou sous la Pleine Lune est aujourd'hui une réalité grâce aux capteurs CMOS refroidis et aux filtres interférentiels à bande étroite. Ce module explore en profondeur la physique des capteurs et l'étalonnage DOF.",
           slides: [
             {
               title: 'Chapitre 1 : Capteurs CMOS Refroidis, Gain HCG & Offset',
@@ -1294,6 +1350,16 @@ export default function App() {
                 'Les Bias ou Dark-Flats : Soustraits aux Flats pour permettre leur division mathématique exacte.',
               ],
               proTip: 'Créez votre bibliothèque de Master Darks (30 poses de 60s, 120s et 300s à -10°C, Gain 100) un jour de pluie dans votre salon : vous pourrez la réutiliser pendant 6 à 12 mois !',
+            },
+            {
+              title: "Chapitre 4 : Profondeur Numérique 16-bit vs 14-bit",
+              subtitle: "Optimiser la dynamique des faibles contrastes",
+              bullets: [
+                "Les caméras dotées de convertisseurs analogiques-numériques (ADC) 16 bits offrent 65 536 nuances de gris possibles par pixel, contre 16 384 nuances en 14 bits.",
+                "Cette résolution accrue est particulièrement utile pour lisser les dégradés subtils dans les nébuleuses diffuses et éviter l'effet de palier (banding) lors des étirements d'histogramme.",
+                "Assurez-vous que votre logiciel de capture et vos scripts d'empilement gèrent nativement les flux FITS 16 bits.",
+              ],
+              proTip: "Privilégiez toujours le stockage au format FITS ou XISF non compressé pour préserver l'intégralité des données mathématiques du capteur.",
             },
           ] as Slide[],
           courseSections: [
@@ -1511,6 +1577,16 @@ export default function App() {
               ],
               proTip: "Utilisez toujours l'Assistant de Guidage (Guiding Assistant) de PHD2 pendant 2 minutes : il mesure votre turbulence réelle et calcule le MinMo (déplacement minimal avant correction) optimal.",
             },
+            {
+              title: 'Chapitre 4 : Compensation de la Flexion Différentielle en Guidage',
+              subtitle: 'Quand la lunette guide bouge par rapport au tube imageur',
+              bullets: [
+                "Si vos étoiles de guidage restent parfaites dans PHD2 mais que vos brutes principales présentent de légers filés sur des poses de 300s, vous souffrez de flexion différentielle.",
+                "Cause : Le système de fixation de la lunette guide (anneaux ou platine) fléchit sous l'effet de la pesanteur au fil de la rotation terrestre.",
+                "Solution définitive : Installez un Diviseur Optique (Off-Axis Guider - OAG) : il prélève une infime partie de la lumière du même télescope principal, éliminant 100 % de la flexion différentielle !",
+              ],
+              proTip: 'Dès que votre focale dépasse 800 mm, le passage à l’OAG devient fortement recommandé pour stabiliser votre suivi sub-arcseconde.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1689,7 +1765,7 @@ export default function App() {
       calculatorType: 'compare' as CalculatorType,
       content: {
         fr: {
-          intro: "L'acquisition sur le terrain ne représente que 50 % d'une astrophoto : l'autre moitié se joue devant l'écran ! Que vous traitiez une galaxie spirale complexe (comme NGC 7331 et son groupe Deer Lick) ou une nébuleuse SHO, maîtrisez le workflow moderne Siril & PixInsight.",
+          intro: "L'acquisition sur le terrain ne représente que 50 % d'une astrophoto : l'autre moitié se joue devant l'écran de post-traitement ! Que vous traitiez une galaxie spirale complexe (comme NGC 7331 et son groupe Deer Lick) ou une nébuleuse complexe, maîtrisez le workflow moderne Siril & PixInsight de A à Z.",
           slides: [
             {
               title: 'Chapitre 1 : Prétraitement & Stade Linéaire Pur',
@@ -1720,6 +1796,16 @@ export default function App() {
                 'Étirez le calque des étoiles séparément avec un étirement doux (Arcsinh Stretch) pour préserver leurs couleurs dorées et bleutées, puis recombinez en mode PixelMath / Screen !',
               ],
               proTip: "Effectuez toujours 3 ou 4 petits étirements GHS successifs plutôt qu'un seul étirement brutal : vous garderez un contrôle total sur la montée du fond de ciel.",
+            },
+            {
+              title: 'Chapitre 4 : Masques de Luminance & Rehaussement de Saturation',
+              subtitle: 'Sublimer les contrastes et les couleurs astrophysiques',
+              bullets: [
+                "L'utilisation de masques de luminance inversés permet de protéger les zones sombres du fond de ciel tout en appliquant des traitements de netteté ou de saturation sélective sur les nébuleuses.",
+                "Saturation colorimétrique : Travailler dans l'espace colorimétrique CIELCh permet de dissocier la chrominance (couleurs) de la luminance pour booster les teintes sans faire monter le bruit chromatique.",
+                "Finition cosmétique : Contrôler l'éclat des étoiles (Star Reduction) pour redonner de la propreté visuelle à l'image finale.",
+              ],
+              proTip: "N'ayez pas la main trop lourde sur la saturation : un ciel naturel conserve des teintes douces et nuancées.",
             },
           ] as Slide[],
           courseSections: [
@@ -1901,7 +1987,7 @@ export default function App() {
       calculatorType: 'npf' as CalculatorType,
       content: {
         fr: {
-          intro: "Rien ne remplace l'émotion d'une nuit sous un ciel pur de montagne ou de réserve de ciel étoilé (Bortle 1-2). Découvrez comment concevoir un setup ultra-compact tenant dans un sac à dos cabine d'avion et calculez vos temps de pose NPF ci-dessous !",
+          intro: "Rien ne remplace l'émotion d'une nuit sous un ciel pur de montagne ou de réserve de ciel étoilé (Bortle 1-2). Découvrez comment concevoir un setup ultra-compact tenant dans un sac à dos cabine d'avion, maîtriser la règle NPF et capturer des panoramas d'arches de la Voie Lactée à couper le souffle.",
           slides: [
             {
               title: 'Chapitre 1 : Objectifs Rapides, Coma & Règle NPF',
@@ -1932,6 +2018,16 @@ export default function App() {
                 'Protégez toujours vos optiques et caméras en bagage cabine, et mettez uniquement le trépied et les contrepoids/rotules métalliques en bagage de soute.',
               ],
               proTip: 'En climat humide ou froid, alimentez une petite bande chauffante (Dew Heater) en 5V USB autour de la lentille frontale de votre objectif dès le début de la nuit pour éviter toute buée.',
+            },
+            {
+              title: 'Chapitre 4 : Panoramas d’Arches de la Voie Lactée en Mosaïque',
+              subtitle: "Assembler plusieurs panneaux verticaux pour un champ immersif",
+              bullets: [
+                "Pour capturer l'arche complète de la Voie Lactée d'un horizon à l'autre, réalisez des assemblages multi-panneaux en mode portrait.",
+                "Conservez une balance des blancs rigoureusement fixe (ex: 4000K) sur tous les panneaux pour éviter les sauts de couleur lors du stitching.",
+                "Assurez un recouvrement (overlap) d'au moins 35 % à 40 % entre chaque photo voisine pour permettre aux logiciels de fusion (PTGui ou Lightroom) de trouver les points de repère stellaires.",
+              ],
+              proTip: 'Utilisez une tête panoramique graduée pour tourner votre appareil autour du point nodal exact de l’objectif.',
             },
           ] as Slide[],
           courseSections: [
