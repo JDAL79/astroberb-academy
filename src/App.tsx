@@ -330,7 +330,7 @@ export default function App() {
     fr: {
       title: 'Astroberb Academy',
       subtitle: "Maîtrisez l'Astrophotographie du Ciel Profond",
-      heroBadge: "✨ Masterclass d'élite • Édition 2026",
+      heroBadge: "⚡ SUPER PROMO !! • OFFRE SPÉCIALE -70%",
       heroDesc: "Du débutant passionné à l'astrophotographe chevronné : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
       videoSectionBadge: '🎬 Vidéo de Bienvenue Officielle (FR / EN)',
       videoSectionTitle: 'Votre Compagnon Avant, Pendant et Après votre Nuit d’Astronomie',
@@ -347,11 +347,11 @@ export default function App() {
       unlockBtn: 'Activer mon code',
       buyStripe: 'Carte bancaire',
       buyPayPal: 'PayPal',
-      buyPackFull: '🔥 Obtenir le Pack Intégral (79$ CAD)',
-      packBtnShort: '🔥 Pack Intégral',
+      buyPackFull: '🔥 Obtenir le Pack Intégral (49.99$ CAD)',
+      packBtnShort: '⚡ SUPER PROMO : Pack Intégral (49.99$)',
       freePreviewBtn: '👁️ Essayer la Démo Gratuite (Simulateur + Chapitre 1)',
       previewBannerTitle: '👁️ MODE APERÇU GRATUIT — Module 1',
-      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Débloquez ce module ou le Pack Intégral pour accéder aux chapitres approfondis, au cours complet, au quiz et aux fiches PDF A4.",
+      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Profitez de la SUPER PROMO pour débloquer l'accès complet à tous les modules.",
       accessGranted: 'Code validé avec succès ! Cliquez sur vos formations débloquées :',
       invalidCode: "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
       accessCourse: '🚀 ACCÉDER À LA MASTERCLASS',
@@ -372,8 +372,8 @@ export default function App() {
       successTitle: "Bienvenue dans l'élite de l'Astroberb Academy !",
       successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant des 7 modules complets, des 6 simulateurs optiques, des quiz et des guides PDF.',
       backupCodeNotice: "IMPORTANT — Votre code d'accès multi-appareils à conserver :",
-      packTitle: "L'Offre Ultime : Le Pack Intégral 7-en-1",
-      packDesc: "Obtenez un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses complètes, nos 6 simulateurs interactifs, nos quiz et nos guides PDF (Valeur : 203$ CAD). Économisez 124$ !",
+      packTitle: "⚡ OFFRE SPÉCIALE : Le Pack Intégral 7-en-1",
+      packDesc: "Obtenez un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses complètes, nos 6 simulateurs interactifs, nos quiz et nos guides PDF (Valeur réelle : 203$ CAD). Profitez de la super promo limitée !",
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
       vipDesc: 'Entrez votre code personnel reçu après votre achat (ou votre code de sauvegarde) pour débloquer instantanément vos formations sur cet appareil :',
@@ -440,7 +440,7 @@ export default function App() {
     en: {
       title: 'Astroberb Academy',
       subtitle: 'Master Deep Sky Astrophotography',
-      heroBadge: '✨ Elite Masterclass • 2026 Edition',
+      heroBadge: '⚡ SUPER PROMO !! • SPECIAL OFFER -70%',
       heroDesc: 'From complete beginner to seasoned imager: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
       videoSectionBadge: '🎬 Official Welcome Video (FR / EN)',
       videoSectionTitle: 'Your Companion Before, During, and After Your Astronomy Night',
@@ -457,11 +457,11 @@ export default function App() {
       unlockBtn: 'Activate Code',
       buyStripe: 'Credit Card',
       buyPayPal: 'PayPal',
-      buyPackFull: '🔥 Get Full Bundle ($79 CAD)',
-      packBtnShort: '🔥 Full Bundle',
+      buyPackFull: '🔥 Get Full Bundle ($49.99 CAD)',
+      packBtnShort: '⚡ SUPER PROMO: Full Bundle ($49.99)',
       freePreviewBtn: '👁️ Try Free Demo (Simulator + Chapter 1)',
       previewBannerTitle: '👁️ FREE PREVIEW MODE — Module 1',
-      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Unlock this module or the Full Bundle to access detailed chapters, theoretical courses, quizzes, and printable A4 PDF sheets.',
+      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Take advantage of the SUPER PROMO to unlock full access.',
       accessGranted: 'Code validated! Click any unlocked course below:',
       invalidCode: 'Invalid access code. Please check your email or contact support.',
       accessCourse: '🚀 START MASTERCLASS',
@@ -482,8 +482,8 @@ export default function App() {
       successTitle: 'Welcome to the Elite Astroberb Academy!',
       successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, 6 interactive optical simulators, quizzes, and printable PDF guides.',
       backupCodeNotice: 'IMPORTANT — Save your multi-device backup code:',
-      packTitle: 'The Ultimate Offer: 7-in-1 Full Bundle',
-      packDesc: 'Get immediate, lifetime access to all 7 complete masterclasses, 6 interactive optical calculators, quizzes, and PDF field guides ($203 CAD value). Save $124!',
+      packTitle: '⚡ SPECIAL OFFER: 7-in-1 Full Bundle',
+      packDesc: 'Get immediate, lifetime access to all 7 complete masterclasses, 6 interactive optical calculators, quizzes, and PDF field guides ($203 CAD value). Save big today!',
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
       vipDesc: 'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
@@ -592,9 +592,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD1',
       titleFr: 'Module 1 : Choisir son Télescope & ses Optiques',
       titleEn: 'Module 1: Choosing Your Telescope & Optics',
-      price: 29,
-      badgeFr: 'Fondamental Optique',
-      badgeEn: 'Optical Foundations',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: 'Lunettes apochromatiques (Triplet ED), Newton, Ritchey-Chrétien : formules optiques, échantillonnage, backfocus 55 mm et correction du tilt.',
       descEn: 'Apochromatic refractors (ED Triplet), Newtonian, Ritchey-Chrétien: optical designs, pixel scale, 55mm backfocus, and sensor tilt.',
       image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=900&q=80',
@@ -863,9 +865,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD2',
       titleFr: 'Module 2 : Montures Harmoniques & Mise en Station',
       titleEn: 'Module 2: Harmonic Mounts & Polar Alignment',
-      price: 29,
-      badgeFr: 'Matériel & Suivi',
-      badgeEn: 'Hardware & Tracking',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: "Maîtriser les montures à réducteurs harmoniques (Juwei-17, Proxisky UMi-17S, ZWO AM5) et l'alignement polaire sub-arcminute.",
       descEn: 'Master strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) and sub-arcminute polar alignment.',
       image: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=900&q=80',
@@ -1089,9 +1093,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD3',
       titleFr: 'Module 3 : Acquisition Automatisée (ASIAIR & N.I.N.A.)',
       titleEn: 'Module 3: Automated Acquisition (ASIAIR & N.I.N.A.)',
-      price: 29,
-      badgeFr: 'Automatisation',
-      badgeEn: 'Automation',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: 'Automatisez 100 % de votre nuit : astrométrie ASTAP, Plate Solving, séquenceur avancé, Dithering et retournement au méridien.',
       descEn: 'Automate 100% of your night: ASTAP astrometry, Plate Solving, advanced sequencer, Dithering, and Meridian Flip.',
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
@@ -1309,9 +1315,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD4',
       titleFr: 'Module 4 : Caméras Refroidies & Filtres Bande Étroite',
       titleEn: 'Module 4: Cooled Cameras & Narrowband Filters',
-      price: 29,
-      badgeFr: 'Capteurs & Ville',
-      badgeEn: 'Sensors & City Imaging',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: 'Capteurs CMOS (IMX533, IMX571), Gain HCG, Darks/Flats/Bias et imagerie SHO (Palette Hubble) ou Dual-Band HOO en ville.',
       descEn: 'CMOS sensors (IMX533, IMX571), HCG Gain, Darks/Flats/Bias, and SHO (Hubble Palette) or Dual-Band HOO city imaging.',
       image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=900&q=80',
@@ -1535,9 +1543,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD5',
       titleFr: 'Module 5 : Autofocus EAF & Autoguidage PHD2',
       titleEn: 'Module 5: EAF Autofocus & PHD2 Guiding',
-      price: 29,
-      badgeFr: 'Précision & Suivi',
-      badgeEn: 'Precision & Guiding',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: 'Obtenir des étoiles ponctuelles : courbe en V (HFR), calcul de la CFZ, compensation du backlash et suivi PHD2 sub-arcseconde.',
       descEn: 'Achieve pinpoint stars: V-curve autofocus (HFR), CFZ calculation, backlash compensation, and sub-arcsecond PHD2 guiding.',
       image: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=900&q=80',
@@ -1755,9 +1765,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD6',
       titleFr: 'Module 6 : Traitement Avancé (Siril, PixInsight & PS)',
       titleEn: 'Module 6: Advanced Processing (Siril, PixInsight & PS)',
-      price: 29,
-      badgeFr: "Traitement d'Art",
-      badgeEn: 'Master Processing',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: "De l'empilement brut au chef-d'œuvre (galaxies type NGC 7331 & nébuleuses) : GraXpert AI, SPCC, déconvolution, Starless et GHS.",
       descEn: 'From raw stack to masterpiece (galaxies like NGC 7331 & nebulae): GraXpert AI, SPCC, deconvolution, Starless, and GHS.',
       image: 'https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=900&q=80',
@@ -1977,9 +1989,11 @@ export default function App() {
       backupCode: 'ASTRO-MOD7',
       titleFr: 'Module Bonus : Setup Nomade & Grand Champ',
       titleEn: 'Bonus Module: Travel Setup & Widefield Milky Way',
-      price: 29,
-      badgeFr: 'Bonus Exclusif',
-      badgeEn: 'Exclusive Bonus',
+      priceDisplay: '9,99 $',
+      priceOld: '29,00 $',
+      price: 9.99,
+      badgeFr: '⚡ SUPER PROMO',
+      badgeEn: '⚡ SPECIAL PROMO',
       descFr: 'Voyager léger sous les ciels Bortle 1 : traqueurs nomades, règle NPF, Samyang 135mm f/2 et arches de la Voie Lactée.',
       descEn: 'Travel light under Bortle 1 skies: portable star trackers, NPF rule, Samyang 135mm f/2, and Milky Way arches.',
       image: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=900&q=80',
@@ -2754,13 +2768,14 @@ export default function App() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-                          <span className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-black/70 backdrop-blur-md text-[11px] font-bold text-white border border-white/20 shadow">
+                          <span className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-amber-500 backdrop-blur-md text-[11px] font-black text-slate-950 border border-amber-300 shadow">
                             {lang === 'fr' ? mod.badgeFr : mod.badgeEn}
                           </span>
 
-                          <span className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-xl bg-indigo-600/90 backdrop-blur-md font-black text-sm shadow-lg text-white">
-                            {mod.price}$ CAD
-                          </span>
+                          <div className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-xl bg-indigo-600/90 backdrop-blur-md shadow-lg flex items-center gap-2 text-white">
+                            <span className="text-xs line-through text-slate-300">{mod.priceOld}</span>
+                            <span className="font-black text-sm text-cyan-300">{mod.priceDisplay}</span>
+                          </div>
 
                           {isDone && (
                             <span className="absolute top-3 right-3 px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg">
@@ -2961,7 +2976,7 @@ export default function App() {
                     {currentT.previewBannerTitle}
                   </span>
                   <span className="text-xs font-bold text-cyan-300">
-                    {currentModule.price}$ CAD (ou Pack 7-en-1 à 79$ CAD)
+                    {currentModule.priceDisplay} CAD (ou Pack 7-en-1 à 49.99$ CAD)
                   </span>
                 </div>
                 <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
@@ -2973,14 +2988,14 @@ export default function App() {
                     onClick={() => handleOpenLink(currentModule.links.stripe)}
                     className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow"
                   >
-                    💳 {currentT.buyStripe} ({currentModule.price}$ CAD)
+                    💳 {currentT.buyStripe} ({currentModule.priceDisplay} CAD)
                   </button>
                   <button
                     type="button"
                     onClick={() => handleOpenLink(currentModule.links.paypal)}
                     className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow"
                   >
-                    🅿️ {currentT.buyPayPal} ({currentModule.price}$ CAD)
+                    🅿️ {currentT.buyPayPal} ({currentModule.priceDisplay} CAD)
                   </button>
                   <button
                     type="button"
@@ -3793,7 +3808,7 @@ export default function App() {
         {activeTab === 'pack' && (
           <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl">
             <span className="inline-block px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold uppercase tracking-widest">
-              7 Modules + 6 Simulateurs + PDF
+              ⚡ SUPER PROMO — 7 Modules + 6 Simulateurs + PDF
             </span>
             <h2 className="text-3xl font-black text-white">
               {currentT.packTitle}
@@ -3805,8 +3820,9 @@ export default function App() {
               <div className="text-sm text-slate-400 line-through">
                 203,00 $ CAD
               </div>
-              <div className="text-4xl md:text-5xl font-black text-cyan-400">
-                79,00 $ CAD
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-xl line-through text-slate-400">150,00 $ CAD</span>
+                <span className="text-4xl md:text-5xl font-black text-cyan-400">49,99 $ CAD</span>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
