@@ -2082,7 +2082,7 @@ export default function App() {
                 "Pour doubler la focale de l'objectif",
               ],
               correct: 0,
-              explanation: "Fermer légèrement le diaphragme masque les rayons marginaux de la lentille frontale, ce qui supprime drastiquement la coma et l'aberration chromatique.",
+              explanation: "Fermer légèrement le diaphragme masque les rayons marginal de la frontale, ce qui supprime drastiquement la coma et l'aberration chromatique.",
             },
           ] as QuizQuestion[],
           downloads: [
@@ -2192,10 +2192,10 @@ export default function App() {
               title: 'Official Expedition Checklist: Portable Widefield Astrophotography',
               sections: [
                 {
-                  title: '1. Carry-On vs. Checked Luggage',
+                  title: '1. Répartition Bagage Cabine vs Bagage Soute (Avion)',
                   content: [
-                    'Carry-On: Cameras, lenses, mount head, mini-PC/ASIAIR, and ALL Lithium batteries (<100Wh each).',
-                    'Checked Bag: Carbon tripod, counterweight bars, hex keys, and empty weight bags.',
+                    'En Cabine (Sac à dos photo) : Caméras, boîtiers, objectifs (14mm, 35mm, 135mm), tête de monture légère, mini-PC/ASIAIR, et TOUTES les batteries Li-ion (< 100 Wh chacune).',
+                    'En Soute (Valise rigide) : Trépied carbone, rotules, barres de contrepoids, outils (clés Allen, tournevis) et sangles de lestage vides.',
                   ],
                 },
               ],
@@ -2707,7 +2707,7 @@ export default function App() {
               </div>
             )}
 
-            {/* CATALOGUE DES MODULES */}
+            {/* CATALOGUE DES COURSES ET OFFRE INTÉGRALE */}
             <div className="space-y-8">
               <div
                 className={`flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-4 ${
@@ -2724,8 +2724,8 @@ export default function App() {
                   </span>
                   <h3 className="text-2xl md:text-3xl font-black mt-1">
                     {lang === 'fr'
-                      ? "Les 7 Modules d'Expertise"
-                      : 'The 7 Expert Modules'}
+                      ? "Les 7 Modules d'Expertise & Offre Intégrale"
+                      : 'The 7 Expert Modules & Full Bundle'}
                   </h3>
                 </div>
                 <p
@@ -2734,11 +2734,12 @@ export default function App() {
                   }`}
                 >
                   {lang === 'fr'
-                    ? 'Chaque module inclut des diaporamas interactifs, des simulateurs optiques, des cours détaillés, des quiz et des guides PDF A4 imprimables.'
-                    : 'Every module includes interactive slides, optical simulators, deep theoretical lessons, quizzes, and printable A4 PDF field guides.'}
+                    ? 'Choisissez vos modules à la carte ou optez pour le Pack Intégral super promo pour tout débloquer instantanément.'
+                    : 'Choose modules individually or select the Super Promo Full Bundle to unlock everything instantly.'}
                 </p>
               </div>
 
+              {/* GRILLE DES 7 MODULES + CARTE DU PACK INTÉGRAL */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {modules.map((mod) => {
                   const unlocked = isModuleUnlocked(mod.id);
@@ -2866,6 +2867,58 @@ export default function App() {
                     </div>
                   );
                 })}
+
+                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE */}
+                <div className="group border-2 border-amber-500/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-2xl bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 hover:scale-105">
+                  <div>
+                    <div className="h-52 overflow-hidden relative bg-slate-950 flex items-center justify-center p-6 text-center">
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent" />
+                      <div className="relative space-y-2">
+                        <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-widest shadow">
+                          🔥 Offre Ultime 7-en-1
+                        </span>
+                        <div className="text-3xl font-black text-white pt-2">
+                          Pack Intégral
+                        </div>
+                        <div className="flex items-center justify-center gap-3 pt-1">
+                          <span className="text-sm line-through text-slate-400">203,00 $ CAD</span>
+                          <span className="text-2xl font-black text-cyan-300">49,99 $ CAD</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 space-y-3">
+                      <h4 className="font-bold text-lg leading-snug text-amber-200">
+                        {lang === 'fr' ? "Accès Complet à Tous les Modules" : "Full Access to All Modules"}
+                      </h4>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        {lang === 'fr' 
+                          ? "Débloquez instantanément les 7 masterclasses, les 6 simulateurs optiques interactifs, les quiz et les guides PDF A4 imprimables." 
+                          : "Instantly unlock all 7 masterclasses, 6 interactive optical simulators, quizzes, and printable A4 PDF guides."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 flex flex-col gap-2.5">
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
+                        className="py-3 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-black text-slate-950 shadow-md text-center transition flex items-center justify-center gap-1"
+                      >
+                        <span>💳</span> {currentT.buyStripe}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
+                        className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                      >
+                        <span>🅿️</span> {currentT.buyPayPal}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
 
