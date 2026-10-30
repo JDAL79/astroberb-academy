@@ -2512,7 +2512,7 @@ export default function App() {
                 {currentT.heroDesc}
               </p>
 
-              {/* 1. VIDEO DE PROMOTION DU LOGO EN HAUT DE PAGE */}
+              {/* VIDEO PROMO DU LOGO EN HAUT DE PAGE */}
               <div
                 className={`max-w-4xl mx-auto mt-6 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
                   nightVision
@@ -2772,7 +2772,7 @@ export default function App() {
                 </p>
               </div>
 
-              {/* 2. VIDEO DE PROMOTION DES MODULES JUSTE AVANT LA GRILLE DES COURS */}
+              {/* VIDEO DE PROMO DES MODULES JUSTE AVANT LA GRILLE */}
               <div
                 className={`max-w-4xl mx-auto p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
                   nightVision
