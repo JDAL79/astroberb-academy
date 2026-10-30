@@ -19,7 +19,9 @@ const SUPPORT_EMAIL = 'contact@astroberb.com';
 
 // Chemins des fichiers multimédias dans public/
 const WELCOME_VIDEO_URL = '/welcome.mp4';
-const LOGO_URL = '/logo.png'; // Placez votre logo ici dans public/
+const PROMO_LOGO_VIDEO_URL = '/promo-logo.mp4';
+const PROMO_MODULES_VIDEO_URL = '/promo-modules.mp4';
+const LOGO_URL = '/logo.png';
 
 type CalculatorType = 'sampling' | 'torque' | 'exposure' | 'focus' | 'compare' | 'npf' | 'none';
 
@@ -332,9 +334,12 @@ export default function App() {
       subtitle: "Maîtrisez l'Astrophotographie du Ciel Profond",
       heroBadge: "⚡ SUPER PROMO !! • OFFRE SPÉCIALE -70%",
       heroDesc: "Du débutant passionné à l'astrophotographe chevronné : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
-      videoSectionBadge: '🎬 Vidéo de Bienvenue Officielle (FR / EN)',
-      videoSectionTitle: 'Votre Compagnon Avant, Pendant et Après votre Nuit d’Astronomie',
-      videoSectionSub: 'Découvrez comment nos modules interactifs et nos simulateurs vous guident étape par étape, de la préparation du matériel jusqu’au traitement final.',
+      videoSectionBadge: '🎬 Vidéo de Bienvenue & Présentation',
+      videoSectionTitle: 'Découvrez l’Excellence de l’Astroberb Academy',
+      videoSectionSub: 'Plongez au cœur de notre masterclass avec notre présentation visuelle et notre compagnon d’apprentissage.',
+      modulesVideoBadge: '🚀 Bande Annonce des Modules',
+      modulesVideoTitle: 'Progressez Étape par Étape Vers la Maîtrise du Ciel Profond',
+      modulesVideoSub: 'Visionnez notre vidéo exclusive de présentation des modules et des simulateurs optiques.',
       phase1Badge: '1. AVANT LA NUIT',
       phase1Desc: 'Calcul d’échantillonnage, backfocus 55 mm & équilibrage harmonique.',
       phase2Badge: '2. PENDANT LA NUIT',
@@ -442,9 +447,12 @@ export default function App() {
       subtitle: 'Master Deep Sky Astrophotography',
       heroBadge: '⚡ SUPER PROMO !! • SPECIAL OFFER -70%',
       heroDesc: 'From complete beginner to seasoned imager: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
-      videoSectionBadge: '🎬 Official Welcome Video (FR / EN)',
-      videoSectionTitle: 'Your Companion Before, During, and After Your Astronomy Night',
-      videoSectionSub: 'Discover how our interactive modules and simulators guide you step-by-step from equipment setup to final image processing.',
+      videoSectionBadge: '🎬 Welcome & Presentation Video',
+      videoSectionTitle: 'Discover the Excellence of Astroberb Academy',
+      videoSectionSub: 'Immerse yourself in our masterclass with our visual presentation and learning companion.',
+      modulesVideoBadge: '🚀 Modules Trailer',
+      modulesVideoTitle: 'Progress Step by Step Toward Deep Sky Mastery',
+      modulesVideoSub: 'Watch our exclusive video trailer presenting the modules and optical simulators.',
       phase1Badge: '1. BEFORE THE NIGHT',
       phase1Desc: 'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
       phase2Badge: '2. DURING THE NIGHT',
@@ -923,7 +931,7 @@ export default function App() {
           courseSections: [
             {
               heading: '1. Comparatif Technique : Juwei-17, Proxisky UMi-17S et ZWO AM5',
-              body: "Les montures Juwei-17 et Proxisky UMi-17S utilisent des réducteurs harmoniques de taille 17 (rapport 100:1) sur les deux axes, couplés à une courroie synchrone et un contrôleur OnStep (compatible ASCOM, INDI, N.I.N.A. et ASIAIR). Elles intègrent un frein électromagnétique à manque de courant sur l'axe AD : si l'alimentation 12V coupe brusquement en pleine nuit, le frein bloque instantanément l'axe pour empêcher votre télescope de retomber sous son propre poids.",
+              body: "Les montures Juwei-17 et Proxisky UMi-17S utilisent des réducteurs harmoniques de taille 17 (rapport 100:1) sur les deux axes, couplés à une courroie synchrone et un contrôleur OnStep (compatible ASCOM, INDI, N.I.N.A. et ASIAIR). Elles intègrent un frein électromagnétique à manque de courant sur l'axe AD : si l'alimentation 12V coupe brusquement en pleine nuit, le frein bloque instantanément l'axe pour empêcher votre télescope de retomber sur son propre poids.",
               highlight: 'Sécurité absolue : Toujours alimenter la monture en 12V - 5A stable et lester le trépied carbone au centre.',
             },
             {
@@ -2082,7 +2090,7 @@ export default function App() {
                 "Pour doubler la focale de l'objectif",
               ],
               correct: 0,
-              explanation: "Fermer légèrement le diaphragme masque les rayons marginal de la frontale, ce qui supprime drastiquement la coma et l'aberration chromatique.",
+              explanation: "Fermer légèrement le diaphragme masque les rayons marginaux de la frontale, ce qui supprime drastiquement la coma et l'aberration chromatique.",
             },
           ] as QuizQuestion[],
           downloads: [
@@ -2504,15 +2512,15 @@ export default function App() {
                 {currentT.heroDesc}
               </p>
 
-              {/* LECTEUR VIDEO DE BIENVENUE OFFICIEL (FR / EN) */}
+              {/* 1. VIDEO DE PROMOTION DU LOGO EN HAUT DE PAGE */}
               <div
-                className={`max-w-4xl mx-auto mt-8 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-5 ${
+                className={`max-w-4xl mx-auto mt-6 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
                   nightVision
                     ? 'bg-black/60 border-rose-800/70'
                     : 'bg-slate-950/80 border-cyan-500/30'
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div>
                     <span
                       className={`text-[11px] font-black uppercase tracking-widest ${
@@ -2525,11 +2533,44 @@ export default function App() {
                       {currentT.videoSectionTitle}
                     </h3>
                   </div>
-                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300 shrink-0 self-start sm:self-center">
-                    🔊 FR / EN
+                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300">
+                    ✨ Logo Trailer
                   </span>
                 </div>
 
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={PROMO_LOGO_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+                <p
+                  className={`text-xs md:text-sm text-center leading-relaxed ${
+                    nightVision ? 'text-rose-200' : 'text-slate-300'
+                  }`}
+                >
+                  {currentT.videoSectionSub}
+                </p>
+              </div>
+
+              {/* LECTEUR VIDEO DE BIENVENUE CLASSIQUE */}
+              <div
+                className={`max-w-4xl mx-auto p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-5 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
                 <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
                   <video
                     src={WELCOME_VIDEO_URL}
@@ -2546,14 +2587,6 @@ export default function App() {
                       : 'Your browser does not support HTML5 video playback.'}
                   </video>
                 </div>
-
-                <p
-                  className={`text-xs md:text-sm text-center leading-relaxed ${
-                    nightVision ? 'text-rose-200' : 'text-slate-300'
-                  }`}
-                >
-                  {currentT.videoSectionSub}
-                </p>
 
                 {/* LES 3 PILIERS : AVANT, PENDANT & APRES LA NUIT */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
@@ -2720,7 +2753,7 @@ export default function App() {
                       nightVision ? 'text-rose-400' : 'text-cyan-400'
                     }`}
                   >
-                    {lang === 'fr' ? 'Programme Complet' : 'Full Curriculum'}
+                    {lang === 'fr' ? ' Programme Complet' : 'Full Curriculum'}
                   </span>
                   <h3 className="text-2xl md:text-3xl font-black mt-1">
                     {lang === 'fr'
@@ -2739,8 +2772,59 @@ export default function App() {
                 </p>
               </div>
 
+              {/* 2. VIDEO DE PROMOTION DES MODULES JUSTE AVANT LA GRILLE DES COURS */}
+              <div
+                className={`max-w-4xl mx-auto p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div>
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-widest ${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      }`}
+                    >
+                      {currentT.modulesVideoBadge}
+                    </span>
+                    <h3 className="text-lg md:text-xl font-black text-white mt-0.5">
+                      {currentT.modulesVideoTitle}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300">
+                    🔭 Modules Preview
+                  </span>
+                </div>
+
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={PROMO_MODULES_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+                <p
+                  className={`text-xs md:text-sm text-center leading-relaxed ${
+                    nightVision ? 'text-rose-200' : 'text-slate-300'
+                  }`}
+                >
+                  {currentT.modulesVideoSub}
+                </p>
+              </div>
+
               {/* GRILLE DES 7 MODULES + CARTE DU PACK INTÉGRAL */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {modules.map((mod) => {
                   const unlocked = isModuleUnlocked(mod.id);
                   const isDone = completedModules.includes(mod.id);
