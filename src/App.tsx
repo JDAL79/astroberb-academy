@@ -384,7 +384,7 @@ export default function App() {
       vipDesc: 'Entrez votre code personnel reçu après votre achat (ou votre code de sauvegarde) pour débloquer instantanément vos formations sur cet appareil :',
       vipPlaceholder: 'Votre code (ex: PACK-COMPLET-2026 ou ASTRO-MOD1)',
       viewUnlocked: 'Voir mes modules déverrouillés ➔',
-      taxNotice: 'Prix en dollars canadiens (CAD). Paiement 100% sécurisé — Accès immédiat.',
+      taxNotice: '🔒 Paiement 100% sécurisé via Stripe & PayPal — Accès immédiat et illimité à vie.',
       footerRights: 'Tous droits réservés.',
       termsLink: 'Conditions Générales de Vente (CGV)',
       privacyLink: 'Politique de Confidentialité',
@@ -497,7 +497,7 @@ export default function App() {
       vipDesc: 'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
       vipPlaceholder: 'Your code (e.g., PACK-COMPLET-2026 or ASTRO-MOD1)',
       viewUnlocked: 'View my unlocked modules ➔',
-      taxNotice: 'Prices in Canadian Dollars (CAD). 100% secure checkout — Instant access.',
+      taxNotice: '🔒 100% Secure Checkout via Stripe & PayPal — Instant lifetime access.',
       footerRights: 'All rights reserved.',
       termsLink: 'Terms of Sale (TOS)',
       privacyLink: 'Privacy Policy',
@@ -2823,7 +2823,7 @@ export default function App() {
                 </p>
               </div>
 
-              {/* GRILLE DES 7 MODULES + CARTE DU PACK INTÉGRAL */}
+              {/* GRILLE DES 7 MODULES + CARTE DU PACK INTÉGRAL AVEC EFFET ÉTOILE AU SURVOL */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {modules.map((mod) => {
                   const unlocked = isModuleUnlocked(mod.id);
@@ -2834,22 +2834,25 @@ export default function App() {
                       onClick={() => {
                         if (unlocked) openModuleDetail(mod.id, false);
                       }}
-                      className={`group border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md ${
+                      className={`group relative border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md hover:shadow-[0_0_30px_rgba(6,182,212,0.35)] hover:border-cyan-400 ${
                         nightVision
                           ? 'bg-rose-950/20 border-rose-900/60'
                           : 'bg-slate-900/70 border-slate-800/80'
                       } ${
                         unlocked
-                          ? 'hover:border-current cursor-pointer hover:-translate-y-1'
+                          ? 'cursor-pointer hover:-translate-y-1'
                           : 'hover:-translate-y-1'
                       }`}
                     >
+                      {/* Effet d'étoiles scintillantes au survol de la carte */}
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
                       <div>
                         <div className="h-52 overflow-hidden relative">
                           <img
                             src={mod.image}
                             alt={lang === 'fr' ? mod.titleFr : mod.titleEn}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90"
+                            className="w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-90"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
@@ -2879,8 +2882,8 @@ export default function App() {
                           )}
                         </div>
 
-                        <div className="p-6 space-y-3">
-                          <h4 className="font-bold text-lg leading-snug">
+                        <div className="p-6 space-y-3 relative z-10">
+                          <h4 className="font-bold text-lg leading-snug group-hover:text-cyan-300 transition-colors">
                             {lang === 'fr' ? mod.titleFr : mod.titleEn}
                           </h4>
                           <p
@@ -2893,7 +2896,7 @@ export default function App() {
                         </div>
                       </div>
 
-                      <div className="p-6 pt-0 flex flex-col gap-2.5">
+                      <div className="p-6 pt-0 flex flex-col gap-2.5 relative z-10">
                         {unlocked ? (
                           <button
                             type="button"
@@ -2952,8 +2955,10 @@ export default function App() {
                   );
                 })}
 
-                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE */}
-                <div className="group border-2 border-amber-500/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-2xl bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 hover:scale-105">
+                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE AVEC EFFET ETOILE */}
+                <div className="group relative border-2 border-amber-500/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-2xl bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 hover:scale-105 hover:shadow-[0_0_35px_rgba(245,158,11,0.4)]">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-400/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
                   <div>
                     <div className="h-52 overflow-hidden relative bg-slate-950 flex items-center justify-center p-6 text-center">
                       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent" />
@@ -2961,7 +2966,7 @@ export default function App() {
                         <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-widest shadow">
                           🔥 Offre Ultime 7-en-1
                         </span>
-                        <div className="text-3xl font-black text-white pt-2">
+                        <div className="text-3xl font-black text-white pt-2 group-hover:text-amber-300 transition-colors">
                           Pack Intégral
                         </div>
                         <div className="flex items-center justify-center gap-3 pt-1">
@@ -2971,7 +2976,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="p-6 space-y-3">
+                    <div className="p-6 space-y-3 relative z-10">
                       <h4 className="font-bold text-lg leading-snug text-amber-200">
                         {lang === 'fr' ? "Accès Complet à Tous les Modules" : "Full Access to All Modules"}
                       </h4>
@@ -2983,7 +2988,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="p-6 pt-0 flex flex-col gap-2.5">
+                  <div className="p-6 pt-0 flex flex-col gap-2.5 relative z-10">
                     <div className="grid grid-cols-2 gap-2.5">
                       <button
                         type="button"
