@@ -199,7 +199,7 @@ export default function App() {
     } catch (e) {}
   };
 
-  // COMPOSANT LOGO OFFICIEL (AFFICHAGE ENTIER / OBJECT-CONTAIN)
+  // COMPOSANT LOGO OFFICIEL AVEC LA MASCOTTE DU PETIT TÉLESCOPE ANIMÉ
   const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
     <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 flex items-center justify-center ${className}`}>
       <img
@@ -244,12 +244,12 @@ export default function App() {
       '<div style="font-size: 42px; margin-bottom: 10px;">🪐</div>',
       '<h1>Astroberb Academy</h1>',
       `<div class="sub">${lang === 'fr' ? 'Certificat Officiel de Maîtrise en Astrophotographie' : 'Official Certificate of Mastery in Astrophotography'}</div>`,
-      `<p>${lang === 'fr' ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de la masterclass d'élite, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique linéaire et non-linéaire." : 'This diploma certifies that the astrophotographer named below has successfully mastered the elite curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and linear/non-linear astrophysical image processing.'}</p>`,
+      `<p>${lang === 'fr' ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de notre collectif, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique." : 'This diploma certifies that the astrophotographer named below has successfully mastered our collective curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and astrophysical image processing.'}</p>`,
       `<div class="name">${displayName}</div>`,
       '<div class="footer">',
       `<div>${lang === 'fr' ? 'Délivré le' : 'Issued on'} : ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US')}</div>`,
       `<div>Modules validés : ${completedModules.length} / 7 • Support : ${SUPPORT_EMAIL}</div>`,
-      `<div><span class="signature">David Bérubé</span><br/>${lang === 'fr' ? 'Fondateur & Formateur Principal' : 'Founder & Lead Instructor'}</div>`,
+      `<div><span class="signature">L'Équipe Astroberb</span><br/>${lang === 'fr' ? 'Le Collectif d’Astronomes Amateurs' : 'The Amateur Astronomers Collective'}</div>`,
       '</div>',
       '</div>',
       '</body>',
@@ -331,22 +331,24 @@ export default function App() {
   const t = {
     fr: {
       title: 'Astroberb Academy',
-      subtitle: "Maîtrisez l'Astrophotographie du Ciel Profond",
+      subtitle: "Le Collectif d'Astronomes Amateurs — Astrophotographie du Ciel Profond",
       heroBadge: "⚡ SUPER PROMO !! • OFFRE SPÉCIALE -70%",
-      heroDesc: "Du débutant passionné à l'astrophotographe chevronné : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
-      videoSectionBadge: '🎬 Vidéo de Bienvenue & Présentation',
-      videoSectionTitle: 'Découvrez l’Excellence de l’Astroberb Academy',
-      videoSectionSub: 'Plongez au cœur de notre masterclass avec notre présentation visuelle et notre compagnon d’apprentissage.',
-      modulesVideoBadge: '🚀 Bande Annonce des Modules',
-      modulesVideoTitle: 'Progressez Étape par Étape Vers la Maîtrise du Ciel Profond',
-      modulesVideoSub: 'Visionnez notre vidéo exclusive de présentation des modules et des simulateurs optiques.',
+      heroDesc: "Bienvenue sur notre plateforme ! Nous sommes un groupe de passionnés d'astronomie réunis pour partager nos astuces de terrain : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
+      videoSectionBadge: '🎬 Présentation de notre Collectif',
+      videoSectionTitle: 'Bienvenue dans notre Observatoire Virtuel !',
+      videoSectionSub: 'Installez-vous confortablement avec un café chaud : nous vous montrons comment nous préparons nos nuits d’observation de A à Z.',
+      modulesVideoBadge: '🚀 Visite Guidée des Modules',
+      modulesVideoTitle: 'Ce que nous partageons avec vous dans nos Masterclasses',
+      modulesVideoSub: 'Découvrez en images comment nos outils et nos modules vous simplifient la vie sous les étoiles.',
+      originStoryTitle: '🔭 L’idée originale de notre collectif',
+      originStoryText: "L'idée originale du site formateur Astroberb est de rassembler tous nos trucs, astuces et connaissances en un seul endroit, accessibles en tout temps, surtout durant les séances d'astronomie. De rendre plus agréable l'approfondissement de vos connaissances en astronomie et astrophoto, et tout ça, dans la simplicité !",
       phase1Badge: '1. AVANT LA NUIT',
       phase1Desc: 'Calcul d’échantillonnage, backfocus 55 mm & équilibrage harmonique.',
       phase2Badge: '2. PENDANT LA NUIT',
       phase2Desc: 'Mise en station polaire, séquenceur N.I.N.A./ASIAIR, EAF & guidage PHD2.',
       phase3Badge: '3. APRÈS LA NUIT',
       phase3Desc: 'Calibration DOF, GraXpert AI, SPCC & étirement GHS (Siril / PixInsight).',
-      trustBadge: "⭐ Noté 4.9/5 par plus de 320 passionnés d'astronomie",
+      trustBadge: "⭐ Noté 4.9/5 par notre communauté de passionnés",
       catalog: 'Catalogue des Cours',
       vipSection: 'Accès Membre / Code',
       unlockBtn: 'Activer mon code',
@@ -356,7 +358,7 @@ export default function App() {
       packBtnShort: '⚡ SUPER PROMO : Pack Intégral (49.99$)',
       freePreviewBtn: '👁️ Essayer la Démo Gratuite (Simulateur + Chapitre 1)',
       previewBannerTitle: '👁️ MODE APERÇU GRATUIT — Module 1',
-      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Profitez de la SUPER PROMO pour débloquer l'accès complet à tous les modules.",
+      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Profitez de notre SUPER PROMO pour tout débloquer.",
       accessGranted: 'Code validé avec succès ! Cliquez sur vos formations débloquées :',
       invalidCode: "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
       accessCourse: '🚀 ACCÉDER À LA MASTERCLASS',
@@ -368,39 +370,39 @@ export default function App() {
       copiedBtn: '✅ Code copié !',
       progressLabel: 'Progression de votre cursus :',
       interactiveModule: 'Studio Pédagogique & Masterclass',
-      studioHeader: 'Diaporama Interactif & Conseils de Terrain',
-      fullCourseTitle: 'Cours Théorique Approfondi & Études de Cas',
-      tutorialSteps: 'Protocole Opérationnel & Checklist Terrain',
+      studioHeader: 'Diaporama Interactif & Astuces de notre Collectif',
+      fullCourseTitle: 'Cours Théorique Approfondi & Retours de Terrain',
+      tutorialSteps: 'Protocole Opérationnel & Checklist Personnelle',
       resourcesPdf: 'Fiches Techniques PDF (Générateur A4 Imprimable)',
       generatePdfBtn: 'Générer & Télécharger le PDF',
       successBadge: 'Paiement Validé avec Succès',
-      successTitle: "Bienvenue dans l'élite de l'Astroberb Academy !",
-      successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant des 7 modules complets, des 6 simulateurs optiques, des quiz et des guides PDF.',
+      successTitle: "Bienvenue dans la famille Astroberb Academy !",
+      successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant de tous nos modules, simulateurs et guides PDF.',
       backupCodeNotice: "IMPORTANT — Votre code d'accès multi-appareils à conserver :",
-      packTitle: "⚡ OFFRE SPÉCIALE : Le Pack Intégral 7-en-1",
-      packDesc: "Obtenez un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses complètes, nos 6 simulateurs interactifs, nos quiz et nos guides PDF (Valeur réelle : 203$ CAD). Profitez de la super promo limitée !",
+      packTitle: "⚡ OFFRE DU COLLECTIF : Le Pack Intégral 7-en-1",
+      packDesc: "Rejoignez notre communauté en obtenant un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses, nos 6 simulateurs et nos guides PDF (Valeur : 203$ CAD).",
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
-      vipDesc: 'Entrez votre code personnel reçu après votre achat (ou votre code de sauvegarde) pour débloquer instantanément vos formations sur cet appareil :',
+      vipDesc: 'Entrez votre code personnel reçu après votre achat pour débloquer instantanément vos formations sur cet appareil :',
       vipPlaceholder: 'Votre code (ex: PACK-COMPLET-2026 ou ASTRO-MOD1)',
       viewUnlocked: 'Voir mes modules déverrouillés ➔',
       taxNotice: '🔒 Paiement 100% sécurisé via Stripe & PayPal — Accès immédiat et illimité à vie.',
       footerRights: 'Tous droits réservés.',
       termsLink: 'Conditions Générales de Vente (CGV)',
       privacyLink: 'Politique de Confidentialité',
-      contactSupport: 'Support VIP',
+      contactSupport: 'Support du Collectif',
       closeBtn: 'Fermer',
       prevSlide: '◀ Chapitre précédent',
       nextSlide: 'Chapitre suivant ▶',
-      proTipLabel: "💡 Conseil d'expert Astroberb :",
+      proTipLabel: "💡 L'astuce de notre équipe :",
       quickAccessTitle: '⚡ Accès direct à vos formations déverrouillées :',
       calcTitle: "🧮 Simulateur Optique : Calculateur d'Échantillonnage & Seeing",
       calcFocalLabel: 'Focale effective du télescope (mm) :',
       calcPixelLabel: 'Taille des pixels de la caméra (µm) :',
       calcResult: 'Votre Échantillonnage : ',
-      calcVerdictGreat: "✨ Optimal (0.8'' à 2.0''/px) ! Vos pixels sont parfaitement accordés au seeing moyen (2'' à 3'') pour maximiser la finesse sans perdre en rapport signal/bruit.",
-      calcVerdictOver: "⚠️ Sur-échantillonnage (< 0.8''/px) : Vous grossissez la turbulence atmosphérique. Nécessite un ciel exceptionnel et un guidage sub-0.4'', ou utilisez le Binning 2x2.",
-      calcVerdictUnder: "⚠️ Sous-échantillonnage (> 2.0''/px) : Grand champ idéal pour les vastes nébuleuses, mais les petites étoiles peuvent paraître légèrement carrées (privilégiez le Drizzle au traitement).",
+      calcVerdictGreat: "✨ Optimal (0.8'' à 2.0''/px) ! Vos pixels sont parfaitement accordés au seeing moyen (2'' à 3'') pour maximiser la finesse sans perdre en signal.",
+      calcVerdictOver: "⚠️ Sur-échantillonnage (< 0.8''/px) : Vous grossissez la turbulence atmosphérique. Nécessite un ciel exceptionnel ou le Binning 2x2.",
+      calcVerdictUnder: "⚠️ Sous-échantillonnage (> 2.0''/px) : Grand champ idéal pour les vastes nébuleuses (privilégiez le Drizzle au traitement).",
       calcTorqueTitle: '⚖️ Simulateur Mécanique : Couple Harmonique & Contrepoids (Juwei-17 / UMi-17S / AM5)',
       calcPayloadLabel: 'Poids total équipé du tube optique (kg) :',
       calcRadiusLabel: "Déport du centre de gravité par rapport à l'axe AD (cm) :",
@@ -418,48 +420,50 @@ export default function App() {
       calcNpfTitle: '📸 Simulateur Grand Champ : Calculateur de la Règle NPF (Trépied Statique)',
       calcNpfFocalLabel: "Focale de l'objectif photo (mm) :",
       calcNpfApertureLabel: 'Ouverture du diaphragme (f/) :',
-      calcNpfResult: "Temps de pose max sans filé d'étoiles (étoiles ponctuelles) : ",
+      calcNpfResult: "Temps de pose max sans filé d'étoiles : ",
       quizTitle: '📝 Quiz de Validation des Connaissances',
       quizSubmit: 'Valider mes réponses',
       quizScore: 'Votre Score : ',
       quizRetry: 'Réinitialiser le quiz',
-      correctAnswer: '✅ Excellente réponse !',
-      wrongAnswer: '❌ Réponse incorrecte.',
+      correctAnswer: '✅ Bien joué !',
+      wrongAnswer: '❌ Pas tout à fait.',
       markComplete: '✓ Marquer ce module comme terminé',
       markIncomplete: '✓ Module terminé (Cliquer pour annuler)',
       certTitle: '🏆 Télécharger mon Certificat Officiel',
       certNamePlaceholder: 'Entrez votre Prénom et Nom pour le diplôme',
       faqTitle: '❓ Foire Aux Questions (FAQ)',
-      faq1Q: 'Ce cursus convient-il si je débute complètement ?',
-      faq1A: 'Absolument ! Chaque module démarre par les fondations expliquées simplement (sans jargon inutile), puis monte progressivement vers les techniques avancées utilisées par les astrophotographes expérimentés.',
-      faq2Q: "Comment reçois-je mes accès après l'achat ?",
-      faq2A: "L'accès est instantané après la transaction ! Votre module se débloque automatiquement et vous obtenez un code de sauvegarde personnel valable à vie sur tous vos appareils (PC, Mac, tablette, smartphone).",
+      faq1Q: 'Ce cursus convient-il si nous débutons complètement ?',
+      faq1A: 'Absolument ! Nous avons conçu chaque module en partant des bases les plus simples avant de monter pas à pas vers les techniques avancées que nous utilisons lors de nos soirées astro.',
+      faq2Q: "Comment recevons-nous nos accès après l'achat ?",
+      faq2A: "L'accès est instantané ! Votre module se débloque sur le champ et vous recevez un code de sauvegarde personnel valable à vie sur tous vos appareils.",
       faq3Q: "Puis-je utiliser le site sur le terrain la nuit sans m'éblouir ?",
-      faq3A: "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge sombre pour préserver à 100 % votre adaptation visuelle nocturne (rhodopsine).",
-      testimonialsTitle: '⭐ Ce que disent nos étudiants passionnés',
-      t1: "« Grâce au module sur les montures harmoniques (Juwei-17 / UMi-17S) et N.I.N.A., mon erreur RMS est passée de 1.4'' à 0.55'' et mes nuits tournent 100 % en automatique pendant que je dors ! »",
-      t1Author: 'Marc D., Astrophotographe amateur (Québec)',
-      t2: "« Le cours sur l'échantillonnage, le backfocus à 55 mm et le workflow linéaire Siril / PixInsight (GraXpert + SPCC + GHS) a complètement transformé mes images de galaxies comme NGC 7331. »",
-      t2Author: 'Stéphane L., Passionné de ciel profond',
+      faq3A: "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
+      testimonialsTitle: '⭐ Ce que disent les membres de notre communauté',
+      t1: "« Grâce aux conseils du collectif sur les montures harmoniques et N.I.N.A., mon erreur RMS est passée sous la barre des 0.6'' et mes nuits tournent toutes seules ! »",
+      t1Author: 'Marc D., Membre du collectif (Québec)',
+      t2: "« Le simulateur d'échantillonnage et les fiches PDF m'ont fait économiser des semaines de tests sur mon matériel. Merci l'équipe ! »",
+      t2Author: 'Stéphane L., Astrophotographe amateur',
     },
     en: {
       title: 'Astroberb Academy',
-      subtitle: 'Master Deep Sky Astrophotography',
+      subtitle: 'The Amateur Astronomers Collective — Master Deep Sky',
       heroBadge: '⚡ SUPER PROMO !! • SPECIAL OFFER -70%',
-      heroDesc: 'From complete beginner to seasoned imager: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
-      videoSectionBadge: '🎬 Welcome & Presentation Video',
-      videoSectionTitle: 'Discover the Excellence of Astroberb Academy',
-      videoSectionSub: 'Immerse yourself in our masterclass with our visual presentation and learning companion.',
-      modulesVideoBadge: '🚀 Modules Trailer',
-      modulesVideoTitle: 'Progress Step by Step Toward Deep Sky Mastery',
-      modulesVideoSub: 'Watch our exclusive video trailer presenting the modules and optical simulators.',
+      heroDesc: 'Welcome to our platform! We are a group of astronomy enthusiasts sharing our field tips: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
+      videoSectionBadge: '🎬 Meet Our Collective',
+      videoSectionTitle: 'Welcome to Our Virtual Observatory!',
+      videoSectionSub: 'Grab a hot coffee: we take you behind the scenes of how we prepare our deep-sky observation nights from A to Z.',
+      modulesVideoBadge: '🚀 Modules Preview',
+      modulesVideoTitle: 'What We Share With You in Our Masterclasses',
+      modulesVideoSub: 'Watch our exclusive video showcasing our interactive tools and simulators.',
+      originStoryTitle: '🔭 The Original Idea Behind Our Collective',
+      originStoryText: "The original idea behind Astroberb is to gather all our tips, tricks, and knowledge in one single place, accessible at all times, especially during astronomy sessions. To make deepening your knowledge in astronomy and astrophotography more enjoyable, and all of that, in complete simplicity!",
       phase1Badge: '1. BEFORE THE NIGHT',
       phase1Desc: 'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
       phase2Badge: '2. DURING THE NIGHT',
       phase2Desc: 'Polar alignment, N.I.N.A./ASIAIR sequencing, EAF autofocus & PHD2 guiding.',
       phase3Badge: '3. AFTER THE NIGHT',
       phase3Desc: 'Calibration frames, GraXpert AI, SPCC & GHS stretching (Siril / PixInsight).',
-      trustBadge: '⭐ Rated 4.9/5 by over 320 astronomy enthusiasts',
+      trustBadge: '⭐ Rated 4.9/5 by our community of enthusiasts',
       catalog: 'Course Catalog',
       vipSection: 'Member Access / Code',
       unlockBtn: 'Activate Code',
@@ -469,7 +473,7 @@ export default function App() {
       packBtnShort: '⚡ SUPER PROMO: Full Bundle ($49.99)',
       freePreviewBtn: '👁️ Try Free Demo (Simulator + Chapter 1)',
       previewBannerTitle: '👁️ FREE PREVIEW MODE — Module 1',
-      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Take advantage of the SUPER PROMO to unlock full access.',
+      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Take advantage of our SUPER PROMO to unlock full access.',
       accessGranted: 'Code validated! Click any unlocked course below:',
       invalidCode: 'Invalid access code. Please check your email or contact support.',
       accessCourse: '🚀 START MASTERCLASS',
@@ -481,17 +485,17 @@ export default function App() {
       copiedBtn: '✅ Copied!',
       progressLabel: 'Your curriculum progress:',
       interactiveModule: 'Pedagogical Studio & Masterclass',
-      studioHeader: 'Interactive Slides & Field Pro Tips',
-      fullCourseTitle: 'In-Depth Theoretical Course & Case Studies',
-      tutorialSteps: 'Operational Protocol & Field Checklist',
+      studioHeader: 'Interactive Slides & Collective Pro Tips',
+      fullCourseTitle: 'In-Depth Theoretical Course & Field Notes',
+      tutorialSteps: 'Operational Protocol & Personal Checklist',
       resourcesPdf: 'PDF Technical Sheets (Printable A4 Generator)',
       generatePdfBtn: 'Generate & Download PDF',
       successBadge: 'Payment Successful',
-      successTitle: 'Welcome to the Elite Astroberb Academy!',
-      successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, 6 interactive optical simulators, quizzes, and printable PDF guides.',
+      successTitle: 'Welcome to the Astroberb Academy Family!',
+      successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, simulators, and guides.',
       backupCodeNotice: 'IMPORTANT — Save your multi-device backup code:',
-      packTitle: '⚡ SPECIAL OFFER: 7-in-1 Full Bundle',
-      packDesc: 'Get immediate, lifetime access to all 7 complete masterclasses, 6 interactive optical calculators, quizzes, and PDF field guides ($203 CAD value). Save big today!',
+      packTitle: '⚡ COLLECTIVE SPECIAL: 7-in-1 Full Bundle',
+      packDesc: 'Join our community with lifetime access to all 7 complete masterclasses, 6 interactive calculators, and PDF field guides ($203 CAD value).',
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
       vipDesc: 'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
@@ -501,19 +505,19 @@ export default function App() {
       footerRights: 'All rights reserved.',
       termsLink: 'Terms of Sale (TOS)',
       privacyLink: 'Privacy Policy',
-      contactSupport: 'VIP Support',
+      contactSupport: 'Collective Support',
       closeBtn: 'Close',
       prevSlide: '◀ Previous Chapter',
       nextSlide: 'Next Chapter ▶',
-      proTipLabel: '💡 Astroberb Pro Tip:',
+      proTipLabel: '💡 Team Pro Tip:',
       quickAccessTitle: '⚡ Direct access to your unlocked courses:',
       calcTitle: '🧮 Optical Simulator: Pixel Scale & Seeing Calculator',
       calcFocalLabel: 'Effective Telescope Focal Length (mm):',
       calcPixelLabel: 'Camera Pixel Size (µm):',
       calcResult: 'Your Pixel Scale: ',
-      calcVerdictGreat: "✨ Optimal (0.8'' to 2.0''/px)! Your sensor is well matched to typical atmospheric seeing (2'' to 3'') for sharp details and high SNR.",
-      calcVerdictOver: "⚠️ Oversampled (< 0.8''/px): Magnifying atmospheric turbulence without extra resolution. Requires exceptional seeing and sub-0.4'' guiding, or 2x2 Binning.",
-      calcVerdictUnder: "⚠️ Undersampled (> 2.0''/px): Great widefield framing for large nebulae, though small stars may look slightly blocky (use Drizzle integration when stacking).",
+      calcVerdictGreat: "✨ Optimal (0.8'' to 2.0''/px)! Your sensor is well matched to typical atmospheric seeing for sharp details.",
+      calcVerdictOver: "⚠️ Oversampled (< 0.8''/px): Magnifying atmospheric turbulence without extra resolution.",
+      calcVerdictUnder: "⚠️ Undersampled (> 2.0''/px): Great widefield framing for large nebulae.",
       calcTorqueTitle: '⚖️ Mechanical Simulator: Harmonic Mount Torque & Counterweight (Juwei-17 / UMi-17S / AM5)',
       calcPayloadLabel: 'Total Rigged Payload Weight (kg):',
       calcRadiusLabel: 'Center of Gravity Offset from RA Axis (cm):',
@@ -531,29 +535,29 @@ export default function App() {
       calcNpfTitle: '📸 Widefield Simulator: NPF Rule Untracked Exposure Calculator',
       calcNpfFocalLabel: 'Camera Lens Focal Length (mm):',
       calcNpfApertureLabel: 'Lens Aperture (f/):',
-      calcNpfResult: 'Max Untracked Exposure (Pinpoint Stars): ',
+      calcNpfResult: 'Max Untracked Exposure: ',
       quizTitle: '📝 Knowledge Validation Quiz',
       quizSubmit: 'Submit Answers',
       quizScore: 'Your Score: ',
       quizRetry: 'Reset Quiz',
       correctAnswer: '✅ Correct!',
-      wrongAnswer: '❌ Incorrect.',
+      wrongAnswer: '❌ Pas tout à fait.',
       markComplete: '✓ Mark module as completed',
       markIncomplete: '✓ Completed (Click to undo)',
       certTitle: '🏆 Download My Official Certificate',
       certNamePlaceholder: 'Enter your Full Name for the diploma',
       faqTitle: '❓ Frequently Asked Questions (FAQ)',
       faq1Q: 'Is this curriculum suitable for complete beginners?',
-      faq1A: 'Yes! Every module starts with clear fundamentals explained step-by-step before diving into advanced techniques for seasoned astrophotographers.',
+      faq1A: 'Yes! We designed each module starting from simple fundamentals before stepping up to advanced techniques.',
       faq2Q: 'How do I receive my access after purchase?',
-      faq2A: 'Access is immediate! Your module unlocks automatically and displays your personal multi-device backup code valid for life across PC, Mac, tablet, and mobile.',
+      faq2A: 'Access is immediate! Your module unlocks automatically and displays your personal backup code.',
       faq3Q: 'Can I use this platform in the field at night?',
-      faq3A: 'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths and preserve your night vision.',
-      testimonialsTitle: '⭐ What our passionate students say',
-      t1: "« Thanks to the strainwave harmonic mount (Juwei-17 / UMi-17S) and N.I.N.A. module, my RMS guiding dropped from 1.4'' to 0.55'' and my sessions run 100% automatically while I sleep! »",
-      t1Author: 'Marc D., Amateur Astrophotographer (Quebec)',
-      t2: '« The pixel scale calculator, 55mm backfocus guide, and Siril / PixInsight workflow (GraXpert + SPCC + GHS) completely transformed my galaxy images like NGC 7331. »',
-      t2Author: 'Stéphane L., Deep Sky Enthusiast',
+      faq3A: 'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
+      testimonialsTitle: '⭐ What our community members say',
+      t1: "« Thanks to the collective's advice on harmonic mounts and N.I.N.A., my RMS guiding dropped below 0.6''! »",
+      t1Author: 'Marc D., Community Member (Quebec)',
+      t2: "« The sampling simulator and PDF guides saved me weeks of testing. Thanks team! »",
+      t2Author: 'Stéphane L., Amateur Astrophotographer',
     },
   };
 
@@ -612,7 +616,7 @@ export default function App() {
       calculatorType: 'sampling' as CalculatorType,
       content: {
         fr: {
-          intro: "Le choix du tube optique détermine 80 % de votre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques, physiques et mécaniques.",
+          intro: "Le choix du tube optique détermine 80 % de notre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques, physiques et mécaniques.",
           slides: [
             {
               title: "Chapitre 1 : Focale vs Rapport d'ouverture (f/D)",
@@ -2649,7 +2653,29 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
+              {/* ENCADRE : HISTORIQUE / IDEE ORIGINALE DU SITE (AVEC LE PETIT TELESCOPE) */}
+              <div
+                className={`max-w-4xl mx-auto p-6 md:p-8 rounded-3xl border shadow-xl text-left flex flex-col md:flex-row items-center gap-6 backdrop-blur-md ${
+                  nightVision
+                    ? 'bg-rose-950/40 border-rose-800'
+                    : 'bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-cyan-500/40'
+                }`}
+              >
+                <div className="w-24 h-24 shrink-0 rounded-2xl bg-black border-2 border-cyan-400/60 flex items-center justify-center shadow-2xl relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-cyan-500/10 animate-pulse" />
+                  <span className="text-5xl group-hover:scale-110 transition-transform duration-300">🔭</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className={`text-lg md:text-xl font-black ${nightVision ? 'text-rose-300' : 'text-cyan-300'}`}>
+                    {currentT.originStoryTitle}
+                  </h3>
+                  <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-100' : 'text-slate-300'}`}>
+                    {currentT.originStoryText}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row justify-center items-center gap-4">
                 <button
                   type="button"
                   onClick={() =>
@@ -2844,7 +2870,7 @@ export default function App() {
                           : 'hover:-translate-y-1'
                       }`}
                     >
-                      {/* Effet d'étoiles scintillantes au survol de la carte */}
+                      {/* Effet d'étoiles scintillantes au survol */}
                       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                       <div>
@@ -4143,7 +4169,7 @@ export default function App() {
                   Astroberb Academy ne stocke aucune coordonnée bancaire.
                 </p>
                 <p>
-                  <strong>2. Stockage local :</strong> Votre progression, votre
+                  <strong>2. Stockage local :</strong> % Votre progression, votre
                   choix de langue et vos modules débloqués sont enregistrés
                   localement sur votre navigateur (LocalStorage) sans pistage
                   publicitaire tiers.
