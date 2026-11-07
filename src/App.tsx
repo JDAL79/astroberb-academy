@@ -243,7 +243,8 @@ export default function App() {
       '<div class="container">',
       '<div style="font-size: 42px; margin-bottom: 10px;">🪐</div>',
       '<h1>Astroberb Academy</h1>',
-      `<div class="sub">${lang === 'fr' ? 'Certificat Officiel de Maîtrise en Astrophotographie' : 'Official Certificate of Mastery in Astrophotography'}</div>`, `<p>${lang === 'fr' ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de notre collectif, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique." : 'This diploma certifies that the astrophotographer named below has successfully mastered our collective curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and astrophysical image processing.'}</p>`,
+      `<div class="sub">${lang === 'fr' ? 'Certificat Officiel de Maîtrise en Astrophotographie' : 'Official Certificate of Mastery in Astrophotography'}</div>`,
+      `<p>${lang === 'fr' ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de notre collectif, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique." : 'This diploma certifies that the astrophotographer named below has successfully mastered our collective curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and astrophysical image processing.'}</p>`,
       `<div class="name">${displayName}</div>`,
       '<div class="footer">',
       `<div>${lang === 'fr' ? 'Délivré le' : 'Issued on'} : ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US')}</div>`,
@@ -276,7 +277,10 @@ export default function App() {
 
     const htmlContent = [
       '<!DOCTYPE html>',
-      `<html lang="${lang}">`, '<head>', '<meta charset="UTF-8">', `<title>${doc.name} - Astroberb Academy</title>`,
+      `<html lang="${lang}">`,
+      '<head>',
+      '<meta charset="UTF-8">',
+      `<title>${doc.name} - Astroberb Academy</title>`,
       '<style>',
       '@page { size: A4; margin: 16mm; }',
       "body { font-family: 'Segoe UI', Roboto, sans-serif; color: #0f172a; line-height: 1.55; padding: 15px; background: white; }",
@@ -307,9 +311,10 @@ export default function App() {
       '</div>',
       '<div style="text-align: right; font-size: 12px; color: #475569;">Édition 2026</div>',
       '</div>',
-      `<div class="mod-tag">${moduleTitle}</div>`, `<h1>${doc.title}</h1>`,
+      `<div class="mod-tag">${moduleTitle}</div>`,
+      `<h1>${doc.title}</h1>`,
       sectionsHtml,
-      `<div class="footer">© ${new Date().getFullYear()} Astroberb Academy — Support :${SUPPORT_EMAIL}</div>`,
+      `<div class="footer">© ${new Date().getFullYear()} Astroberb Academy — Support : ${SUPPORT_EMAIL}</div>`,
       '<script>setTimeout(function() { window.print(); }, 400);</script>',
       '</body>',
       '</html>',
@@ -337,13 +342,6 @@ export default function App() {
       modulesVideoSub: 'Découvrez en images comment nos outils et nos modules vous simplifient la vie sous les étoiles.',
       originStoryTitle: '🔭 L’idée originale de notre collectif',
       originStoryText: "L'idée originale du site formateur Astroberb est de rassembler tous nos trucs, astuces et connaissances en un seul endroit, accessibles en tout temps, surtout durant les séances d'astronomie. De rendre plus agréable l'approfondissement de vos connaissances en astronomie et astrophoto, et tout ça, dans la simplicité !",
-      benefitsTitle: '🎯 Ce que vous saurez faire avec nous sur le terrain',
-      benefit1Title: '1. Maîtriser votre matériel',
-      benefit1Desc: 'Fini les prises de tête avec le backfocus, le tilt ou le choix des filtres, vous saurez tout régler au millimètre.',
-      benefit2Title: '2. Automatiser vos nuits',
-      benefit2Desc: 'Programmez des sessions de A à Z (Plate solving, autofocus EAF, meridian flip) pour dormir l’esprit tranquille.',
-      benefit3Title: '3. Sublimer vos images',
-      benefit3Desc: 'Obtenez des galaxies et des nébuleuses contrastées et piquées grâce à un traitement moderne sous GraXpert et GHS.',
       phase1Badge: '1. AVANT LA NUIT',
       phase1Desc: 'Calcul d’échantillonnage, backfocus 55 mm & équilibrage harmonique.',
       phase2Badge: '2. PENDANT LA NUIT',
@@ -438,10 +436,8 @@ export default function App() {
       faq1A: 'Absolument ! Nous avons conçu chaque module en partant des bases les plus simples avant de monter pas à pas vers les techniques avancées que nous utilisons lors de nos soirées astro.',
       faq2Q: "Comment recevons-nous nos accès après l'achat ?",
       faq2A: "L'accès est instantané ! Votre module se débloque sur le champ et vous recevez un code de sauvegarde personnel valable à vie sur tous vos appareils.",
-      faq3Q: 'Sous quel format et combien de temps ai-je accès aux cours ?',
-      faq3A: "L'accès est immédiat, illimité et à vie directement depuis votre navigateur sur PC, Mac, tablette ou mobile. Vous pouvez également consulter et imprimer vos fiches techniques PDF A4 sur le terrain dès que vous en avez besoin !",
-      faq4Q: "Puis-je utiliser le site sur le terrain la nuit sans m'éblouir ?",
-      faq4A: "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
+      faq3Q: "Puis-je utiliser le site sur le terrain la nuit sans m'éblouir ?",
+      faq3A: "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
       testimonialsTitle: '⭐ Ce que disent les membres de notre communauté',
       t1: "« Grâce aux conseils du collectif sur les montures harmoniques et N.I.N.A., mon erreur RMS est passée sous la barre des 0.6'' et mes nuits tournent toutes seules ! »",
       t1Author: 'Marc D., Membre du collectif (Québec)',
@@ -461,13 +457,6 @@ export default function App() {
       modulesVideoSub: 'Watch our exclusive video showcasing our interactive tools and simulators.',
       originStoryTitle: '🔭 The Original Idea Behind Our Collective',
       originStoryText: "The original idea behind Astroberb is to gather all our tips, tricks, and knowledge in one single place, accessible at all times, especially during astronomy sessions. To make deepening your knowledge in astronomy and astrophotography more enjoyable, and all of that, in complete simplicity!",
-      benefitsTitle: '🎯 What You Will Be Able to Do in the Field with Us',
-      benefit1Title: '1. Master Your Equipment',
-      benefit1Desc: 'No more headaches with backfocus, tilt, or filter selection; you will know how to adjust everything precisely.',
-      benefit2Title: '2. Automate Your Nights',
-      benefit2Desc: 'Program sessions from A to Z (Plate solving, EAF autofocus, meridian flip) so you can sleep peacefully.',
-      benefit3Title: '3. Elevate Your Images',
-      benefit3Desc: 'Get stunning, crisp galaxies and nebulae using modern processing workflows in GraXpert and GHS.',
       phase1Badge: '1. BEFORE THE NIGHT',
       phase1Desc: 'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
       phase2Badge: '2. DURING THE NIGHT',
@@ -562,10 +551,8 @@ export default function App() {
       faq1A: 'Yes! We designed each module starting from simple fundamentals before stepping up to advanced techniques.',
       faq2Q: 'How do I receive my access after purchase?',
       faq2A: 'Access is immediate! Your module unlocks automatically and displays your personal backup code.',
-      faq3Q: 'What format are the courses in and how long do I have access?',
-      faq3A: 'Access is immediate, unlimited, and for life directly from your browser on PC, Mac, tablet, or mobile. You can also view and print your A4 PDF technical sheets in the field whenever you need them!',
-      faq4Q: 'Can I use this platform in the field at night?',
-      faq4A: 'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
+      faq3Q: 'Can I use this platform in the field at night?',
+      faq3A: 'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
       testimonialsTitle: '⭐ What our community members say',
       t1: "« Thanks to the collective's advice on harmonic mounts and N.I.N.A., my RMS guiding dropped below 0.6''! »",
       t1Author: 'Marc D., Community Member (Quebec)',
@@ -2308,4 +2295,1904 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen font-sans
+      className={`min-h-screen font-sans flex flex-col justify-between transition-colors duration-300 ${
+        nightVision
+          ? 'bg-[#120101] text-rose-200 selection:bg-rose-600 selection:text-white'
+          : 'bg-[#030712] text-slate-100 selection:bg-cyan-500 selection:text-slate-950'
+      }`}
+    >
+      {/* EN-TETE AVEC MODE NUIT & GLASSMORPHISM */}
+      <header
+        className={`border-b sticky top-0 z-50 backdrop-blur-md ${
+          nightVision
+            ? 'border-rose-900/60 bg-[#120101]/95 text-rose-100'
+            : 'border-slate-800/80 bg-[#030712]/90'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-3.5 md:h-20 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex items-center justify-between">
+            <div
+              className="flex items-center space-x-3 cursor-pointer group"
+              onClick={() => setActiveTab('home')}
+            >
+              <AstroberbLogo className="w-10 h-10" />
+              <h1
+                className={`font-extrabold text-lg tracking-tight ${
+                  nightVision
+                    ? 'text-rose-300'
+                    : 'bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent'
+                }`}
+              >
+                {currentT.title}
+              </h1>
+            </div>
+
+            <div className="flex md:hidden items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
+                  nightVision
+                    ? 'bg-rose-950 border-rose-800 text-rose-300'
+                    : 'bg-slate-900/90 border-slate-700/80'
+                }`}
+              >
+                🌐 {lang.toUpperCase()}
+              </button>
+              <button
+                type="button"
+                onClick={() => setNightVision(!nightVision)}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
+                  nightVision
+                    ? 'bg-rose-900 border-rose-700 text-white'
+                    : 'bg-slate-900/90 border-slate-700 text-rose-400'
+                }`}
+                title="Mode Nuit Rouge"
+              >
+                🔴
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('pack')}
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg text-white"
+              >
+                {currentT.packBtnShort}
+              </button>
+            </div>
+          </div>
+
+          <nav className="flex items-center justify-center space-x-8 text-sm border-t border-slate-800/60 pt-2.5 md:border-t-0 md:pt-0 font-medium">
+            <button
+              type="button"
+              onClick={() => setActiveTab('home')}
+              className={
+                activeTab === 'home'
+                  ? `${
+                      nightVision ? 'text-rose-400' : 'text-cyan-400'
+                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
+                  : 'hover:opacity-80 transition'
+              }
+            >
+              ✨ {currentT.catalog}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setVipStatus(null);
+                setActiveTab('vip');
+              }}
+              className={
+                activeTab === 'vip'
+                  ? `${
+                      nightVision ? 'text-rose-400' : 'text-cyan-400'
+                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
+                  : 'hover:opacity-80 transition'
+              }
+            >
+              🔑 {currentT.vipSection}
+            </button>
+          </nav>
+
+          <div className="hidden md:flex items-center space-x-3">
+            <button
+              type="button"
+              onClick={() => setNightVision(!nightVision)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
+                nightVision
+                  ? 'bg-rose-950 border-rose-700 text-white'
+                  : 'bg-slate-900 border-slate-700 text-rose-400 hover:border-rose-500'
+              }`}
+              title="Préserver la vision nocturne"
+            >
+              🔴 {lang === 'fr' ? 'Mode Nuit' : 'Night Mode'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition ${
+                nightVision
+                  ? 'bg-rose-950 border-rose-800 text-rose-300'
+                  : 'bg-slate-900/80 border-slate-700/80 hover:border-cyan-500'
+              }`}
+            >
+              🌐 {lang.toUpperCase()}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('pack')}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg hover:opacity-95 transition text-white"
+            >
+              {currentT.packBtnShort}
+            </button>
+          </div>
+        </div>
+
+        {/* BANDEAU ACCES RAPIDE AUX COURS DEVERROUILLES + PROGRESSION */}
+        {unlockedModules.length > 0 && (
+          <div
+            className={`border-t py-2.5 px-4 ${
+              nightVision
+                ? 'bg-rose-950/80 border-rose-900 text-rose-200'
+                : 'bg-gradient-to-r from-emerald-950/90 via-slate-950 to-emerald-950/90 border-emerald-500/40 text-emerald-300'
+            }`}
+          >
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2.5">
+              <span className="text-xs font-bold mr-2 flex items-center gap-1.5">
+                <span>⭐</span> {currentT.quickAccessTitle}
+              </span>
+              {modules.map((m) => {
+                if (!isModuleUnlocked(m.id)) return null;
+                const isSelected =
+                  activeTab === 'module-detail' && selectedModuleId === m.id;
+                const isDone = completedModules.includes(m.id);
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => openModuleDetail(m.id, false)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5 ${
+                      isSelected
+                        ? nightVision
+                          ? 'bg-rose-600 text-white ring-2 ring-white scale-105'
+                          : 'bg-cyan-400 text-slate-950 ring-2 ring-white scale-105'
+                        : isDone
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                    }`}
+                  >
+                    <span>{isDone ? '✓' : '🚀'}</span>{' '}
+                    {m.id === 7 ? 'Bonus' : `Mod. ${m.id}`}
+                  </button>
+                );
+              })}
+              <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 ml-1">
+                {completedModules.length}/7 ({progressPercentage}%)
+              </span>
+              {completedModules.length > 0 && (
+                <button
+                  type="button"
+                  onClick={generateCertificate}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1"
+                >
+                  🏆 {lang === 'fr' ? 'Certificat' : 'Certificate'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* CONTENU PRINCIPAL */}
+      <main className="max-w-7xl mx-auto px-4 py-10 flex-grow w-full">
+        {activeTab === 'home' && (
+          <div className="space-y-16">
+            {/* HERO SECTION */}
+            <div
+              className={`text-center py-14 px-4 md:px-12 rounded-3xl border space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-sm ${
+                nightVision
+                  ? 'bg-rose-950/30 border-rose-900/50'
+                  : 'bg-gradient-to-b from-indigo-950/50 via-slate-900/40 to-slate-950/20 border-indigo-500/30'
+              }`}
+            >
+              <div
+                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
+                  nightVision
+                    ? 'bg-rose-900/40 text-rose-300 border border-rose-800'
+                    : 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30'
+                }`}
+              >
+                {currentT.heroBadge}
+              </div>
+
+              <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto">
+                {currentT.subtitle}
+              </h2>
+
+              <p
+                className={`max-w-2xl mx-auto text-base md:text-lg leading-relaxed ${
+                  nightVision ? 'text-rose-200' : 'text-slate-300'
+                }`}
+              >
+                {currentT.heroDesc}
+              </p>
+
+              {/* VIDEO PROMO DU LOGO EN HAUT DE PAGE */}
+              <div
+                className={`max-w-4xl mx-auto mt-6 p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div>
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-widest ${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      }`}
+                    >
+                      {currentT.videoSectionBadge}
+                    </span>
+                    <h3 className="text-lg md:text-xl font-black text-white mt-0.5">
+                      {currentT.videoSectionTitle}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300">
+                    ✨ Logo Trailer
+                  </span>
+                </div>
+
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={PROMO_LOGO_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+                <p
+                  className={`text-xs md:text-sm text-center leading-relaxed ${
+                    nightVision ? 'text-rose-200' : 'text-slate-300'
+                  }`}
+                >
+                  {currentT.videoSectionSub}
+                </p>
+              </div>
+
+              {/* LECTEUR VIDEO DE BIENVENUE CLASSIQUE */}
+              <div
+                className={`max-w-4xl mx-auto p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-5 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={WELCOME_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+
+                {/* LES 3 PILIERS : AVANT, PENDANT & APRES LA NUIT */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-cyan-400'
+                      }`}
+                    >
+                      🔭 {currentT.phase1Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase1Desc}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-indigo-400'
+                      }`}
+                    >
+                      🌌 {currentT.phase2Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase2Desc}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-3.5 rounded-2xl border ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-white/5 border-white/10'
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-black uppercase tracking-wider mb-1 ${
+                        nightVision ? 'text-rose-300' : 'text-emerald-400'
+                      }`}
+                    >
+                      🎨 {currentT.phase3Badge}
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.phase3Desc}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ENCADRE : HISTORIQUE / IDEE ORIGINALE DU SITE (AVEC LE PETIT TELESCOPE) */}
+              <div
+                className={`max-w-4xl mx-auto p-6 md:p-8 rounded-3xl border shadow-xl text-left flex flex-col md:flex-row items-center gap-6 backdrop-blur-md ${
+                  nightVision
+                    ? 'bg-rose-950/40 border-rose-800'
+                    : 'bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-cyan-500/40'
+                }`}
+              >
+                <div className="w-24 h-24 shrink-0 rounded-2xl bg-black border-2 border-cyan-400/60 flex items-center justify-center shadow-2xl relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-cyan-500/10 animate-pulse" />
+                  <span className="text-5xl group-hover:scale-110 transition-transform duration-300">🔭</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className={`text-lg md:text-xl font-black ${nightVision ? 'text-rose-300' : 'text-cyan-300'}`}>
+                    {currentT.originStoryTitle}
+                  </h3>
+                  <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-100' : 'text-slate-300'}`}>
+                    {currentT.originStoryText}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenLink(paymentLinks.packIntegral.stripe)
+                  }
+                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl ${
+                    nightVision
+                      ? 'bg-rose-600 text-white hover:bg-rose-500'
+                      : 'bg-gradient-to-r from-cyan-400 via-indigo-500 to-indigo-600 text-slate-950'
+                  }`}
+                >
+                  <span>💳</span> {currentT.buyPackFull} ({currentT.buyStripe})
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenLink(paymentLinks.packIntegral.paypal)
+                  }
+                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl ${
+                    nightVision
+                      ? 'bg-rose-800 text-white hover:bg-rose-700'
+                      : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                  }`}
+                >
+                  <span>🅿️</span> {currentT.buyPackFull} ({currentT.buyPayPal})
+                </button>
+              </div>
+
+              {/* BOUTON DEMO GRATUITE MODULE 1 */}
+              {!isModuleUnlocked(1) && (
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => openModuleDetail(1, true)}
+                    className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-xs font-bold text-cyan-300 transition"
+                  >
+                    {currentT.freePreviewBtn}
+                  </button>
+                </div>
+              )}
+
+              <div className="pt-3 flex flex-col items-center gap-1.5">
+                <span
+                  className={`text-xs font-semibold ${
+                    nightVision ? 'text-rose-300' : 'text-amber-300'
+                  }`}
+                >
+                  {currentT.trustBadge}
+                </span>
+                <span
+                  className={`text-xs ${
+                    nightVision ? 'text-rose-400/80' : 'text-slate-400'
+                  }`}
+                >
+                  {currentT.taxNotice}
+                </span>
+              </div>
+            </div>
+
+            {/* BARRE DE PROGRESSION DU CURSUS */}
+            {unlockedModules.length > 0 && (
+              <div
+                className={`p-6 rounded-3xl border space-y-3 ${
+                  nightVision
+                    ? 'bg-rose-950/20 border-rose-900'
+                    : 'bg-slate-900/70 border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between text-xs md:text-sm font-bold">
+                  <span>
+                    📈 {currentT.progressLabel} {completedModules.length} / 7{' '}
+                    {lang === 'fr' ? 'modules validés' : 'modules completed'}
+                  </span>
+                  <span className="text-cyan-400 font-mono">
+                    {progressPercentage}%
+                  </span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-black/60 overflow-hidden border border-white/10">
+                  <div
+                    className={`h-full transition-all duration-500 ${
+                      nightVision
+                        ? 'bg-rose-600'
+                        : 'bg-gradient-to-r from-cyan-400 to-emerald-400'
+                    }`}
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* CATALOGUE DES COURSES ET OFFRE INTÉGRALE */}
+            <div className="space-y-8">
+              <div
+                className={`flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-4 ${
+                  nightVision ? 'border-rose-900' : 'border-slate-800'
+                }`}
+              >
+                <div>
+                  <span
+                    className={`text-xs font-extrabold uppercase tracking-widest ${
+                      nightVision ? 'text-rose-400' : 'text-cyan-400'
+                    }`}
+                  >
+                    {lang === 'fr' ? ' Programme Complet' : 'Full Curriculum'}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-black mt-1">
+                    {lang === 'fr'
+                      ? "Les 7 Modules d'Expertise & Offre Intégrale"
+                      : 'The 7 Expert Modules & Full Bundle'}
+                  </h3>
+                </div>
+                <p
+                  className={`text-xs max-w-md ${
+                    nightVision ? 'text-rose-300' : 'text-slate-400'
+                  }`}
+                >
+                  {lang === 'fr'
+                    ? 'Choisissez vos modules à la carte ou optez pour le Pack Intégral super promo pour tout débloquer instantanément.'
+                    : 'Choose modules individually or select the Super Promo Full Bundle to unlock everything instantly.'}
+                </p>
+              </div>
+
+              {/* VIDEO DE PROMO DES MODULES JUSTE AVANT LA GRILLE */}
+              <div
+                className={`max-w-4xl mx-auto p-4 md:p-6 rounded-3xl border shadow-2xl text-left space-y-4 ${
+                  nightVision
+                    ? 'bg-black/60 border-rose-800/70'
+                    : 'bg-slate-950/80 border-cyan-500/30'
+                }`}
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div>
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-widest ${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      }`}
+                    >
+                      {currentT.modulesVideoBadge}
+                    </span>
+                    <h3 className="text-lg md:text-xl font-black text-white mt-0.5">
+                      {currentT.modulesVideoTitle}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300">
+                    🔭 Modules Preview
+                  </span>
+                </div>
+
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/15 aspect-video shadow-2xl">
+                  <video
+                    src={PROMO_MODULES_VIDEO_URL}
+                    poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className={`w-full h-full object-cover ${
+                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                    }`}
+                  >
+                    {lang === 'fr'
+                      ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
+                      : 'Your browser does not support HTML5 video playback.'}
+                  </video>
+                </div>
+                <p
+                  className={`text-xs md:text-sm text-center leading-relaxed ${
+                    nightVision ? 'text-rose-200' : 'text-slate-300'
+                  }`}
+                >
+                  {currentT.modulesVideoSub}
+                </p>
+              </div>
+
+              {/* GRILLE DES 7 MODULES + CARTE DU PACK INTÉGRAL AVEC EFFET ÉTOILE AU SURVOL */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                {modules.map((mod) => {
+                  const unlocked = isModuleUnlocked(mod.id);
+                  const isDone = completedModules.includes(mod.id);
+                  return (
+                    <div
+                      key={mod.id}
+                      onClick={() => {
+                        if (unlocked) openModuleDetail(mod.id, false);
+                      }}
+                      className={`group relative border rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl backdrop-blur-md hover:shadow-[0_0_30px_rgba(6,182,212,0.35)] hover:border-cyan-400 ${
+                        nightVision
+                          ? 'bg-rose-950/20 border-rose-900/60'
+                          : 'bg-slate-900/70 border-slate-800/80'
+                      } ${
+                        unlocked
+                          ? 'cursor-pointer hover:-translate-y-1'
+                          : 'hover:-translate-y-1'
+                      }`}
+                    >
+                      {/* Effet d'étoiles scintillantes au survol */}
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                      <div>
+                        <div className="h-52 overflow-hidden relative">
+                          <img
+                            src={mod.image}
+                            alt={lang === 'fr' ? mod.titleFr : mod.titleEn}
+                            className="w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-90"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                          <span className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-amber-500 backdrop-blur-md text-[11px] font-black text-slate-950 border border-amber-300 shadow">
+                            {lang === 'fr' ? mod.badgeFr : mod.badgeEn}
+                          </span>
+
+                          <div className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-xl bg-indigo-600/90 backdrop-blur-md shadow-lg flex items-center gap-2 text-white">
+                            <span className="text-xs line-through text-slate-300">{mod.priceOld}</span>
+                            <span className="font-black text-sm text-cyan-300">{mod.priceDisplay}</span>
+                          </div>
+
+                          {isDone && (
+                            <span className="absolute top-3 right-3 px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg">
+                              ✓ {lang === 'fr' ? 'Terminé' : 'Completed'}
+                            </span>
+                          )}
+                          {!isDone && unlocked && (
+                            <span className="absolute top-3 right-3 px-3 py-1 rounded-xl bg-cyan-600 text-white font-bold text-xs shadow-lg">
+                              🔓 {lang === 'fr' ? 'Débloqué' : 'Unlocked'}
+                            </span>
+                          )}
+                          {!unlocked && (
+                            <span className="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 text-[11px] font-semibold text-slate-300 border border-white/10">
+                              {currentT.lockedBadge}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="p-6 space-y-3 relative z-10">
+                          <h4 className="font-bold text-lg leading-snug group-hover:text-cyan-300 transition-colors">
+                            {lang === 'fr' ? mod.titleFr : mod.titleEn}
+                          </h4>
+                          <p
+                            className={`text-sm leading-relaxed ${
+                              nightVision ? 'text-rose-300' : 'text-slate-400'
+                            }`}
+                          >
+                            {lang === 'fr' ? mod.descFr : mod.descEn}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-6 pt-0 flex flex-col gap-2.5 relative z-10">
+                        {unlocked ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openModuleDetail(mod.id, false);
+                            }}
+                            className={`w-full py-3.5 rounded-xl font-black text-xs shadow-lg transition text-center uppercase tracking-wider flex items-center justify-center gap-2 ${
+                              nightVision
+                                ? 'bg-rose-600 text-white hover:bg-rose-500'
+                                : 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950'
+                            }`}
+                          >
+                            <span>▶️</span> {currentT.accessCourse}
+                          </button>
+                        ) : (
+                          <>
+                            <div className="grid grid-cols-2 gap-2.5">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenLink(mod.links.stripe);
+                                }}
+                                className="py-3 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              >
+                                <span>💳</span> {currentT.buyStripe}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenLink(mod.links.paypal);
+                                }}
+                                className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                              >
+                                <span>🅿️</span> {currentT.buyPayPal}
+                              </button>
+                            </div>
+                            {mod.id === 1 && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openModuleDetail(1, true);
+                                }}
+                                className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-cyan-300 transition"
+                              >
+                                {currentT.freePreviewBtn}
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE AVEC EFFET ETOILE */}
+                <div className="group relative border-2 border-amber-500/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-2xl bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 hover:scale-105 hover:shadow-[0_0_35px_rgba(245,158,11,0.4)]">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-400/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                  <div>
+                    <div className="h-52 overflow-hidden relative bg-slate-950 flex items-center justify-center p-6 text-center">
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent" />
+                      <div className="relative space-y-2">
+                        <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-widest shadow">
+                          🔥 Offre Ultime 7-en-1
+                        </span>
+                        <div className="text-3xl font-black text-white pt-2 group-hover:text-amber-300 transition-colors">
+                          Pack Intégral
+                        </div>
+                        <div className="flex items-center justify-center gap-3 pt-1">
+                          <span className="text-sm line-through text-slate-400">203,00 $ CAD</span>
+                          <span className="text-2xl font-black text-cyan-300">49,99 $ CAD</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 space-y-3 relative z-10">
+                      <h4 className="font-bold text-lg leading-snug text-amber-200">
+                        {lang === 'fr' ? "Accès Complet à Tous les Modules" : "Full Access to All Modules"}
+                      </h4>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        {lang === 'fr' 
+                          ? "Débloquez instantanément les 7 masterclasses, les 6 simulateurs optiques interactifs, les quiz et les guides PDF A4 imprimables." 
+                          : "Instantly unlock all 7 masterclasses, 6 interactive optical simulators, quizzes, and printable A4 PDF guides."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 flex flex-col gap-2.5 relative z-10">
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
+                        className="py-3 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-black text-slate-950 shadow-md text-center transition flex items-center justify-center gap-1"
+                      >
+                        <span>💳</span> {currentT.buyStripe}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
+                        className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
+                      >
+                        <span>🅿️</span> {currentT.buyPayPal}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* SECTION TEMOIGNAGES */}
+            <div className="space-y-6 pt-6">
+              <h3 className="text-2xl font-black text-center">
+                {currentT.testimonialsTitle}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div
+                  className={`p-6 rounded-3xl border space-y-3 ${
+                    nightVision
+                      ? 'bg-rose-950/20 border-rose-900'
+                      : 'bg-slate-900/60 border-slate-800'
+                  }`}
+                >
+                  <p
+                    className={`italic text-sm leading-relaxed ${
+                      nightVision ? 'text-rose-200' : 'text-slate-300'
+                    }`}
+                  >
+                    {currentT.t1}
+                  </p>
+                  <div className="text-xs font-bold text-cyan-400">
+                    {currentT.t1Author}
+                  </div>
+                </div>
+                <div
+                  className={`p-6 rounded-3xl border space-y-3 ${
+                    nightVision
+                      ? 'bg-rose-950/20 border-rose-900'
+                      : 'bg-slate-900/60 border-slate-800'
+                  }`}
+                >
+                  <p
+                    className={`italic text-sm leading-relaxed ${
+                      nightVision ? 'text-rose-200' : 'text-slate-300'
+                    }`}
+                  >
+                    {currentT.t2}
+                  </p>
+                  <div className="text-xs font-bold text-cyan-400">
+                    {currentT.t2Author}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION FAQ ACCORDEON */}
+            <div className="space-y-4 pt-6 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-black text-center">
+                {currentT.faqTitle}
+              </h3>
+              {[
+                { q: currentT.faq1Q, a: currentT.faq1A },
+                { q: currentT.faq2Q, a: currentT.faq2A },
+                { q: currentT.faq3Q, a: currentT.faq3A },
+              ].map((faq, idx) => (
+                <div
+                  key={idx}
+                  className={`border rounded-2xl overflow-hidden transition ${
+                    nightVision
+                      ? 'bg-rose-950/30 border-rose-900'
+                      : 'bg-slate-900/80 border-slate-800'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenFaqIndex(openFaqIndex === idx ? null : idx)
+                    }
+                    className="w-full p-4 text-left font-bold text-sm md:text-base flex justify-between items-center"
+                  >
+                    <span>{faq.q}</span>
+                    <span>{openFaqIndex === idx ? '−' : '+'}</span>
+                  </button>
+                  {openFaqIndex === idx && (
+                    <div
+                      className={`p-4 pt-0 text-xs md:text-sm leading-relaxed border-t ${
+                        nightVision
+                          ? 'border-rose-900/50 text-rose-200'
+                          : 'border-slate-800 text-slate-300'
+                      }`}
+                    >
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* VUE DETAILLEE D'UN MODULE */}
+        {activeTab === 'module-detail' && currentModule && (
+          <div
+            className={`max-w-4xl mx-auto space-y-12 border rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md ${
+              nightVision
+                ? 'bg-rose-950/20 border-rose-900'
+                : 'bg-slate-900/90 border-slate-800/80'
+            }`}
+          >
+            {/* BANNIERE MODE APERÇU GRATUIT */}
+            {isPreviewMode && !isModuleUnlocked(currentModule.id) && (
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/80 via-indigo-950/80 to-slate-900 border border-amber-500/50 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-300">
+                    {currentT.previewBannerTitle}
+                  </span>
+                  <span className="text-xs font-bold text-cyan-300">
+                    {currentModule.priceDisplay} CAD (ou Pack 7-en-1 à 49.99$ CAD)
+                  </span>
+                </div>
+                <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
+                  {currentT.previewBannerDesc}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenLink(currentModule.links.stripe)}
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow"
+                  >
+                    💳 {currentT.buyStripe} ({currentModule.priceDisplay} CAD)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenLink(currentModule.links.paypal)}
+                    className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow"
+                  >
+                    🅿️ {currentT.buyPayPal} ({currentModule.priceDisplay} CAD)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('pack')}
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow"
+                  >
+                    {currentT.buyPackFull}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* BANNIERE DE CONFIRMATION D'ACHAT + COPIE CODE */}
+            {justPurchasedModule && (
+              <div className="p-5 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200 text-sm flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span>{currentT.paymentConfirmedModule}</span>
+                  <span className="font-mono font-black text-white bg-black/50 px-3 py-1 rounded-lg border border-emerald-400/40">
+                    {currentModule.backupCode}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(currentModule.backupCode)}
+                    className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold"
+                  >
+                    {copiedCode === currentModule.backupCode
+                      ? currentT.copiedBtn
+                      : currentT.copyBtn}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setJustPurchasedModule(false)}
+                  className="text-xs underline opacity-80 hover:opacity-100"
+                >
+                  {currentT.closeBtn}
+                </button>
+              </div>
+            )}
+
+            {/* NAVIGATION HAUT DE MODULE */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab('home')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                  nightVision
+                    ? 'bg-rose-900 text-white'
+                    : 'bg-slate-800 text-cyan-400 hover:bg-slate-700'
+                }`}
+              >
+                {currentT.backToCatalog}
+              </button>
+              {isModuleUnlocked(currentModule.id) && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(currentModule.backupCode)}
+                    className="text-xs font-mono px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/10 transition"
+                  >
+                    🔑 {currentModule.backupCode} (
+                    {copiedCode === currentModule.backupCode
+                      ? currentT.copiedBtn
+                      : currentT.copyBtn}
+                    )
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleCompleteModule(currentModule.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      completedModules.includes(currentModule.id)
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {completedModules.includes(currentModule.id)
+                      ? currentT.markIncomplete
+                      : currentT.markComplete}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* TITRE & INTRODUCTION DU MODULE */}
+            <div className="space-y-3 border-b border-white/10 pb-6">
+              <span
+                className={`inline-block text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-lg ${
+                  nightVision
+                    ? 'bg-rose-900/50 text-rose-300'
+                    : 'bg-indigo-500/20 text-indigo-300'
+                }`}
+              >
+                {currentT.interactiveModule}
+              </span>
+              <h2 className="text-2xl md:text-4xl font-black leading-tight">
+                {lang === 'fr' ? currentModule.titleFr : currentModule.titleEn}
+              </h2>
+              <p
+                className={`text-base md:text-lg leading-relaxed ${
+                  nightVision ? 'text-rose-200' : 'text-slate-300'
+                }`}
+              >
+                {currentModule.content[lang].intro}
+              </p>
+            </div>
+
+            {/* 1. STUDIO DIAPORAMA INTERACTIF */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <span>🎬</span> {currentT.studioHeader}
+                </h3>
+                <span className="text-xs font-mono px-3 py-1 rounded-lg bg-black/40 border border-white/10">
+                  {lang === 'fr' ? 'Chapitre' : 'Chapter'}{' '}
+                  {currentSlideIndex + 1} /{' '}
+                  {currentModule.content[lang].slides.length}
+                </span>
+              </div>
+
+              <div className="rounded-3xl bg-black/50 border border-white/10 p-6 md:p-10 shadow-2xl space-y-6">
+                <div className="space-y-1">
+                  <h4 className="text-xl md:text-2xl font-black text-white">
+                    {currentModule.content[lang].slides[currentSlideIndex].title}
+                  </h4>
+                  <p
+                    className={`text-xs md:text-sm font-semibold ${
+                      nightVision ? 'text-rose-400' : 'text-cyan-400'
+                    }`}
+                  >
+                    {currentModule.content[lang].slides[currentSlideIndex].subtitle}
+                  </p>
+                </div>
+
+                <ul className="space-y-3">
+                  {currentModule.content[lang].slides[currentSlideIndex].bullets.map((b, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl text-sm md:text-base leading-relaxed"
+                    >
+                      <span
+                        className={`font-bold mt-0.5 ${
+                          nightVision ? 'text-rose-400' : 'text-cyan-400'
+                        }`}
+                      >
+                        ✦
+                      </span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div
+                  className={`p-4 rounded-2xl border text-xs md:text-sm leading-relaxed ${
+                    nightVision
+                      ? 'bg-rose-950/60 border-rose-700 text-rose-200'
+                      : 'bg-indigo-950/50 border-indigo-500/40 text-indigo-200'
+                  }`}
+                >
+                  <strong className="block mb-1 font-extrabold">
+                    {currentT.proTipLabel}
+                  </strong>
+                  {currentModule.content[lang].slides[currentSlideIndex].proTip}
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    disabled={currentSlideIndex === 0}
+                    onClick={() =>
+                      setCurrentSlideIndex((prev) => Math.max(0, prev - 1))
+                    }
+                    className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-xs font-bold transition"
+                  >
+                    {currentT.prevSlide}
+                  </button>
+                  <div className="flex gap-1.5">
+                    {currentModule.content[lang].slides.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        disabled={isPreviewMode && !isModuleUnlocked(currentModule.id) && idx > 0}
+                        onClick={() => setCurrentSlideIndex(idx)}
+                        className={`w-2.5 h-2.5 rounded-full transition ${
+                          currentSlideIndex === idx
+                            ? nightVision
+                              ? 'bg-rose-500 scale-125'
+                              : 'bg-cyan-400 scale-125'
+                            : 'bg-slate-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    disabled={
+                      (isPreviewMode && !isModuleUnlocked(currentModule.id)) ||
+                      currentSlideIndex ===
+                        currentModule.content[lang].slides.length - 1
+                    }
+                    onClick={() =>
+                      setCurrentSlideIndex((prev) =>
+                        Math.min(
+                          currentModule.content[lang].slides.length - 1,
+                          prev + 1
+                        )
+                      )
+                    }
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-xs font-bold text-white transition"
+                  >
+                    {isPreviewMode && !isModuleUnlocked(currentModule.id)
+                      ? '🔒 Chapitre 2'
+                      : currentT.nextSlide}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* SIMULATEURS (1 à 6 selon le module) */}
+            {currentModule.calculatorType === 'sampling' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcFocalLabel}
+                    </label>
+                    <input
+                      type="number"
+                      min="10"
+                      max="5000"
+                      value={calcFocal}
+                      onChange={(e) => setCalcFocal(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcPixelLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0.5"
+                      max="20"
+                      value={calcPixel}
+                      onChange={(e) => setCalcPixel(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {pixelScaleResult} &quot;/pixel
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-emerald-400 max-w-xl mx-auto leading-relaxed">
+                    {calcVerdict}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {currentModule.calculatorType === 'torque' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcTorqueTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcPayloadLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      min="1"
+                      max="30"
+                      value={calcPayloadKg}
+                      onChange={(e) => setCalcPayloadKg(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcRadiusLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="5"
+                      max="40"
+                      value={calcTubeRadiusCm}
+                      onChange={(e) =>
+                        setCalcTubeRadiusCm(Number(e.target.value))
+                      }
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcTorqueResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {torqueNm} N·m
+                    </span>
+                  </div>
+                  <p
+                    className={`text-xs font-bold ${
+                      needsCounterweight ? 'text-amber-400' : 'text-emerald-400'
+                    }`}
+                  >
+                    {needsCounterweight
+                      ? lang === 'fr'
+                        ? '⚠️ Couple élevé : Ajoutez un contrepoids de 3 à 5 kg sur la barre pour soulager le réducteur et stabiliser le trépied.'
+                        : '⚠️ High torque load: Add a 3kg to 5kg counterweight to stabilize your tripod and assist the strainwave gear.'
+                      : lang === 'fr'
+                      ? '✨ Charge nominale parfaite : Aucun contrepoids requis sur Juwei-17 / UMi-17S / AM5 (lestez uniquement le trépied).'
+                      : '✨ Optimal torque load: No counterweight needed on Juwei-17 / UMi-17S / AM5 (ballast tripod center only).'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {currentModule.calculatorType === 'exposure' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcExpTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcBortleLabel} (Bortle {calcBortle})
+                    </label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="9"
+                      value={calcBortle}
+                      onChange={(e) => setCalcBortle(Number(e.target.value))}
+                      className="w-full accent-cyan-400 mt-3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcFilterLabel}
+                    </label>
+                    <select
+                      value={calcFilterBand}
+                      onChange={(e) =>
+                        setCalcFilterBand(
+                          e.target.value as 'broadband' | 'dualband' | 'sho'
+                        )
+                      }
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white text-xs font-bold focus:outline-none"
+                    >
+                      <option value="broadband">
+                        UV/IR Cut — Large Bande (Galaxies / Amas)
+                      </option>
+                      <option value="dualband">
+                        Dual-Band 7nm (Ha/OIII Couleur)
+                      </option>
+                      <option value="sho">
+                        Bande Étroite 3nm (SHO Monochrome)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcExpResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {recommendedSubSec} sec
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-400 font-bold">
+                    {lang === 'fr'
+                      ? '✨ Ce temps de pose submerge le bruit de lecture (Gain 100) sans saturer le cœur des étoiles.'
+                      : '✨ This sub-exposure swamps sensor read noise (Gain 100) without clipping bright star cores.'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {currentModule.calculatorType === 'focus' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  {currentT.calcFocusTitle}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcFocusFDLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="1.2"
+                      max="20"
+                      value={calcFokusFD}
+                      onChange={(e) => setCalcFokusFD(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcFocusStepLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.5"
+                      max="20"
+                      value={calcMicronStep}
+                      onChange={(e) =>
+                        setCalcMicronStep(Number(e.target.value))
+                      }
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-2">
+                  <div className="text-sm font-bold">
+                    {currentT.calcFocusResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {cfzMicrons} µm
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-emerald-400">
+                    {currentT.calcFocusAdvice}
+                    <span className="font-mono text-white underline ml-1">
+                      ~{recommendedSteps} steps
+                    </span>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {currentModule.calculatorType === 'compare' && (
+              <div className="space-y-4 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold">
+                  {currentT.calcCompareTitle}
+                </h3>
+                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden border border-white/15 select-none">
+                  <img
+                    src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
+                    alt="Final Processed"
+                    className="w-full h-full object-cover saturate-150 contrast-125"
+                  />
+                  <div
+                    className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-cyan-400"
+                    style={{ width: `${compareSlider}%` }}
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
+                      alt="Raw Linear"
+                      className="w-full h-full object-cover brightness-[0.18] contrast-75 saturate-0"
+                    />
+                  </div>
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 text-[10px] font-bold text-slate-300">
+                    {lang === 'fr' ? 'AVANT : Brute Linéaire' : 'BEFORE: Linear Stack'}
+                  </span>
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded bg-cyan-500/90 text-[10px] font-black text-slate-950">
+                    {lang === 'fr'
+                      ? 'APRÈS : GraXpert + SPCC + GHS'
+                      : 'AFTER: GraXpert + SPCC + GHS'}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="95"
+                  value={compareSlider}
+                  onChange={(e) => setCompareSlider(Number(e.target.value))}
+                  className="w-full accent-cyan-400 cursor-ew-resize"
+                />
+              </div>
+            )}
+
+            {currentModule.calculatorType === 'npf' && (
+              <div className="space-y-5 bg-black/40 border border-cyan-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold">{currentT.calcNpfTitle}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcNpfFocalLabel}
+                    </label>
+                    <input
+                      type="number"
+                      min="8"
+                      max="200"
+                      value={npfFocal}
+                      onChange={(e) => setNpfFocal(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcNpfApertureLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.2"
+                      min="1.2"
+                      max="11"
+                      value={npfAperture}
+                      onChange={(e) => setNpfAperture(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-1.5">
+                      {currentT.calcPixelLabel}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="1"
+                      max="12"
+                      value={npfPixel}
+                      onChange={(e) => setNpfPixel(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 text-center space-y-1">
+                  <div className="text-sm font-bold">
+                    {currentT.calcNpfResult}
+                    <span className="text-2xl font-black text-cyan-400 font-mono ml-2">
+                      {npfSeconds} sec
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SECTIONS RESERVEES AUX ELEVES DEBLOQUES */}
+            {isModuleUnlocked(currentModule.id) && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>📚</span> {currentT.fullCourseTitle}
+                  </h3>
+                  <div className="space-y-4">
+                    {currentModule.content[lang].courseSections.map(
+                      (sec, idx) => (
+                        <div
+                          key={idx}
+                          className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3"
+                        >
+                          <h4 className="font-black text-base md:text-lg text-white">
+                            {sec.heading}
+                          </h4>
+                          <p
+                            className={`text-sm md:text-base leading-relaxed ${
+                              nightVision ? 'text-rose-200' : 'text-slate-300'
+                            }`}
+                          >
+                            {sec.body}
+                          </p>
+                          {sec.highlight && (
+                            <div
+                              className={`p-3.5 rounded-xl font-mono text-xs md:text-sm font-bold border ${
+                                nightVision
+                                  ? 'bg-rose-950/60 border-rose-800 text-rose-300'
+                                  : 'bg-cyan-950/40 border-cyan-500/30 text-cyan-300'
+                              }`}
+                            >
+                              ⚡ {sec.highlight}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>✅</span> {currentT.tutorialSteps}
+                  </h3>
+                  <div className="p-6 rounded-3xl bg-black/40 border border-white/10 space-y-3">
+                    {currentModule.content[lang].steps.map((step, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 text-sm md:text-base"
+                      >
+                        <span className="text-emerald-400 font-black">✔</span>
+                        <span>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-5 bg-black/50 border border-indigo-500/30 p-6 md:p-8 rounded-3xl shadow-xl">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                      {currentT.quizTitle}
+                    </h3>
+                    {quizSubmitted && (
+                      <span className="px-3.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
+                        {currentT.quizScore} {correctQuizCount} /{' '}
+                        {activeQuizList.length}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-6">
+                    {activeQuizList.map((q, qIdx) => (
+                      <div
+                        key={qIdx}
+                        className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3"
+                      >
+                        <p className="font-bold text-sm md:text-base">
+                          {qIdx + 1}. {q.question}
+                        </p>
+                        <div className="space-y-2">
+                          {q.options.map((opt, oIdx) => {
+                            const isSelected = selectedAnswers[qIdx] === oIdx;
+                            const isCorrect = q.correct === oIdx;
+                            let btnStyle =
+                              'bg-black/50 border-white/10 hover:border-white/30';
+                            if (quizSubmitted) {
+                              if (isCorrect) {
+                                btnStyle =
+                                  'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold';
+                              } else if (isSelected && !isCorrect) {
+                                btnStyle =
+                                  'bg-rose-950/80 border-rose-500 text-rose-200';
+                              }
+                            } else if (isSelected) {
+                              btnStyle =
+                                'bg-indigo-600/40 border-cyan-400 text-white font-bold';
+                            }
+
+                            return (
+                              <button
+                                key={oIdx}
+                                type="button"
+                                disabled={quizSubmitted}
+                                onClick={() =>
+                                  setSelectedAnswers((prev) => ({
+                                    ...prev,
+                                    [qIdx]: oIdx,
+                                  }))
+                                }
+                                className={`w-full text-left p-3.5 rounded-xl border text-xs md:text-sm transition flex items-center justify-between ${btnStyle}`}
+                              >
+                                <span>{opt}</span>
+                                {quizSubmitted && isCorrect && <span>✓</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {quizSubmitted && (
+                          <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 text-xs leading-relaxed">
+                            <strong
+                              className={
+                                selectedAnswers[qIdx] === q.correct
+                                  ? 'text-emerald-400'
+                                  : 'text-rose-400'
+                              }
+                            >
+                              {selectedAnswers[qIdx] === q.correct
+                                ? currentT.correctAnswer
+                                : currentT.wrongAnswer}
+                            </strong>{' '}
+                            {q.explanation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex justify-end">
+                    {!quizSubmitted ? (
+                      <button
+                        type="button"
+                        onClick={() => setQuizSubmitted(true)}
+                        className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg"
+                      >
+                        {currentT.quizSubmit}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedAnswers({});
+                          setQuizSubmitted(false);
+                        }}
+                        className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs"
+                      >
+                        {currentT.quizRetry}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>📄</span> {currentT.resourcesPdf}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {currentModule.content[lang].downloads.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="p-6 rounded-3xl bg-black/50 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xl"
+                      >
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-extrabold">
+                            PDF Officiel A4 Imprimable
+                          </span>
+                          <h4 className="font-bold text-sm md:text-base leading-snug pt-1">
+                            {doc.name}
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            generateAndDownloadPDF(
+                              doc,
+                              lang === 'fr'
+                                ? currentModule.titleFr
+                                : currentModule.titleEn
+                            )
+                          }
+                          className="shrink-0 py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition hover:opacity-95 shadow-lg"
+                        >
+                          <span>📥</span> {currentT.generatePdfBtn}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'success' && (
+          <div className="max-w-2xl mx-auto bg-slate-900 border border-emerald-500/50 rounded-3xl p-8 md:p-12 text-center space-y-6 shadow-2xl">
+            <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-4xl">
+              ✨
+            </div>
+            <span className="inline-block px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold uppercase tracking-widest">
+              {currentT.successBadge}
+            </span>
+            <div className="space-y-2">
+              <h2 className="text-3xl md:text-4xl font-black text-white">
+                {currentT.successTitle}
+              </h2>
+              <p className="text-slate-300 text-sm md:text-base max-w-lg mx-auto">
+                {currentT.successDesc}
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/40 space-y-3">
+              <p className="text-xs text-slate-300 font-semibold">
+                {currentT.backupCodeNotice}
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-xl font-mono font-black text-cyan-400 tracking-widest">
+                  PACK-COMPLET-2026
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyCode('PACK-COMPLET-2026')}
+                  className="px-3.5 py-1.5 rounded-xl bg-cyan-500 text-slate-950 text-xs font-black"
+                >
+                  {copiedCode === 'PACK-COMPLET-2026'
+                    ? currentT.copiedBtn
+                    : currentT.copyBtn}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2 max-w-md mx-auto">
+              <input
+                type="text"
+                value={studentName}
+                onChange={(e) => handleSaveStudentName(e.target.value)}
+                placeholder={currentT.certNamePlaceholder}
+                className="w-full px-4 py-3 rounded-xl bg-black border border-slate-700 text-white text-center text-sm focus:outline-none focus:border-amber-400"
+              />
+              <button
+                type="button"
+                onClick={generateCertificate}
+                className="w-full px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg transition"
+              >
+                {currentT.certTitle}
+              </button>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab('home')}
+                className="text-xs font-bold text-cyan-400 hover:underline"
+              >
+                {currentT.viewUnlocked}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'pack' && (
+          <div className="max-w-xl mx-auto bg-slate-900 border border-amber-500/40 rounded-3xl p-8 md:p-10 text-center space-y-6 shadow-2xl">
+            <span className="inline-block px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold uppercase tracking-widest">
+              ⚡ SUPER PROMO — 7 Modules + 6 Simulateurs + PDF
+            </span>
+            <h2 className="text-3xl font-black text-white">
+              {currentT.packTitle}
+            </h2>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              {currentT.packDesc}
+            </p>
+            <div className="space-y-1">
+              <div className="text-sm text-slate-400 line-through">
+                203,00 $ CAD
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-xl line-through text-slate-400">150,00 $ CAD</span>
+                <span className="text-4xl md:text-5xl font-black text-cyan-400">49,99 $ CAD</span>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
+                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-600 font-extrabold text-slate-950 text-sm shadow-lg hover:opacity-95 transition"
+              >
+                {currentT.payCardStripe}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
+                className="flex-1 py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-extrabold text-white text-sm shadow-lg transition"
+              >
+                {currentT.payWithPaypal}
+              </button>
+            </div>
+            <p className="text-xs text-slate-400">{currentT.taxNotice}</p>
+          </div>
+        )}
+
+        {activeTab === 'vip' && (
+          <div className="max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl space-y-6">
+            <h2 className="text-2xl font-bold text-center">
+              🔑 {currentT.vipSection}
+            </h2>
+            <p className="text-xs md:text-sm text-slate-400 text-center leading-relaxed">
+              {currentT.vipDesc}
+            </p>
+            <form onSubmit={handleValidateVip} className="space-y-4">
+              <input
+                type="text"
+                value={vipCode}
+                onChange={(e) => setVipCode(e.target.value)}
+                placeholder={currentT.vipPlaceholder}
+                className="w-full px-5 py-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-white font-mono text-center uppercase tracking-widest focus:outline-none focus:border-cyan-500"
+              />
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-600 font-bold text-white text-sm shadow-lg hover:opacity-95 transition"
+              >
+                {currentT.unlockBtn}
+              </button>
+            </form>
+            {vipStatus === 'success' && (
+              <div className="space-y-3 text-center">
+                <p className="text-emerald-400 text-sm font-bold">
+                  ✅ {currentT.accessGranted}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('home')}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold"
+                >
+                  {currentT.viewUnlocked}
+                </button>
+              </div>
+            )}
+            {vipStatus === 'error' && (
+              <p className="text-rose-400 text-xs text-center font-medium">
+                ⚠️ {currentT.invalidCode}
+              </p>
+            )}
+
+            {unlockedModules.length > 0 && (
+              <div className="pt-6 border-t border-slate-800 space-y-3 text-center">
+                <h3 className="text-sm font-bold text-amber-400">
+                  {currentT.certTitle}
+                </h3>
+                <input
+                  type="text"
+                  value={studentName}
+                  onChange={(e) => handleSaveStudentName(e.target.value)}
+                  placeholder={currentT.certNamePlaceholder}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-center text-xs focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={generateCertificate}
+                  className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition"
+                >
+                  🖨️ {currentT.certTitle}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      <footer
+        className={`border-t py-10 mt-20 text-xs ${
+          nightVision
+            ? 'border-rose-900 bg-[#120101] text-rose-300'
+            : 'border-slate-800/80 bg-[#010308] text-slate-400'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center space-x-2.5">
+            <AstroberbLogo className="w-6 h-6" />
+            <span className="font-bold">Astroberb Academy</span>
+            <span>
+              — © {new Date().getFullYear()} {currentT.footerRights}
+            </span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 font-medium">
+            <button
+              type="button"
+              onClick={() => setLegalModal('terms')}
+              className="hover:underline transition"
+            >
+              {currentT.termsLink}
+            </button>
+            <button
+              type="button"
+              onClick={() => setLegalModal('privacy')}
+              className="hover:underline transition"
+            >
+              {currentT.privacyLink}
+            </button>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="hover:underline transition"
+            >
+              ✉️ {currentT.contactSupport} ({SUPPORT_EMAIL})
+            </a>
+          </div>
+        </div>
+      </footer>
+
+      {legalModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 md:p-8 space-y-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-lg font-bold text-white">
+                {legalModal === 'terms'
+                  ? currentT.termsLink
+                  : currentT.privacyLink}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setLegalModal(null)}
+                className="text-slate-400 hover:text-white text-xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            {legalModal === 'terms' ? (
+              <div className="text-xs md:text-sm text-slate-300 leading-relaxed space-y-3">
+                <p>
+                  <strong>1. Objet :</strong> Les présentes Conditions Générales
+                  de Vente encadrent l’accès aux formations numériques,
+                  simulateurs optiques et fiches PDF d’Astroberb Academy.
+                </p>
+                <p>
+                  <strong>2. Accès immédiat & Licence :</strong> Dès validation
+                  du paiement via Stripe ou PayPal, l’accès aux modules achetés
+                  est débloqué immédiatement et un code de sauvegarde personnel
+                  multi-appareils est fourni à l’élève. L’accès est personnel,
+                  illimité dans le temps et inclut les mises à jour.
+                </p>
+                <p>
+                  <strong>3. Produits numériques :</strong> S’agissant de
+                  contenus numériques accessibles et téléchargeables
+                  instantanément, l’acheteur bénéficie d’un support réactif à
+                  l’adresse {SUPPORT_EMAIL} pour toute assistance technique ou
+                  récupération de code d’accès.
+                </p>
+              </div>
+            ) : (
+              <div className="text-xs md:text-sm text-slate-300 leading-relaxed space-y-3">
+                <p>
+                  <strong>1. Sécurité des transactions :</strong> Tous les
+                  règlements sont traités de manière 100 % chiffrée (SSL/TLS)
+                  directement par nos partenaires certifiés Stripe et PayPal.
+                  Astroberb Academy ne stocke aucune coordonnée bancaire.
+                </p>
+                <p>
+                  <strong>2. Stockage local :</strong> % Votre progression, votre
+                  choix de langue et vos modules débloqués sont enregistrés
+                  localement sur votre navigateur (LocalStorage) sans pistage
+                  publicitaire tiers.
+                </p>
+                <p>
+                  <strong>3. Contact & Droit d’accès :</strong> Pour toute
+                  question relative à vos données ou à votre compte membre,
+                  contactez-nous à {SUPPORT_EMAIL}.
+                </p>
+              </div>
+            )}
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setLegalModal(null)}
+                className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold"
+              >
+                {currentT.closeBtn}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
