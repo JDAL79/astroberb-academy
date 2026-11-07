@@ -52,6 +52,108 @@ interface DownloadDoc {
   sections: { title: string; content: string[] }[];
 }
 
+interface GlossaryItem {
+  termFr: string;
+  termEn: string;
+  defFr: string;
+  defEn: string;
+  moduleRef: number;
+}
+
+const GLOSSARY_TERMS: GlossaryItem[] = [
+  {
+    termFr: 'Backfocus',
+    termEn: 'Backfocus',
+    defFr: "Distance mécanique exacte (généralement 55,0 mm) entre la bague arrière de votre correcteur/réducteur et la surface du capteur CMOS.",
+    defEn: "The exact mechanical distance (typically 55.0mm) between the rear shoulder of your flattener/reducer and the CMOS sensor plane.",
+    moduleRef: 1,
+  },
+  {
+    termFr: 'Tilt',
+    termEn: 'Sensor Tilt',
+    defFr: "Défaut d'alignement mécanique où le plan du capteur n'est pas parfaitement orthogonal à l'axe optique, créant des coins flous.",
+    defEn: "Mechanical misalignment where the sensor plane is not perfectly orthogonal to the optical axis, causing blurry corners.",
+    moduleRef: 1,
+  },
+  {
+    termFr: 'Échantillonnage',
+    termEn: 'Pixel Scale',
+    defFr: "Portion de ciel en secondes d'arc capturée par un pixel unique de votre caméra (exprimé en ''/px). Doit être adapté au seeing.",
+    defEn: "The portion of the sky in arcseconds captured by a single camera pixel (''/px). Must match atmospheric seeing.",
+    moduleRef: 1,
+  },
+  {
+    termFr: 'Monture Harmonique',
+    termEn: 'Harmonic Mount',
+    defFr: "Monture équatoriale légère à réducteurs Strainwave offrant un couple élevé sans nécessiter de contrepoids lourds.",
+    defEn: "Lightweight equatorial mount using strainwave gear reducers providing high torque without heavy counterweights.",
+    moduleRef: 2,
+  },
+  {
+    termFr: 'Plate Solving',
+    termEn: 'Plate Solving',
+    defFr: "Technique astrométrique où le logiciel analyse une photo du ciel pour identifier instantanément les coordonnées de pointage exactes.",
+    defEn: "Astrometric technique where software analyzes a sky photo to instantly identify exact pointing coordinates.",
+    moduleRef: 3,
+  },
+  {
+    termFr: 'Dithering',
+    termEn: 'Dithering',
+    defFr: "Décalage aléatoire de quelques pixels entre les poses pour éliminer le bruit de trame (Walking Noise) à l'empilement.",
+    defEn: "Random shifting of a few pixels between exposures to eliminate fixed-pattern walking noise during stacking.",
+    moduleRef: 3,
+  },
+  {
+    termFr: 'Gain HCG',
+    termEn: 'HCG Gain',
+    defFr: "Seuil de conversion à haut gain sur les capteurs CMOS Sony (ex: Gain 100) qui fait chuter drastiquement le bruit de lecture.",
+    defEn: "High Conversion Gain threshold on Sony CMOS sensors (e.g. Gain 100) that drastically reduces read noise.",
+    moduleRef: 4,
+  },
+  {
+    termFr: 'Filtre Dual-Band',
+    termEn: 'Dual-Band Filter',
+    defFr: "Filtre interférentiel à bande étroite (ex: 3nm ou 7nm) ne laissant passer que les raies Ha et OIII pour imager en ville.",
+    defEn: "Narrowband interference filter passing only Ha and OIII emission lines for city imaging with color cameras.",
+    moduleRef: 4,
+  },
+  {
+    termFr: 'CFZ (Zone Critique de Focus)',
+    termEn: 'CFZ (Critical Focus Zone)',
+    defFr: "Plage microscopique de mise au point où l'optique reste parfaitement diffraction-limitée.",
+    defEn: "The microscopic focus range where optics remain diffraction-limited.",
+    moduleRef: 5,
+  },
+  {
+    termFr: 'HFR (Half Flux Radius)',
+    termEn: 'HFR (Half Flux Radius)',
+    defFr: "Rayon contenant 50 % de l'énergie lumineuse d'une étoile. Indicateur universel de la qualité de focalisation.",
+    defEn: "Radius containing 50% of a star's light energy. Universal indicator of focus quality.",
+    moduleRef: 5,
+  },
+  {
+    termFr: 'GHS (Generalized Hyperbolic Stretch)',
+    termEn: 'GHS Stretch',
+    defFr: "Outil d'étirement d'histogramme non-linéaire permettant de révéler les extensions faibles tout en protégeant les cœurs brillants.",
+    defEn: "Non-linear histogram stretch tool designed to reveal faint extensions while protecting bright cores.",
+    moduleRef: 6,
+  },
+  {
+    termFr: 'SPCC',
+    termEn: 'SPCC Calibration',
+    defFr: "Étalonnage colorimétrique spectrophotométrique basé sur le catalogue Gaia pour restituer les vraies teintes des astres.",
+    defEn: "Spectrophotometric color calibration using the Gaia star catalog to render true astronomical colors.",
+    moduleRef: 6,
+  },
+  {
+    termFr: 'Règle NPF',
+    termEn: 'NPF Rule',
+    defFr: "Formule moderne calculant le temps de pose maximal sans filé d'étoiles sur trépied fixe en tenant compte du capteur et de l'optique.",
+    defEn: "Modern formula calculating maximum untracked exposure time on a static tripod based on sensor and optics.",
+    moduleRef: 7,
+  },
+];
+
 export default function App() {
   const [lang, setLang] = useState<'fr' | 'en'>(() => {
     try {
@@ -63,12 +165,14 @@ export default function App() {
   });
 
   const [nightVision, setNightVision] = useState<boolean>(false);
+  const [fieldMode, setFieldMode] = useState<boolean>(false); // NOUVEAU : Mode Nomade / Plein Écran Terrain
   const [vipCode, setVipCode] = useState('');
   const [studentName, setStudentName] = useState<string>('');
   const [unlockedModules, setUnlockedModules] = useState<number[]>([]);
   const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [vipStatus, setVipStatus] = useState<'success' | 'error' | null>(null);
-  const [activeTab, setActiveTab] = useState<'home' | 'vip' | 'pack' | 'success' | 'module-detail'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'vip' | 'pack' | 'success' | 'module-detail' | 'glossary'>('home');
+  const [glossarySearch, setGlossarySearch] = useState<string>(''); // NOUVEAU : Recherche lexique
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
   const [justPurchasedModule, setJustPurchasedModule] = useState<boolean>(false);
@@ -358,6 +462,9 @@ export default function App() {
       trustBadge: "⭐ Noté 4.9/5 par notre communauté de passionnés",
       catalog: 'Catalogue des Cours',
       vipSection: 'Accès Membre / Code',
+      glossaryNav: '📖 Lexique Astro',
+      fieldModeBtn: '🌙 Mode Nomade (Terrain)',
+      exitFieldMode: '✕ Quitter le Mode Nomade',
       unlockBtn: 'Activer mon code',
       buyStripe: 'Carte bancaire',
       buyPayPal: 'PayPal',
@@ -480,6 +587,9 @@ export default function App() {
       trustBadge: '⭐ Rated 4.9/5 by our community of enthusiasts',
       catalog: 'Course Catalog',
       vipSection: 'Member Access / Code',
+      glossaryNav: '📖 Astro Glossary',
+      fieldModeBtn: '🌙 Field Mode (Nomad)',
+      exitFieldMode: '✕ Exit Field Mode',
       unlockBtn: 'Activate Code',
       buyStripe: 'Credit Card',
       buyPayPal: 'PayPal',
@@ -1361,6 +1471,14 @@ export default function App() {
 
   const progressPercentage = Math.round((completedModules.length / 7) * 100);
 
+  // Filtrage du lexique
+  const filteredGlossary = GLOSSARY_TERMS.filter((item) => {
+    const term = lang === 'fr' ? item.termFr : item.termEn;
+    const def = lang === 'fr' ? item.defFr : item.defEn;
+    const query = glossarySearch.toLowerCase();
+    return term.toLowerCase().includes(query) || def.toLowerCase().includes(query);
+  });
+
   return (
     <div
       className={`min-h-screen font-sans flex flex-col justify-between transition-colors duration-300 ${
@@ -1369,189 +1487,292 @@ export default function App() {
           : 'bg-[#030712] text-slate-100 selection:bg-cyan-500 selection:text-slate-950'
       }`}
     >
-      {/* EN-TETE AVEC MODE NUIT & GLASSMORPHISM */}
-      <header
-        className={`border-b sticky top-0 z-50 backdrop-blur-md ${
-          nightVision
-            ? 'border-rose-900/60 bg-[#120101]/95 text-rose-100'
-            : 'border-slate-800/80 bg-[#030712]/90'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-3.5 md:h-20 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div className="flex items-center justify-between">
-            <div
-              className="flex items-center space-x-3 cursor-pointer group"
-              onClick={() => setActiveTab('home')}
-            >
-              <AstroberbLogo className="w-10 h-10" />
-              <h1
-                className={`font-extrabold text-lg tracking-tight ${
-                  nightVision
-                    ? 'text-rose-300'
-                    : 'bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent'
-                }`}
+      {/* EN-TETE AVEC MODE NUIT & MODE NOMADE TERRAIN */}
+      {!fieldMode && (
+        <header
+          className={`border-b sticky top-0 z-50 backdrop-blur-md ${
+            nightVision
+              ? 'border-rose-900/60 bg-[#120101]/95 text-rose-100'
+              : 'border-slate-800/80 bg-[#030712]/90'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 py-3.5 md:h-20 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="flex items-center justify-between">
+              <div
+                className="flex items-center space-x-3 cursor-pointer group"
+                onClick={() => setActiveTab('home')}
               >
-                {currentT.title}
-              </h1>
+                <AstroberbLogo className="w-10 h-10" />
+                <h1
+                  className={`font-extrabold text-lg tracking-tight ${
+                    nightVision
+                      ? 'text-rose-300'
+                      : 'bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent'
+                  }`}
+                >
+                  {currentT.title}
+                </h1>
+              </div>
+
+              <div className="flex md:hidden items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+                  className={`px-2 py-1.5 rounded-xl text-xs font-bold border transition ${
+                    nightVision
+                      ? 'bg-rose-950 border-rose-800 text-rose-300'
+                      : 'bg-slate-900/90 border-slate-700/80'
+                  }`}
+                >
+                  🌐 {lang.toUpperCase()}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNightVision(!nightVision)}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
+                    nightVision
+                      ? 'bg-rose-900 border-rose-700 text-white'
+                      : 'bg-slate-900/90 border-slate-700 text-rose-400'
+                  }`}
+                  title="Mode Nuit Rouge"
+                >
+                  🔴
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('pack')}
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg text-white animate-pulse"
+                >
+                  {currentT.packBtnShort}
+                </button>
+              </div>
             </div>
 
-            <div className="flex md:hidden items-center space-x-2">
+            <nav className="flex items-center justify-center space-x-6 text-sm border-t border-slate-800/60 pt-2.5 md:border-t-0 md:pt-0 font-medium">
+              <button
+                type="button"
+                onClick={() => setActiveTab('home')}
+                className={
+                  activeTab === 'home'
+                    ? `${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
+                    : 'hover:opacity-80 transition'
+                }
+              >
+                ✨ {currentT.catalog}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('glossary')}
+                className={
+                  activeTab === 'glossary'
+                    ? `${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
+                    : 'hover:opacity-80 transition'
+                }
+              >
+                📖 {currentT.glossaryNav}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setVipStatus(null);
+                  setActiveTab('vip');
+                }}
+                className={
+                  activeTab === 'vip'
+                    ? `${
+                        nightVision ? 'text-rose-400' : 'text-cyan-400'
+                      } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
+                    : 'hover:opacity-80 transition'
+                }
+              >
+                🔑 {currentT.vipSection}
+              </button>
+            </nav>
+
+            <div className="hidden md:flex items-center space-x-2.5">
+              <button
+                type="button"
+                onClick={() => setFieldMode(true)}
+                className="px-3 py-2 rounded-xl text-xs font-bold border border-cyan-500/40 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-900/60 transition flex items-center gap-1.5"
+                title="Mode plein écran épuré pour le terrain"
+              >
+                🌙 {lang === 'fr' ? 'Mode Nomade' : 'Field Mode'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setNightVision(!nightVision)}
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
+                  nightVision
+                    ? 'bg-rose-950 border-rose-700 text-white'
+                    : 'bg-slate-900 border-slate-700 text-rose-400 hover:border-rose-500'
+                }`}
+                title="Préserver la vision nocturne"
+              >
+                🔴 {lang === 'fr' ? 'Mode Nuit' : 'Night Mode'}
+              </button>
               <button
                 type="button"
                 onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition ${
                   nightVision
                     ? 'bg-rose-950 border-rose-800 text-rose-300'
-                    : 'bg-slate-900/90 border-slate-700/80'
+                    : 'bg-slate-900/80 border-slate-700/80 hover:border-cyan-500'
                 }`}
               >
                 🌐 {lang.toUpperCase()}
               </button>
               <button
                 type="button"
-                onClick={() => setNightVision(!nightVision)}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition ${
-                  nightVision
-                    ? 'bg-rose-900 border-rose-700 text-white'
-                    : 'bg-slate-900/90 border-slate-700 text-rose-400'
-                }`}
-                title="Mode Nuit Rouge"
-              >
-                🔴
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveTab('pack')}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg text-white animate-pulse"
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg hover:opacity-95 transition text-white animate-pulse"
               >
                 {currentT.packBtnShort}
               </button>
             </div>
           </div>
 
-          <nav className="flex items-center justify-center space-x-8 text-sm border-t border-slate-800/60 pt-2.5 md:border-t-0 md:pt-0 font-medium">
-            <button
-              type="button"
-              onClick={() => setActiveTab('home')}
-              className={
-                activeTab === 'home'
-                  ? `${
-                      nightVision ? 'text-rose-400' : 'text-cyan-400'
-                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
-                  : 'hover:opacity-80 transition'
-              }
+          {/* BANDEAU ACCES RAPIDE AUX COURS DEVERROUILLES + PROGRESSION */}
+          {unlockedModules.length > 0 && (
+            <div
+              className={`border-t py-2.5 px-4 ${
+                nightVision
+                  ? 'bg-rose-950/80 border-rose-900 text-rose-200'
+                  : 'bg-gradient-to-r from-emerald-950/90 via-slate-950 to-emerald-950/90 border-emerald-500/40 text-emerald-300'
+              }`}
             >
-              ✨ {currentT.catalog}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setVipStatus(null);
-                setActiveTab('vip');
-              }}
-              className={
-                activeTab === 'vip'
-                  ? `${
-                      nightVision ? 'text-rose-400' : 'text-cyan-400'
-                    } font-bold border-b-2 border-current pb-1 md:pb-0 md:border-b-0 transition`
-                  : 'hover:opacity-80 transition'
-              }
-            >
-              🔑 {currentT.vipSection}
-            </button>
-          </nav>
+              <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2.5">
+                <span className="text-xs font-bold mr-2 flex items-center gap-1.5">
+                  <span>⭐</span> {currentT.quickAccessTitle}
+                </span>
+                {modules.map((m) => {
+                  if (!isModuleUnlocked(m.id)) return null;
+                  const isSelected =
+                    activeTab === 'module-detail' && selectedModuleId === m.id;
+                  const isDone = completedModules.includes(m.id);
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => openModuleDetail(m.id, false)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5 ${
+                        isSelected
+                          ? nightVision
+                            ? 'bg-rose-600 text-white ring-2 ring-white scale-105'
+                            : 'bg-cyan-400 text-slate-950 ring-2 ring-white scale-105'
+                          : isDone
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                      }`}
+                    >
+                      <span>{isDone ? '✓' : '🚀'}</span>{' '}
+                      {m.id === 7 ? 'Bonus' : `Mod. ${m.id}`}
+                    </button>
+                  );
+                })}
+                <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 ml-1">
+                  {completedModules.length}/7 ({progressPercentage}%)
+                </span>
+                {completedModules.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={generateCertificate}
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1"
+                  >
+                    🏆 {lang === 'fr' ? 'Certificat' : 'Certificate'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </header>
+      )}
 
-          <div className="hidden md:flex items-center space-x-3">
+      {/* BARRE HAUTE EN MODE NOMADE (PLEIN ÉCRAN TERRAIN) */}
+      {fieldMode && (
+        <div className={`p-4 border-b flex items-center justify-between sticky top-0 z-50 shadow-2xl ${nightVision ? 'bg-rose-950 border-rose-900 text-white' : 'bg-slate-950 border-cyan-500/40 text-cyan-300'}`}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🔭</span>
+            <div>
+              <h2 className="text-xs md:text-sm font-black uppercase tracking-wider">{lang === 'fr' ? 'Astroberb — Mode Nomade Terrain' : 'Astroberb Field Mode'}</h2>
+              <p className="text-[10px] text-slate-400">{lang === 'fr' ? 'Interface épurée pour vos nuits sous les étoiles' : 'Streamlined interface for observation nights'}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setNightVision(!nightVision)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
-                nightVision
-                  ? 'bg-rose-950 border-rose-700 text-white'
-                  : 'bg-slate-900 border-slate-700 text-rose-400 hover:border-rose-500'
-              }`}
-              title="Préserver la vision nocturne"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${nightVision ? 'bg-rose-900 border-rose-700 text-white' : 'bg-slate-900 border-slate-700 text-rose-400'}`}
             >
-              🔴 {lang === 'fr' ? 'Mode Nuit' : 'Night Mode'}
+              🔴 {nightVision ? 'Mode Nuit ON' : 'Mode Nuit'}
             </button>
             <button
               type="button"
-              onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition ${
-                nightVision
-                  ? 'bg-rose-950 border-rose-800 text-rose-300'
-                  : 'bg-slate-900/80 border-slate-700/80 hover:border-cyan-500'
-              }`}
+              onClick={() => setFieldMode(false)}
+              className="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition shadow"
             >
-              🌐 {lang.toUpperCase()}
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('pack')}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg hover:opacity-95 transition text-white animate-pulse"
-            >
-              {currentT.packBtnShort}
+              {currentT.exitFieldMode}
             </button>
           </div>
         </div>
+      )}
 
-        {/* BANDEAU ACCES RAPIDE AUX COURS DEVERROUILLES + PROGRESSION */}
-        {unlockedModules.length > 0 && (
-          <div
-            className={`border-t py-2.5 px-4 ${
-              nightVision
-                ? 'bg-rose-950/80 border-rose-900 text-rose-200'
-                : 'bg-gradient-to-r from-emerald-950/90 via-slate-950 to-emerald-950/90 border-emerald-500/40 text-emerald-300'
-            }`}
-          >
-            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2.5">
-              <span className="text-xs font-bold mr-2 flex items-center gap-1.5">
-                <span>⭐</span> {currentT.quickAccessTitle}
+      {/* CONTENU PRINCIPAL */}
+      <main className="max-w-7xl mx-auto px-4 py-10 flex-grow w-full">
+        {/* VUE LEXIQUE / GLOSSAIRE */}
+        {activeTab === 'glossary' && (
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center space-y-3">
+              <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-extrabold uppercase tracking-widest border border-cyan-500/30">
+                📚 Dictionnaire Technique
               </span>
-              {modules.map((m) => {
-                if (!isModuleUnlocked(m.id)) return null;
-                const isSelected =
-                  activeTab === 'module-detail' && selectedModuleId === m.id;
-                const isDone = completedModules.includes(m.id);
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => openModuleDetail(m.id, false)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5 ${
-                      isSelected
-                        ? nightVision
-                          ? 'bg-rose-600 text-white ring-2 ring-white scale-105'
-                          : 'bg-cyan-400 text-slate-950 ring-2 ring-white scale-105'
-                        : isDone
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-                    }`}
-                  >
-                    <span>{isDone ? '✓' : '🚀'}</span>{' '}
-                    {m.id === 7 ? 'Bonus' : `Mod. ${m.id}`}
-                  </button>
-                );
-              })}
-              <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 ml-1">
-                {completedModules.length}/7 ({progressPercentage}%)
-              </span>
-              {completedModules.length > 0 && (
-                <button
-                  type="button"
-                  onClick={generateCertificate}
-                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1"
-                >
-                  🏆 {lang === 'fr' ? 'Certificat' : 'Certificate'}
-                </button>
+              <h2 className="text-3xl md:text-4xl font-black">{lang === 'fr' ? 'Le Lexique Astrophotographie' : 'Astrophotography Glossary'}</h2>
+              <p className={`text-sm md:text-base max-w-xl mx-auto ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                {lang === 'fr' ? 'Retrouvez toutes les définitions des termes techniques utilisés dans nos masterclasses.' : 'Find definitions for all technical terms used in our masterclasses.'}
+              </p>
+              <div className="pt-2 max-w-md mx-auto">
+                <input
+                  type="text"
+                  value={glossarySearch}
+                  onChange={(e) => setGlossarySearch(e.target.value)}
+                  placeholder={lang === 'fr' ? 'Rechercher un terme (ex: Backfocus, Tilt...)' : 'Search a term (e.g. Backfocus, Tilt...)'}
+                  className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white text-sm focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredGlossary.map((item, idx) => (
+                <div key={idx} className={`p-5 rounded-3xl border space-y-2 backdrop-blur-md ${nightVision ? 'bg-rose-950/30 border-rose-900' : 'bg-slate-900/80 border-slate-800'}`}>
+                  <div className="flex items-center justify-between">
+                    <h3 className={`font-black text-base md:text-lg ${nightVision ? 'text-rose-300' : 'text-cyan-300'}`}>
+                      {lang === 'fr' ? item.termFr : item.termEn}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => openModuleDetail(item.moduleRef, false)}
+                      className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-600/60 hover:bg-indigo-600 text-white transition"
+                    >
+                      Module {item.moduleRef} ➔
+                    </button>
+                  </div>
+                  <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                    {lang === 'fr' ? item.defFr : item.defEn}
+                  </p>
+                </div>
+              ))}
+              {filteredGlossary.length === 0 && (
+                <div className="col-span-full text-center py-12 text-slate-400 text-sm">
+                  {lang === 'fr' ? 'Aucun terme trouvé pour cette recherche.' : 'No term found for this query.'}
+                </div>
               )}
             </div>
           </div>
         )}
-      </header>
 
-      {/* CONTENU PRINCIPAL */}
-      <main className="max-w-7xl mx-auto px-4 py-10 flex-grow w-full">
         {activeTab === 'home' && (
           <div className="space-y-16">
             {/* HERO SECTION */}
@@ -1584,7 +1805,7 @@ export default function App() {
                 {currentT.heroDesc}
               </p>
 
-              {/* 1. NOUVELLE SECTION BÉNÉFICES CONCRETS */}
+              {/* SECTION BÉNÉFICES CONCRETS */}
               <div className="max-w-5xl mx-auto pt-6 pb-2">
                 <h3 className={`text-xl md:text-2xl font-black mb-6 ${nightVision ? 'text-rose-200' : 'text-white'}`}>
                   {currentT.benefitsTitle}
@@ -2077,7 +2298,7 @@ export default function App() {
                   );
                 })}
 
-                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE AVEC BOUTON PULSANT */}
+                {/* CARTE SPECIALE DU PACK INTEGRAL DANS LA GRILLE */}
                 <div className="group relative border-2 border-amber-500/80 rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-2xl bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 hover:scale-105 hover:shadow-[0_0_35px_rgba(245,158,11,0.4)]">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-400/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
@@ -2177,7 +2398,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* SECTION FAQ ACCORDEON MISE A JOUR */}
+            {/* SECTION FAQ ACCORDEON */}
             <div className="space-y-4 pt-6 max-w-3xl mx-auto">
               <h3 className="text-2xl font-black text-center">
                 {currentT.faqTitle}
@@ -3172,45 +3393,47 @@ export default function App() {
         )}
       </main>
 
-      <footer
-        className={`border-t py-10 mt-20 text-xs ${
-          nightVision
-            ? 'border-rose-900 bg-[#120101] text-rose-300'
-            : 'border-slate-800/80 bg-[#010308] text-slate-400'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center space-x-2.5">
-            <AstroberbLogo className="w-6 h-6" />
-            <span className="font-bold">Astroberb Academy</span>
-            <span>
-              — © {new Date().getFullYear()} {currentT.footerRights}
-            </span>
+      {!fieldMode && (
+        <footer
+          className={`border-t py-10 mt-20 text-xs ${
+            nightVision
+              ? 'border-rose-900 bg-[#120101] text-rose-300'
+              : 'border-slate-800/80 bg-[#010308] text-slate-400'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center space-x-2.5">
+              <AstroberbLogo className="w-6 h-6" />
+              <span className="font-bold">Astroberb Academy</span>
+              <span>
+                — © {new Date().getFullYear()} {currentT.footerRights}
+              </span>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 font-medium">
+              <button
+                type="button"
+                onClick={() => setLegalModal('terms')}
+                className="hover:underline transition"
+              >
+                {currentT.termsLink}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLegalModal('privacy')}
+                className="hover:underline transition"
+              >
+                {currentT.privacyLink}
+              </button>
+              <a
+                href={`mailto:${SUPPORT_EMAIL}`}
+                className="hover:underline transition"
+              >
+                ✉️ {currentT.contactSupport} ({SUPPORT_EMAIL})
+              </a>
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 font-medium">
-            <button
-              type="button"
-              onClick={() => setLegalModal('terms')}
-              className="hover:underline transition"
-            >
-              {currentT.termsLink}
-            </button>
-            <button
-              type="button"
-              onClick={() => setLegalModal('privacy')}
-              className="hover:underline transition"
-            >
-              {currentT.privacyLink}
-            </button>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="hover:underline transition"
-            >
-              ✉️ {currentT.contactSupport} ({SUPPORT_EMAIL})
-            </a>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {legalModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
