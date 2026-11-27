@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // ==========================================
 // CONFIGURATION DES CODES D'ACCES SECURISES
+// (À déplacer côté serveur / API en production)
 // ==========================================
 const ACCESS_CODES: Record<string, number[]> = {
   'PACK-COMPLET-2026': [1, 2, 3, 4, 5, 6, 7],
@@ -59,6 +60,14 @@ interface GlossaryItem {
   defEn: string;
   moduleRef: number;
 }
+
+const escapeHtml = (str: string): string =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 const GLOSSARY_TERMS: GlossaryItem[] = [
   {
@@ -165,14 +174,14 @@ export default function App() {
   });
 
   const [nightVision, setNightVision] = useState<boolean>(false);
-  const [fieldMode, setFieldMode] = useState<boolean>(false); // NOUVEAU : Mode Nomade / Plein Écran Terrain
+  const [fieldMode, setFieldMode] = useState<boolean>(false);
   const [vipCode, setVipCode] = useState('');
   const [studentName, setStudentName] = useState<string>('');
   const [unlockedModules, setUnlockedModules] = useState<number[]>([]);
   const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [vipStatus, setVipStatus] = useState<'success' | 'error' | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'vip' | 'pack' | 'success' | 'module-detail' | 'glossary'>('home');
-  const [glossarySearch, setGlossarySearch] = useState<string>(''); // NOUVEAU : Recherche lexique
+  const [glossarySearch, setGlossarySearch] = useState<string>('');
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
   const [justPurchasedModule, setJustPurchasedModule] = useState<boolean>(false);
@@ -180,6 +189,7 @@ export default function App() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [popupBlockedMsg, setPopupBlockedMsg] = useState<string | null>(null);
 
   // Simulateur Module 1 (Echantillonnage)
   const [calcFocal, setCalcFocal] = useState<number>(500);
@@ -209,10 +219,19 @@ export default function App() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
 
+  const handleToggleLang = (nextLang: 'fr' | 'en') => {
+    setLang(nextLang);
+    setCurrentSlideIndex(0);
+    setSelectedAnswers({});
+    setQuizSubmitted(false);
+  };
+
   useEffect(() => {
     try {
       localStorage.setItem('astroberb_lang', lang);
-    } catch (e) {}
+    } catch {
+      // Ignorer les erreurs d'accès au stockage local
+    }
   }, [lang]);
 
   useEffect(() => {
@@ -239,11 +258,14 @@ export default function App() {
     const unlockParam = params.get('unlock');
     const successParam = params.get('success');
 
+    // Note : la validation de paiement doit idéalement être vérifiée côté serveur via webhook
     if (unlockParam === 'all' || successParam === 'true') {
       currentUnlocked = [1, 2, 3, 4, 5, 6, 7];
       try {
         localStorage.setItem('astroberb_unlocked', JSON.stringify(currentUnlocked));
-      } catch (e) {}
+      } catch {
+        // Ignorer
+      }
       setActiveTab('success');
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (unlockParam) {
@@ -253,7 +275,9 @@ export default function App() {
           currentUnlocked = [...currentUnlocked, modId];
           try {
             localStorage.setItem('astroberb_unlocked', JSON.stringify(currentUnlocked));
-          } catch (e) {}
+          } catch {
+            // Ignorer
+          }
         }
         setSelectedModuleId(modId);
         setIsPreviewMode(false);
@@ -272,40 +296,47 @@ export default function App() {
     setUnlockedModules(cleanArray);
     try {
       localStorage.setItem('astroberb_unlocked', JSON.stringify(cleanArray));
-    } catch (e) {}
+    } catch {
+      // Ignorer
+    }
   };
 
   const toggleCompleteModule = (id: number) => {
-    let updated: number[];
-    if (completedModules.includes(id)) {
-      updated = completedModules.filter((m) => m !== id);
-    } else {
-      updated = [...completedModules, id];
-    }
+    const updated = completedModules.includes(id)
+      ? completedModules.filter((m) => m !== id)
+      : [...completedModules, id];
     setCompletedModules(updated);
     try {
       localStorage.setItem('astroberb_completed', JSON.stringify(updated));
-    } catch (e) {}
+    } catch {
+      // Ignorer
+    }
   };
 
   const handleSaveStudentName = (val: string) => {
     setStudentName(val);
     try {
       localStorage.setItem('astroberb_student_name', val);
-    } catch (e) {}
+    } catch {
+      // Ignorer
+    }
   };
 
   const handleCopyCode = (code: string) => {
-    try {
-      navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2500);
-    } catch (e) {}
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(() => {
+        setCopiedCode(code);
+        setTimeout(() => setCopiedCode(null), 2500);
+      }).catch(() => {
+        // Fallback silencieux si clipboard indisponible
+      });
+    }
   };
 
-  // COMPOSANT LOGO OFFICIEL AVEC LA MASCOTTE DU PETIT TÉLESCOPE ANIMÉ
   const AstroberbLogo = ({ className = 'w-10 h-10' }: { className?: string }) => (
-    <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 flex items-center justify-center ${className}`}>
+    <div
+      className={`relative rounded-2xl overflow-hidden shadow-xl border border-cyan-500/40 bg-black transition-transform duration-300 group-hover:scale-105 shrink-0 flex items-center justify-center ${className}`}
+    >
       <img
         src={LOGO_URL}
         alt="Astroberb Academy Logo"
@@ -316,11 +347,31 @@ export default function App() {
     </div>
   );
 
-  // GENERATEUR DE CERTIFICAT OFFICIEL
+  const openPrintableWindow = (htmlContent: string, windowFeatures: string) => {
+    setPopupBlockedMsg(null);
+    const win = window.open('', '_blank', windowFeatures);
+    if (!win) {
+      setPopupBlockedMsg(
+        lang === 'fr'
+          ? "Votre navigateur a bloqué l'ouverture de la fenêtre. Autorisez les pop-ups pour imprimer ou enregistrer en PDF."
+          : 'Your browser blocked the pop-up window. Please allow pop-ups to print or save as PDF.'
+      );
+      return;
+    }
+    win.document.open();
+    win.document.write(htmlContent);
+    win.document.close();
+  };
+
   const generateCertificate = () => {
-    const displayName =
+    const rawName =
       studentName.trim() ||
       (lang === 'fr' ? "Élève d'Élite Astroberb" : 'Astroberb Elite Student');
+    const safeName = escapeHtml(rawName);
+    const safeEmail = escapeHtml(SUPPORT_EMAIL);
+    const formattedDate = escapeHtml(
+      new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US')
+    );
 
     const htmlContent = [
       '<!DOCTYPE html>',
@@ -343,38 +394,55 @@ export default function App() {
       '</style>',
       '</head>',
       '<body>',
-      `<button class="no-print" onclick="window.print()">🖨️ ${lang === 'fr' ? 'Imprimer ou Enregistrer le Certificat en PDF' : 'Print or Save Certificate as PDF'}</button>`,
+      `<button class="no-print" onclick="window.print()">🖨️ ${
+        lang === 'fr'
+          ? 'Imprimer ou Enregistrer le Certificat en PDF'
+          : 'Print or Save Certificate as PDF'
+      }</button>`,
       '<div class="container">',
       '<div style="font-size: 42px; margin-bottom: 10px;">🪐</div>',
       '<h1>Astroberb Academy</h1>',
-      `<div class="sub">${lang === 'fr' ? 'Certificat Officiel de Maîtrise en Astrophotographie' : 'Official Certificate of Mastery in Astrophotography'}</div>`,
-      `<p>${lang === 'fr' ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de notre collectif, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique." : 'This diploma certifies that the astrophotographer named below has successfully mastered our collective curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and astrophysical image processing.'}</p>`,
-      `<div class="name">${displayName}</div>`,
+      `<div class="sub">${
+        lang === 'fr'
+          ? 'Certificat Officiel de Maîtrise en Astrophotographie'
+          : 'Official Certificate of Mastery in Astrophotography'
+      }</div>`,
+      `<p>${
+        lang === 'fr'
+          ? "Ce diplôme certifie que l'astrophotographe ci-dessous a complété avec succès le cursus technique de notre collectif, incluant le calcul optique d'échantillonnage, la maîtrise des montures harmoniques, l'automatisation astrométrique nocturne et le traitement astrophysique."
+          : 'This diploma certifies that the astrophotographer named below has successfully mastered our collective curriculum, including optical sampling physics, strainwave harmonic mount tracking, automated astrometric sequencing, and astrophysical image processing.'
+      }</p>`,
+      `<div class="name">${safeName}</div>`,
       '<div class="footer">',
-      `<div>${lang === 'fr' ? 'Délivré le' : 'Issued on'} : ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US')}</div>`,
-      `<div>Modules validés : ${completedModules.length} / 7 • Support : ${SUPPORT_EMAIL}</div>`,
-      `<div><span class="signature">L'Équipe Astroberb</span><br/>${lang === 'fr' ? 'Le Collectif d’Astronomes Amateurs' : 'The Amateur Astronomers Collective'}</div>`,
+      `<div>${
+        lang === 'fr' ? 'Délivré le' : 'Issued on'
+      } : ${formattedDate}</div>`,
+      `<div>Modules validés : ${completedModules.length} / 7 • Support : ${safeEmail}</div>`,
+      `<div><span class="signature">L'Équipe Astroberb</span><br/>${
+        lang === 'fr'
+          ? 'Le Collectif d’Astronomes Amateurs'
+          : 'The Amateur Astronomers Collective'
+      }</div>`,
       '</div>',
       '</div>',
       '</body>',
       '</html>',
     ].join('\n');
 
-    const win = window.open('', '_blank', 'width=1050,height=750');
-    if (win) {
-      win.document.open();
-      win.document.write(htmlContent);
-      win.document.close();
-    }
+    openPrintableWindow(htmlContent, 'width=1050,height=750');
   };
 
-  // GENERATEUR DE PDF ROBUSTE A4
   const generateAndDownloadPDF = (doc: DownloadDoc, moduleTitle: string) => {
+    const safeDocName = escapeHtml(doc.name);
+    const safeTitle = escapeHtml(doc.title);
+    const safeModuleTitle = escapeHtml(moduleTitle);
+    const safeEmail = escapeHtml(SUPPORT_EMAIL);
+
     const sectionsHtml = doc.sections
       .map(
         (sec) =>
-          `<div class="section"><h2>${sec.title}</h2><ul>${sec.content
-            .map((item) => `<li>${item}</li>`)
+          `<div class="section"><h2>${escapeHtml(sec.title)}</h2><ul>${sec.content
+            .map((item) => `<li>${escapeHtml(item)}</li>`)
             .join('')}</ul></div>`
       )
       .join('');
@@ -384,7 +452,7 @@ export default function App() {
       `<html lang="${lang}">`,
       '<head>',
       '<meta charset="UTF-8">',
-      `<title>${doc.name} - Astroberb Academy</title>`,
+      `<title>${safeDocName} - Astroberb Academy</title>`,
       '<style>',
       '@page { size: A4; margin: 16mm; }',
       "body { font-family: 'Segoe UI', Roboto, sans-serif; color: #0f172a; line-height: 1.55; padding: 15px; background: white; }",
@@ -405,65 +473,78 @@ export default function App() {
       '</head>',
       '<body>',
       '<div class="no-print">',
-      `<span>📄 <strong>${lang === 'fr' ? 'Document technique prêt' : 'Technical sheet ready'}</strong> — ${lang === 'fr' ? 'Cliquez pour enregistrer en PDF ou imprimer.' : 'Click to save as PDF or print.'}</span>`,
-      `<button class="btn-print" onclick="window.print()">🖨️ ${lang === 'fr' ? 'Enregistrer en PDF' : 'Save as PDF'}</button>`,
+      `<span>📄 <strong>${
+        lang === 'fr' ? 'Document technique prêt' : 'Technical sheet ready'
+      }</strong> — ${
+        lang === 'fr'
+          ? 'Cliquez pour enregistrer en PDF ou imprimer.'
+          : 'Click to save as PDF or print.'
+      }</span>`,
+      `<button class="btn-print" onclick="window.print()">🖨️ ${
+        lang === 'fr' ? 'Enregistrer en PDF' : 'Save as PDF'
+      }</button>`,
       '</div>',
       '<div class="header">',
       '<div>',
       '<div class="brand">🪐 ASTROBERB ACADEMY</div>',
-      `<div class="sub">${lang === 'fr' ? 'Documentation Technique & Abaques Terrain' : 'Official Field Technical Documentation'}</div>`,
+      `<div class="sub">${
+        lang === 'fr'
+          ? 'Documentation Technique & Abaques Terrain'
+          : 'Official Field Technical Documentation'
+      }</div>`,
       '</div>',
       '<div style="text-align: right; font-size: 12px; color: #475569;">Édition 2026</div>',
       '</div>',
-      `<div class="mod-tag">${moduleTitle}</div>`,
-      `<h1>${doc.title}</h1>`,
+      `<div class="mod-tag">${safeModuleTitle}</div>`,
+      `<h1>${safeTitle}</h1>`,
       sectionsHtml,
-      `<div class="footer">© ${new Date().getFullYear()} Astroberb Academy — Support : ${SUPPORT_EMAIL}</div>`,
+      `<div class="footer">© ${new Date().getFullYear()} Astroberb Academy — Support : ${safeEmail}</div>`,
       '<script>setTimeout(function() { window.print(); }, 400);</script>',
       '</body>',
       '</html>',
     ].join('\n');
 
-    const win = window.open('', '_blank', 'width=900,height=800');
-    if (win) {
-      win.document.open();
-      win.document.write(htmlContent);
-      win.document.close();
-    }
+    openPrintableWindow(htmlContent, 'width=900,height=800');
   };
 
   const t = {
     fr: {
       title: 'Astroberb Academy',
       subtitle: "Le Collectif d'Astronomes Amateurs — Astrophotographie du Ciel Profond",
-      heroBadge: "⚡ SUPER PROMO • TOUT LE SAVOIR-FAIRE DU TERRAIN",
-      heroDesc: "Bienvenue sur notre plateforme ! Nous sommes un groupe de passionnés d'astronomie réunis pour partager nos astuces de terrain : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
+      heroBadge: '⚡ SUPER PROMO • TOUT LE SAVOIR-FAIRE DU TERRAIN',
+      heroDesc:
+        "Bienvenue sur notre plateforme ! Nous sommes un groupe de passionnés d'astronomie réunis pour partager nos astuces de terrain : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
       benefitsTitle: 'Ce que vous saurez faire après les cours',
       benefit1Title: 'Maîtriser son matériel',
-      benefit1Desc: 'Fini les prises de tête avec le backfocus, le tilt ou le choix des filtres. Vous assemblez un train optique rigide et parfaitement réglé.',
+      benefit1Desc:
+        'Fini les prises de tête avec le backfocus, le tilt ou le choix des filtres. Vous assemblez un train optique rigide et parfaitement réglé.',
       benefit2Title: 'Automatiser ses nuits',
-      benefit2Desc: "Programmez des sessions de A à Z (Plate solving, autofocus EAF, meridian flip, guidage PHD2) pour dormir l'esprit tranquille.",
+      benefit2Desc:
+        "Programmez des sessions de A à Z (Plate solving, autofocus EAF, meridian flip, guidage PHD2) pour dormir l'esprit tranquille.",
       benefit3Title: 'Sublimer ses images',
-      benefit3Desc: 'Obtenez des galaxies et des nébuleuses dignes des plus grands observatoires grâce à GraXpert, SPCC et l’étirement GHS.',
+      benefit3Desc:
+        'Obtenez des galaxies et des nébuleuses dignes des plus grands observatoires grâce à GraXpert, SPCC et l’étirement GHS.',
       videoSectionBadge: '🎬 Présentation de notre Collectif',
       videoSectionTitle: 'Bienvenue dans notre Observatoire Virtuel !',
-      videoSectionSub: 'Installez-vous confortablement avec un café chaud : nous vous montrons comment nous préparons nos nuits d’observation de A à Z.',
+      videoSectionSub:
+        'Installez-vous confortablement avec un café chaud : nous vous montrons comment nous préparons nos nuits d’observation de A à Z.',
       modulesVideoBadge: '🚀 Visite Guidée des Modules',
       modulesVideoTitle: 'Ce que nous partageons avec vous dans nos Masterclasses',
-      modulesVideoSub: 'Découvrez en images comment nos outils et nos modules vous simplifient la vie sous les étoiles.',
+      modulesVideoSub:
+        'Découvrez en images comment nos outils et nos modules vous simplifient la vie sous les étoiles.',
       originStoryTitle: '🔭 L’idée originale de notre collectif',
-      originStoryText: "L'idée originale du site formateur Astroberb est de rassembler tous nos trucs, astuces et connaissances en un seul endroit, accessibles en tout temps, surtout durant les séances d'astronomie. De rendre plus agréable l'approfondissement de vos connaissances en astronomie et astrophoto, et tout ça, dans la simplicité !",
+      originStoryText:
+        "L'idée originale du site formateur Astroberb est de rassembler tous nos trucs, astuces et connaissances en un seul endroit, accessibles en tout temps, surtout durant les séances d'astronomie. De rendre plus agréable l'approfondissement de vos connaissances en astronomie et astrophoto, et tout ça, dans la simplicité !",
       phase1Badge: '1. AVANT LA NUIT',
       phase1Desc: 'Calcul d’échantillonnage, backfocus 55 mm & équilibrage harmonique.',
       phase2Badge: '2. PENDANT LA NUIT',
       phase2Desc: 'Mise en station polaire, séquenceur N.I.N.A./ASIAIR, EAF & guidage PHD2.',
       phase3Badge: '3. APRÈS LA NUIT',
       phase3Desc: 'Calibration DOF, GraXpert AI, SPCC & étirement GHS (Siril / PixInsight).',
-      trustBadge: "⭐ Noté 4.9/5 par notre communauté de passionnés",
+      trustBadge: '⭐ Noté 4.9/5 par notre communauté de passionnés',
       catalog: 'Catalogue des Cours',
       vipSection: 'Accès Membre / Code',
-      glossaryNav: '📖 Lexique Astro',
-      fieldModeBtn: '🌙 Mode Nomade (Terrain)',
+      glossaryNav: 'Lexique Astro',
       exitFieldMode: '✕ Quitter le Mode Nomade',
       unlockBtn: 'Activer mon code',
       buyStripe: 'Carte bancaire',
@@ -472,14 +553,16 @@ export default function App() {
       packBtnShort: '⚡ SUPER PROMO : Pack Intégral (49.99$)',
       freePreviewBtn: '👁️ Essayer la Démo Gratuite (Simulateur + Chapitre 1)',
       previewBannerTitle: '👁️ MODE APERÇU GRATUIT — Module 1',
-      previewBannerDesc: "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Profitez de notre super promo pour tout débloquer.",
+      previewBannerDesc:
+        "Testez notre simulateur d'échantillonnage et le Chapitre 1 ! Profitez de notre super promo pour tout débloquer.",
       accessGranted: 'Code validé avec succès ! Cliquez sur vos formations débloquées :',
-      invalidCode: "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
+      invalidCode:
+        "Code d'accès invalide. Vérifiez votre courriel ou contactez le support.",
       accessCourse: '🚀 ACCÉDER À LA MASTERCLASS',
       lockedBadge: '🔒 Module verrouillé',
-      unlockedBadge: '🔓 Déverrouillé (Cliquer pour lancer)',
       backToCatalog: '← Retour au catalogue des formations',
-      paymentConfirmedModule: '🎉 Accès débloqué ! Votre code de sauvegarde multi-appareils : ',
+      paymentConfirmedModule:
+        '🎉 Accès débloqué ! Votre code de sauvegarde multi-appareils : ',
       copyBtn: '📋 Copier le code',
       copiedBtn: '✅ Code copié !',
       progressLabel: 'Progression de votre cursus :',
@@ -490,17 +573,22 @@ export default function App() {
       resourcesPdf: 'Fiches Techniques PDF (Générateur A4 Imprimable)',
       generatePdfBtn: 'Générer & Télécharger le PDF',
       successBadge: 'Paiement Validé avec Succès',
-      successTitle: "Bienvenue dans la famille Astroberb Academy !",
-      successDesc: 'Votre accès intégral est débloqué. Profitez dès maintenant de tous nos modules, simulateurs et guides PDF.',
-      backupCodeNotice: "IMPORTANT — Votre code d'accès multi-appareils à conserver :",
-      packTitle: "⚡ OFFRE DU COLLECTIF : Le Pack Intégral 7-en-1",
-      packDesc: "Rejoignez notre communauté en obtenant un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses, nos 6 simulateurs et nos guides PDF.",
+      successTitle: 'Bienvenue dans la famille Astroberb Academy !',
+      successDesc:
+        'Votre accès intégral est débloqué. Profitez dès maintenant de tous nos modules, simulateurs et guides PDF.',
+      backupCodeNotice:
+        "IMPORTANT — Votre code d'accès multi-appareils à conserver :",
+      packTitle: '⚡ OFFRE DU COLLECTIF : Le Pack Intégral 7-en-1',
+      packDesc:
+        "Rejoignez notre communauté en obtenant un accès immédiat, illimité et à vie à l'ensemble de nos 7 masterclasses, nos 6 simulateurs et nos guides PDF.",
       payCardStripe: '💳 Payer par Carte Sécurisée (Stripe)',
       payWithPaypal: '🅿️ Payer instantanément avec PayPal',
-      vipDesc: 'Entrez votre code personnel reçu après votre achat pour débloquer instantanément vos formations sur cet appareil :',
+      vipDesc:
+        'Entrez votre code personnel reçu après votre achat pour débloquer instantanément vos formations sur cet appareil :',
       vipPlaceholder: 'Votre code (ex: PACK-COMPLET-2026 ou ASTRO-MOD1)',
       viewUnlocked: 'Voir mes modules déverrouillés ➔',
-      taxNotice: '🔒 Paiement 100% sécurisé via Stripe & PayPal — Accès immédiat et illimité à vie.',
+      taxNotice:
+        '🔒 Paiement 100% sécurisé via Stripe & PayPal — Accès immédiat et illimité à vie.',
       footerRights: 'Tous droits réservés.',
       termsLink: 'Conditions Générales de Vente (CGV)',
       privacyLink: 'Politique de Confidentialité',
@@ -514,10 +602,14 @@ export default function App() {
       calcFocalLabel: 'Focale effective du télescope (mm) :',
       calcPixelLabel: 'Taille des pixels de la caméra (µm) :',
       calcResult: 'Votre Échantillonnage : ',
-      calcVerdictGreat: "✨ Optimal (0.8'' à 2.0''/px) ! Vos pixels sont parfaitement accordés au seeing moyen (2'' à 3'') pour maximiser la finesse sans perdre en signal.",
-      calcVerdictOver: "⚠️ Sur-échantillonnage (< 0.8''/px) : Vous grossissez la turbulence atmosphérique. Nécessite un ciel exceptionnel ou le Binning 2x2.",
-      calcVerdictUnder: "⚠️ Sous-échantillonnage (> 2.0''/px) : Grand champ idéal pour les vastes nébuleuses (privilégiez le Drizzle au traitement).",
-      calcTorqueTitle: '⚖️ Simulateur Mécanique : Couple Harmonique & Contrepoids (Juwei-17 / UMi-17S / AM5)',
+      calcVerdictGreat:
+        "✨ Optimal (0.8'' à 2.0''/px) ! Vos pixels sont parfaitement accordés au seeing moyen (2'' à 3'') pour maximiser la finesse sans perdre en signal.",
+      calcVerdictOver:
+        "⚠️ Sur-échantillonnage (< 0.8''/px) : Vous grossissez la turbulence atmosphérique. Nécessite un ciel exceptionnel ou le Binning 2x2.",
+      calcVerdictUnder:
+        "⚠️ Sous-échantillonnage (> 2.0''/px) : Grand champ idéal pour les vastes nébuleuses (privilégiez le Drizzle au traitement).",
+      calcTorqueTitle:
+        '⚖️ Simulateur Mécanique : Couple Harmonique & Contrepoids (Juwei-17 / UMi-17S / AM5)',
       calcPayloadLabel: 'Poids total équipé du tube optique (kg) :',
       calcRadiusLabel: "Déport du centre de gravité par rapport à l'axe AD (cm) :",
       calcTorqueResult: 'Couple exercé sur le réducteur harmonique : ',
@@ -526,12 +618,15 @@ export default function App() {
       calcFocusStepLabel: 'Déplacement EAF par pas (µm/pas) :',
       calcFocusResult: 'Tolérance de mise au point (CFZ) : ',
       calcFocusAdvice: 'Pas recommandés (Step Size) pour la courbe en V : ',
-      calcExpTitle: '⏱️ CMOS Simulator: Temps de Pose Unitaire Optimal (Swamp Factor)',
+      calcExpTitle:
+        '⏱️ CMOS Simulator: Temps de Pose Unitaire Optimal (Swamp Factor)',
       calcBortleLabel: 'Qualité de votre ciel (Échelle de Bortle 1 à 9) :',
       calcFilterLabel: 'Type de filtre utilisé :',
       calcExpResult: 'Temps de pose unitaire recommandé (à f/5, Gain 100) : ',
-      calcCompareTitle: '🎨 Comparateur Interactif : Brute Linéaire vs Traitement Final (GraXpert + SPCC + GHS)',
-      calcNpfTitle: '📸 Simulateur Grand Champ : Calculateur de la Règle NPF (Trépied Statique)',
+      calcCompareTitle:
+        '🎨 Comparateur Interactif : Brute Linéaire vs Traitement Final (GraXpert + SPCC + GHS)',
+      calcNpfTitle:
+        '📸 Simulateur Grand Champ : Calculateur de la Règle NPF (Trépied Statique)',
       calcNpfFocalLabel: "Focale de l'objectif photo (mm) :",
       calcNpfApertureLabel: 'Ouverture du diaphragme (f/) :',
       calcNpfResult: "Temps de pose max sans filé d'étoiles : ",
@@ -547,11 +642,14 @@ export default function App() {
       certNamePlaceholder: 'Entrez votre Prénom et Nom pour le diplôme',
       faqTitle: '❓ Foire Aux Questions (FAQ)',
       faq1Q: 'Ce cursus convient-il si nous débutons complètement ?',
-      faq1A: 'Absolument ! Nous avons conçu chaque module en partant des bases les plus simples avant de monter pas à pas vers les techniques avancées que nous utilisons lors de nos soirées astro.',
-      faq2Q: "Sous quel format et combien de temps ai-je accès aux cours ?",
-      faq2A: "L'accès est immédiat, illimité et à vie directement depuis votre navigateur sur PC, Mac, tablette ou mobile. Vous pouvez également consulter et imprimer vos fiches techniques PDF A4 sur le terrain dès que vous en avez besoin !",
+      faq1A:
+        'Absolument ! Nous avons conçu chaque module en partant des bases les plus simples avant de monter pas à pas vers les techniques avancées que nous utilisons lors de nos soirées astro.',
+      faq2Q: 'Sous quel format et combien de temps ai-je accès aux cours ?',
+      faq2A:
+        "L'accès est immédiat, illimité et à vie directement depuis votre navigateur sur PC, Mac, tablette ou mobile. Vous pouvez également consulter et imprimer vos fiches techniques PDF A4 sur le terrain dès que vous en avez besoin !",
       faq3Q: "Puis-je utiliser le site sur le terrain la nuit sans m'éblouir ?",
-      faq3A: "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
+      faq3A:
+        "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
       testimonialsTitle: '⭐ Ce que disent les membres de notre communauté',
       t1: "« Grâce aux conseils du collectif sur les montures harmoniques et N.I.N.A., mon erreur RMS est passée sous la barre des 0.6'' et mes nuits tournent toutes seules ! »",
       t1Author: 'Marc D., Membre du collectif (Québec)',
@@ -562,33 +660,42 @@ export default function App() {
       title: 'Astroberb Academy',
       subtitle: 'The Amateur Astronomers Collective — Master Deep Sky',
       heroBadge: '⚡ SPECIAL PROMO • ALL FIELD EXPERTISE',
-      heroDesc: 'Welcome to our platform! We are a group of astronomy enthusiasts sharing our field tips: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
+      heroDesc:
+        'Welcome to our platform! We are a group of astronomy enthusiasts sharing our field tips: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
       benefitsTitle: 'What you will be able to do after the courses',
       benefit1Title: 'Master your gear',
-      benefit1Desc: 'No more headaches with backfocus, tilt, or filter selection. Assemble a rigid and perfectly tuned optical train.',
+      benefit1Desc:
+        'No more headaches with backfocus, tilt, or filter selection. Assemble a rigid and perfectly tuned optical train.',
       benefit2Title: 'Automate your nights',
-      benefit2Desc: 'Program sessions from A to Z (plate solving, EAF autofocus, meridian flip, PHD2 guiding) to sleep with peace of mind.',
+      benefit2Desc:
+        'Program sessions from A to Z (plate solving, EAF autofocus, meridian flip, PHD2 guiding) to sleep with peace of mind.',
       benefit3Title: 'Enhance your images',
-      benefit3Desc: 'Capture galaxies and nebulae worthy of top observatories using GraXpert, SPCC, and GHS stretching.',
+      benefit3Desc:
+        'Capture galaxies and nebulae worthy of top observatories using GraXpert, SPCC, and GHS stretching.',
       videoSectionBadge: '🎬 Meet Our Collective',
       videoSectionTitle: 'Welcome to Our Virtual Observatory!',
-      videoSectionSub: 'Grab a hot coffee: we take you behind the scenes of how we prepare our deep-sky observation nights from A to Z.',
+      videoSectionSub:
+        'Grab a hot coffee: we take you behind the scenes of how we prepare our deep-sky observation nights from A to Z.',
       modulesVideoBadge: '🚀 Modules Preview',
       modulesVideoTitle: 'What We Share With You in Our Masterclasses',
-      modulesVideoSub: 'Watch our exclusive video showcasing our interactive tools and simulators.',
+      modulesVideoSub:
+        'Watch our exclusive video showcasing our interactive tools and simulators.',
       originStoryTitle: '🔭 The Original Idea Behind Our Collective',
-      originStoryText: "The original idea behind Astroberb is to gather all our tips, tricks, and knowledge in one single place, accessible at all times, especially during astronomy sessions. To make deepening your knowledge in astronomy and astrophotography more enjoyable, and all of that, in complete simplicity!",
+      originStoryText:
+        'The original idea behind Astroberb is to gather all our tips, tricks, and knowledge in one single place, accessible at all times, especially during astronomy sessions. To make deepening your knowledge in astronomy and astrophotography more enjoyable, and all of that, in complete simplicity!',
       phase1Badge: '1. BEFORE THE NIGHT',
-      phase1Desc: 'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
+      phase1Desc:
+        'Pixel scale calculation, 55mm backfocus & harmonic mount balancing.',
       phase2Badge: '2. DURING THE NIGHT',
-      phase2Desc: 'Polar alignment, N.I.N.A./ASIAIR sequencing, EAF autofocus & PHD2 guiding.',
+      phase2Desc:
+        'Polar alignment, N.I.N.A./ASIAIR sequencing, EAF autofocus & PHD2 guiding.',
       phase3Badge: '3. AFTER THE NIGHT',
-      phase3Desc: 'Calibration frames, GraXpert AI, SPCC & GHS stretching (Siril / PixInsight).',
+      phase3Desc:
+        'Calibration frames, GraXpert AI, SPCC & GHS stretching (Siril / PixInsight).',
       trustBadge: '⭐ Rated 4.9/5 by our community of enthusiasts',
       catalog: 'Course Catalog',
       vipSection: 'Member Access / Code',
-      glossaryNav: '📖 Astro Glossary',
-      fieldModeBtn: '🌙 Field Mode (Nomad)',
+      glossaryNav: 'Astro Glossary',
       exitFieldMode: '✕ Exit Field Mode',
       unlockBtn: 'Activate Code',
       buyStripe: 'Credit Card',
@@ -597,14 +704,15 @@ export default function App() {
       packBtnShort: '⚡ SUPER PROMO: Full Bundle ($49.99)',
       freePreviewBtn: '👁️ Try Free Demo (Simulator + Chapter 1)',
       previewBannerTitle: '👁️ FREE PREVIEW MODE — Module 1',
-      previewBannerDesc: 'Test our pixel scale simulator and Chapter 1! Take advantage of our special promo to unlock full access.',
+      previewBannerDesc:
+        'Test our pixel scale simulator and Chapter 1! Take advantage of our special promo to unlock full access.',
       accessGranted: 'Code validated! Click any unlocked course below:',
       invalidCode: 'Invalid access code. Please check your email or contact support.',
       accessCourse: '🚀 START MASTERCLASS',
       lockedBadge: '🔒 Locked Module',
-      unlockedBadge: '🔓 Unlocked (Click to launch)',
       backToCatalog: '← Back to course catalog',
-      paymentConfirmedModule: '🎉 Access unlocked! Your multi-device backup code: ',
+      paymentConfirmedModule:
+        '🎉 Access unlocked! Your multi-device backup code: ',
       copyBtn: '📋 Copy code',
       copiedBtn: '✅ Copied!',
       progressLabel: 'Your curriculum progress:',
@@ -616,16 +724,20 @@ export default function App() {
       generatePdfBtn: 'Generate & Download PDF',
       successBadge: 'Payment Successful',
       successTitle: 'Welcome to the Astroberb Academy Family!',
-      successDesc: 'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, simulators, and guides.',
+      successDesc:
+        'Your full bundle is unlocked. Enjoy immediate access to all 7 modules, simulators, and guides.',
       backupCodeNotice: 'IMPORTANT — Save your multi-device backup code:',
       packTitle: '⚡ COLLECTIVE SPECIAL: 7-in-1 Full Bundle',
-      packDesc: 'Join our community with lifetime access to all 7 complete masterclasses, 6 interactive calculators, and PDF field guides.',
+      packDesc:
+        'Join our community with lifetime access to all 7 complete masterclasses, 6 interactive calculators, and PDF field guides.',
       payCardStripe: '💳 Secure Credit Card (Stripe)',
       payWithPaypal: '🅿️ Pay instantly with PayPal',
-      vipDesc: 'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
+      vipDesc:
+        'Enter your personal access code received after purchase to instantly unlock your courses on this device:',
       vipPlaceholder: 'Your code (e.g., PACK-COMPLET-2026 or ASTRO-MOD1)',
       viewUnlocked: 'View my unlocked modules ➔',
-      taxNotice: '🔒 100% Secure Checkout via Stripe & PayPal — Instant lifetime access.',
+      taxNotice:
+        '🔒 100% Secure Checkout via Stripe & PayPal — Instant lifetime access.',
       footerRights: 'All rights reserved.',
       termsLink: 'Terms of Sale (TOS)',
       privacyLink: 'Privacy Policy',
@@ -639,10 +751,14 @@ export default function App() {
       calcFocalLabel: 'Effective Telescope Focal Length (mm):',
       calcPixelLabel: 'Camera Pixel Size (µm):',
       calcResult: 'Your Pixel Scale: ',
-      calcVerdictGreat: "✨ Optimal (0.8'' to 2.0''/px)! Your sensor is well matched to typical atmospheric seeing for sharp details.",
-      calcVerdictOver: "⚠️ Oversampled (< 0.8''/px): Magnifying atmospheric turbulence without extra resolution.",
-      calcVerdictUnder: "⚠️ Undersampled (> 2.0''/px): Great widefield framing for large nebulae.",
-      calcTorqueTitle: '⚖️ Mechanical Simulator: Harmonic Mount Torque & Counterweight (Juwei-17 / UMi-17S / AM5)',
+      calcVerdictGreat:
+        "✨ Optimal (0.8'' to 2.0''/px)! Your sensor is well matched to typical atmospheric seeing for sharp details.",
+      calcVerdictOver:
+        "⚠️ Oversampled (< 0.8''/px): Magnifying atmospheric turbulence without extra resolution.",
+      calcVerdictUnder:
+        "⚠️ Undersampled (> 2.0''/px): Great widefield framing for large nebulae.",
+      calcTorqueTitle:
+        '⚖️ Mechanical Simulator: Harmonic Mount Torque & Counterweight (Juwei-17 / UMi-17S / AM5)',
       calcPayloadLabel: 'Total Rigged Payload Weight (kg):',
       calcRadiusLabel: 'Center of Gravity Offset from RA Axis (cm):',
       calcTorqueResult: 'Torque Load on Strainwave Gear: ',
@@ -651,12 +767,15 @@ export default function App() {
       calcFocusStepLabel: 'Focuser Travel per Step (µm/step):',
       calcFocusResult: 'Critical Focus Zone Tolerance (CFZ): ',
       calcFocusAdvice: 'Recommended EAF step size for V-Curve autofocus: ',
-      calcExpTitle: '⏱️ CMOS Simulator: Optimal Sub-Exposure Calculator (Swamp Factor)',
+      calcExpTitle:
+        '⏱️ CMOS Simulator: Optimal Sub-Exposure Calculator (Swamp Factor)',
       calcBortleLabel: 'Sky Darkness (Bortle Scale 1 to 9):',
       calcFilterLabel: 'Filter Type:',
       calcExpResult: 'Recommended Sub-Exposure (at f/5, Gain 100): ',
-      calcCompareTitle: '🎨 Interactive Before / After: Raw Linear Stack vs. Final Processed (GraXpert + SPCC + GHS)',
-      calcNpfTitle: '📸 Widefield Simulator: NPF Rule Untracked Exposure Calculator',
+      calcCompareTitle:
+        '🎨 Interactive Before / After: Raw Linear Stack vs. Final Processed (GraXpert + SPCC + GHS)',
+      calcNpfTitle:
+        '📸 Widefield Simulator: NPF Rule Untracked Exposure Calculator',
       calcNpfFocalLabel: 'Camera Lens Focal Length (mm):',
       calcNpfApertureLabel: 'Lens Aperture (f/):',
       calcNpfResult: 'Max Untracked Exposure: ',
@@ -672,11 +791,14 @@ export default function App() {
       certNamePlaceholder: 'Enter your Full Name for the diploma',
       faqTitle: '❓ Frequently Asked Questions (FAQ)',
       faq1Q: 'Is this curriculum suitable for complete beginners?',
-      faq1A: 'Yes! We designed each module starting from simple fundamentals before stepping up to advanced techniques.',
+      faq1A:
+        'Yes! We designed each module starting from simple fundamentals before stepping up to advanced techniques.',
       faq2Q: 'What format are the courses in and how long do I have access?',
-      faq2A: 'Access is immediate, unlimited, and lifetime directly from your browser on PC, Mac, tablet, or mobile. You can also view and print your A4 PDF technical sheets in the field whenever you need them!',
+      faq2A:
+        'Access is immediate, unlimited, and lifetime directly from your browser on PC, Mac, tablet, or mobile. You can also view and print your A4 PDF technical sheets in the field whenever you need them!',
       faq3Q: 'Can I use this platform in the field at night?',
-      faq3A: 'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
+      faq3A:
+        'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
       testimonialsTitle: '⭐ What our community members say',
       t1: "« Thanks to the collective's advice on harmonic mounts and N.I.N.A., my RMS guiding dropped below 0.6''! »",
       t1Author: 'Marc D., Community Member (Quebec)',
@@ -732,24 +854,29 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: 'Lunettes apochromatiques (Triplet ED), Newton, Ritchey-Chrétien : formules optiques, échantillonnage, backfocus 55 mm et correction du tilt.',
-      descEn: 'Apochromatic refractors (ED Triplet), Newtonian, Ritchey-Chrétien: optical designs, pixel scale, 55mm backfocus, and sensor tilt.',
-      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        'Lunettes apochromatiques (Triplet ED), Newton, Ritchey-Chrétien : formules optiques, échantillonnage, backfocus 55 mm et correction du tilt.',
+      descEn:
+        'Apochromatic refractors (ED Triplet), Newtonian, Ritchey-Chrétien: optical designs, pixel scale, 55mm backfocus, and sensor tilt.',
+      image:
+        'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module1,
       calculatorType: 'sampling' as CalculatorType,
       content: {
         fr: {
-          intro: "Le choix du tube optique détermine 80 % de notre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques, physiques et mécaniques.",
+          intro:
+            "Le choix du tube optique détermine 80 % de notre réussite sur le terrain et le type d'objets célestes accessibles. Que vous débutiez avec une lunette apochromatique ou que vous optimisiez un télescope à miroir rapide, ce module vous donne toutes les clés mathématiques, physiques et mécaniques.",
           slides: [
             {
               title: "Chapitre 1 : Focale vs Rapport d'ouverture (f/D)",
-              subtitle: "Comprendre le cadrage et la vitesse photographique d'un instrument",
+              subtitle: 'Comprendre le cadrage et la vitesse photographique d’un instrument',
               bullets: [
                 'Débutant : La longueur focale (ex: 400 mm vs 1200 mm) agit comme le zoom : elle détermine uniquement la taille de la nébuleuse ou galaxie sur votre capteur.',
                 "Le rapport d'ouverture (f/D = Focale ÷ Diamètre) agit comme l'ouverture d'un objectif photo : il dicte la vitesse à laquelle les photons s'accumulent sur chaque pixel.",
                 'Règle du carré : Passer de f/8 à f/4 concentre 4 fois plus de lumière ! Une pose de 1 heure à f/4 équivaut à 4 heures de pose à f/8.',
               ],
-              proTip: 'Pour débuter sans frustration, choisissez une lunette apochromatique de 300 à 500 mm de focale ouverte entre f/4.5 et f/5.5 grâce à son réducteur-aplanisseur dédié.',
+              proTip:
+                'Pour débuter sans frustration, choisissez une lunette apochromatique de 300 à 500 mm de focale ouverte entre f/4.5 et f/5.5 grâce à son réducteur-aplanisseur dédié.',
             },
             {
               title: 'Chapitre 2 : Comparatif des Formules Optiques',
@@ -759,7 +886,8 @@ export default function App() {
                 'Télescope de Newton (f/4 ou f/5) : Le meilleur rapport diamètre/prix et très rapide photographiquement, mais exige un correcteur de coma, une collimation laser/Cheshire rigoureuse et une prise au vent maîtrisée.',
                 'Schmidt-Cassegrain (EdgeHD) & Ritchey-Chrétien (RC) : Longues focales (1000 à 2000 mm) taillées pour les petites galaxies (comme NGC 7331 ou M51) et nébuleuses planétaires.',
               ],
-              proTip: "Si vous imagez en nomade, un quadruplet Petzval (type Askar FRA / RedCat) ou un triplet de 70-80 mm vous fait gagner 30 minutes d'installation chaque nuit.",
+              proTip:
+                'Si vous imagez en nomade, un quadruplet Petzval (type Askar FRA / RedCat) ou un triplet de 70-80 mm vous fait gagner 30 minutes d’installation chaque nuit.',
             },
             {
               title: 'Chapitre 3 : Backfocus 55 mm, Courbure de Champ & Tilt',
@@ -769,14 +897,17 @@ export default function App() {
                 'Diagnostic visuel dans les coins : Si les étoiles des 4 coins filent vers le centre (en rayons de vélo), le capteur est TROP PROCHE du correcteur (ajoutez 0.5 à 1 mm de bague).',
                 "Si les étoiles des coins tournent autour du centre (en arc de cercle), le capteur est TROP LOIN du correcteur (retirez une rondelle de calage). Si un seul coin est flou, il s'agit de Tilt (inclinaison mécanique).",
               ],
-              proTip: "Si vous insérez un filtre de 2 mm d'épaisseur dans votre train optique, ajoutez +0,67 mm (1/3 de l'épaisseur du verre) à votre distance de backfocus cible (soit 55,7 mm).",
+              proTip:
+                "Si vous insérez un filtre de 2 mm d'épaisseur dans votre train optique, ajoutez +0,67 mm (1/3 de l'épaisseur du verre) à votre distance de backfocus cible (soit 55,7 mm).",
             },
           ] as Slide[],
           courseSections: [
             {
-              heading: "1. La Physique de l'Échantillonnage et le Critère de Nyquist-Shannon",
+              heading:
+                "1. La Physique de l'Échantillonnage et le Critère de Nyquist-Shannon",
               body: "L'échantillonnage (exprimé en secondes d'arc par pixel, ''/px) mesure la portion de ciel capturée par un seul photosite de votre caméra. L'atmosphère terrestre brouille les détails fins : c'est le Seeing (généralement entre 2,0'' et 3,0'' sous nos latitudes). Pour capturer 100 % des détails permis par le ciel sans étaler inutilement la lumière, votre échantillonnage doit se situer autour du tiers ou de la moitié du Seeing moyen, soit entre 0,8''/px et 2,0''/px.",
-              highlight: "Formule fondamentale : Échantillonnage (''/px) = (206,265 × Taille_Pixel_µm) ÷ Focale_mm",
+              highlight:
+                "Formule fondamentale : Échantillonnage (''/px) = (206,265 × Taille_Pixel_µm) ÷ Focale_mm",
             },
           ] as LessonSection[],
           steps: [
@@ -786,21 +917,24 @@ export default function App() {
           ],
           quiz: [
             {
-              question: "Quel paramètre détermine la vitesse photographique pure d'un télescope ?",
+              question:
+                "Quel paramètre détermine la vitesse photographique pure d'un télescope ?",
               options: [
                 'La longueur focale en millimètres uniquement',
                 "Le rapport d'ouverture f/D (Focale divisée par le Diamètre)",
                 'La longueur du pare-buée',
               ],
               correct: 1,
-              explanation: 'Le rapport f/D dicte la concentration de photons par unité de surface sur le capteur.',
+              explanation:
+                'Le rapport f/D dicte la concentration de photons par unité de surface sur le capteur.',
             },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod1-pdf1',
               name: "Abaque d'Échantillonnage Optique & Diagnostic Backfocus 55 mm (PDF)",
-              title: 'Guide de Référence : Échantillonnage, Formules Optiques & Backfocus 55 mm',
+              title:
+                'Guide de Référence : Échantillonnage, Formules Optiques & Backfocus 55 mm',
               sections: [
                 {
                   title: '1. Formule Mathématique & Cibles de Seeing',
@@ -814,7 +948,8 @@ export default function App() {
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Your optical tube assembly dictates 80% of your field experience and target framing. Whether starting with an apochromatic refractor or tuning a fast reflector, this module covers essential optical math and mechanical precision.',
+          intro:
+            'Your optical tube assembly dictates 80% of your field experience and target framing. Whether starting with an apochromatic refractor or tuning a fast reflector, this module covers essential optical math and mechanical precision.',
           slides: [
             {
               title: 'Chapter 1: Focal Length vs. Focal Ratio (f/D)',
@@ -824,14 +959,38 @@ export default function App() {
                 'Focal ratio (f/D = Focal Length ÷ Aperture) dictates photographic speed—how fast photons accumulate on each pixel.',
                 'Inverse square law: Moving from f/8 to f/4 concentrates 4x more light, cutting required exposure time by a factor of 4!',
               ],
-              proTip: 'For stress-free deep-sky imaging, start with a 300mm to 500mm apochromatic refractor operating between f/4.5 and f/5.5.',
+              proTip:
+                'For stress-free deep-sky imaging, start with a 300mm to 500mm apochromatic refractor operating between f/4.5 and f/5.5.',
+            },
+            {
+              title: 'Chapter 2: Optical Designs Compared',
+              subtitle: 'APO Refractor, Newtonian, SCT & RC',
+              bullets: [
+                'Apochromatic Refractors (ED Triplet / Petzval): High contrast, no collimation needed, great for wide nebulae.',
+                'Newtonian Reflectors (f/4 or f/5): Fast optics and great aperture per dollar, requiring coma correction and collimation.',
+                'SCT & Ritchey-Chrétien: Long focal lengths suited to small galaxies and planetary nebulae.',
+              ],
+              proTip:
+                'For grab-and-go imaging, a Petzval quadruplet or 70-80mm triplet saves setup time every night.',
+            },
+            {
+              title: 'Chapter 3: 55mm Backfocus, Field Curvature & Tilt',
+              subtitle: 'Mechanical alignment to a fraction of a millimeter',
+              bullets: [
+                'Backfocus is the exact distance from the rear shoulder of your flattener/reducer to the CMOS sensor plane (55.0mm standard).',
+                'Corner stars pointing radially inward indicate sensor is too close; tangential stretching indicates too far.',
+                'Single-corner blur indicates mechanical sensor tilt.',
+              ],
+              proTip:
+                'Add roughly one-third of filter glass thickness (e.g. +0.67mm for a 2mm filter) to your backfocus spacing.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. Pixel Scale Physics & Atmospheric Seeing',
               body: "Pixel scale (arcseconds per pixel, ''/px) measures the angular resolution of each camera pixel. Earth's atmosphere blurs fine detail (Seeing, typically 2.0'' to 3.0'').",
-              highlight: "Core Formula: Pixel Scale (''/px) = (206.265 × Pixel_Size_µm) ÷ Focal_Length_mm",
+              highlight:
+                "Core Formula: Pixel Scale (''/px) = (206.265 × Pixel_Size_µm) ÷ Focal_Length_mm",
             },
           ] as LessonSection[],
           steps: [
@@ -847,7 +1006,8 @@ export default function App() {
                 'Dew shield length',
               ],
               correct: 1,
-              explanation: 'Focal ratio (f/D) controls photon concentration per unit area on the sensor.',
+              explanation:
+                'Focal ratio (f/D) controls photon concentration per unit area on the sensor.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -877,14 +1037,18 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: "Maîtriser les montures à réducteurs harmoniques (Juwei-17, Proxisky UMi-17S, ZWO AM5) et l'alignement polaire sub-arcminute.",
-      descEn: 'Master strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) and sub-arcminute polar alignment.',
-      image: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        "Maîtriser les montures à réducteurs harmoniques (Juwei-17, Proxisky UMi-17S, ZWO AM5) et l'alignement polaire sub-arcminute.",
+      descEn:
+        'Master strainwave harmonic mounts (Juwei-17, Proxisky UMi-17S, ZWO AM5) and sub-arcminute polar alignment.',
+      image:
+        'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module2,
       calculatorType: 'torque' as CalculatorType,
       content: {
         fr: {
-          intro: "La monture équatoriale est le cœur battant de votre setup nomade ou fixe. L'avènement des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a redéfini les standards de portabilité et de charge utile.",
+          intro:
+            "La monture équatoriale est le cœur battant de votre setup nomade ou fixe. L'avènement des réducteurs harmoniques (Strainwave Gear comme les Juwei-17, Proxisky UMi-17S ou ZWO AM5) a redéfini les standards de portabilité et de charge utile.",
           slides: [
             {
               title: 'Chapitre 1 : Vis sans fin vs Réducteur Harmonique (Strainwave)',
@@ -894,42 +1058,63 @@ export default function App() {
                 "Montures Harmoniques (Juwei-17, UMi-17S, AM5) : Une couronne flexible s'engrène dans une couronne rigide avec un couple phénoménal.",
                 "Résultat : Une tête de monture de 4 à 5 kg porte 13 à 18 kg d'équipement SANS contrepoids et avec zéro jeu d'inversion en déclinaison !",
               ],
-              proTip: 'Au-delà de 12 kg de charge utile, ajoutez tout de même une petite barre et un contrepoids de 3 à 5 kg pour éviter le basculement du trépied !',
+              proTip:
+                'Au-delà de 12 kg de charge utile, ajoutez tout de même une petite barre et un contrepoids de 3 à 5 kg pour éviter le basculement du trépied !',
             },
           ] as Slide[],
           courseSections: [
             {
-              heading: '1. Comparatif Technique : Juwei-17, Proxisky UMi-17S et ZWO AM5',
-              body: "Les montures Juwei-17 et Proxisky UMi-17S utilisent des réducteurs harmoniques de taille 17 sur les deux axes, couplés à une courroie synchrone et un contrôleur OnStep. Elles intègrent un frein électromagnétique à manque de courant.",
-              highlight: 'Sécurité absolue : Toujours alimenter la monture en 12V - 5A stable et lester le trépied au centre.',
+              heading:
+                '1. Comparatif Technique : Juwei-17, Proxisky UMi-17S et ZWO AM5',
+              body: 'Les montures Juwei-17 et Proxisky UMi-17S utilisent des réducteurs harmoniques de taille 17 sur les deux axes, couplés à une courroie synchrone et un contrôleur OnStep. Elles intègrent un frein électromagnétique à manque de courant.',
+              highlight:
+                'Sécurité absolue : Toujours alimenter la monture en 12V - 5A stable et lester le trépied au centre.',
             },
           ] as LessonSection[],
-          steps: ['1. Orienter le trépied vers le Nord, le mettre de niveau et suspendre un poids de lestage.'],
+          steps: [
+            '1. Orienter le trépied vers le Nord, le mettre de niveau et suspendre un poids de lestage.',
+          ],
           quiz: [
             {
-              question: 'Quelle durée de pose dote un autoguidage PHD2 performant sur une monture harmonique ?',
-              options: ['De 0,5 seconde à 1,0 seconde', 'De 5 à 10 secondes', "Aucun autoguidage n'est nécessaire"],
+              question:
+                'Quelle durée de pose dote un autoguidage PHD2 performant sur une monture harmonique ?',
+              options: [
+                'De 0,5 seconde à 1,0 seconde',
+                'De 5 à 10 secondes',
+                "Aucun autoguidage n'est nécessaire",
+              ],
               correct: 0,
-              explanation: "L'erreur périodique des réducteurs harmoniques exige une fréquence de correction élevée (0,5s à 1,0s).",
+              explanation:
+                "L'erreur périodique des réducteurs harmoniques exige une fréquence de correction élevée (0,5s à 1,0s).",
             },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod2-pdf1',
               name: 'Checklist Terrain : Montures Harmoniques & Mise en Station (PDF)',
-              title: 'Protocole Opérationnel : Juwei-17 / UMi-17S / AM5 & Alignement Polaire',
-              sections: [{ title: '1. Sécurité Mécanique', content: ['Lestage obligatoire du trépied carbone.'] }],
+              title:
+                'Protocole Opérationnel : Juwei-17 / UMi-17S / AM5 & Alignement Polaire',
+              sections: [
+                {
+                  title: '1. Sécurité Mécanique',
+                  content: ['Lestage obligatoire du trépied carbone.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Your equatorial mount is the beating heart of your rig. Strainwave harmonic mounts have revolutionized portable imaging.',
+          intro:
+            'Your equatorial mount is the beating heart of your rig. Strainwave harmonic mounts have revolutionized portable imaging.',
           slides: [
             {
               title: 'Chapter 1: Worm Gears vs. Strainwave Harmonic Drives',
               subtitle: 'High torque, zero backlash, no counterweights',
-              bullets: ['Harmonic mounts carry heavy payloads without heavy counterweights.'],
-              proTip: 'For heavy payloads, add a small 3-5kg counterweight for extra safety.',
+              bullets: [
+                'Harmonic mounts carry heavy payloads without heavy counterweights.',
+              ],
+              proTip:
+                'For heavy payloads, add a small 3-5kg counterweight for extra safety.',
             },
           ] as Slide[],
           courseSections: [
@@ -942,10 +1127,16 @@ export default function App() {
           steps: ['1. Point tripod North and level.'],
           quiz: [
             {
-              question: 'What guide exposure duration is recommended for strainwave harmonic mounts?',
-              options: ['0.5 to 1.0 second', '5 to 10 seconds', 'Guiding is not needed'],
+              question:
+                'What guide exposure duration is recommended for strainwave harmonic mounts?',
+              options: [
+                '0.5 to 1.0 second',
+                '5 to 10 seconds',
+                'Guiding is not needed',
+              ],
               correct: 0,
-              explanation: 'Fast periodic error slopes on harmonic drives require frequent 0.5s - 1.0s guide pulses.',
+              explanation:
+                'Fast periodic error slopes on harmonic drives require frequent 0.5s - 1.0s guide pulses.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -953,7 +1144,12 @@ export default function App() {
               id: 'mod2-pdf1-en',
               name: 'Field Checklist: Harmonic Mounts & Polar Alignment (PDF)',
               title: 'Operational Protocol',
-              sections: [{ title: '1. Mechanical & Power Safety', content: ['Mandatory tripod ballast.'] }],
+              sections: [
+                {
+                  title: '1. Mechanical & Power Safety',
+                  content: ['Mandatory tripod ballast.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -968,20 +1164,27 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: 'Automatisez 100 % de votre nuit : astrométrie ASTAP, Plate Solving, séquenceur avancé, Dithering et retournement au méridien.',
-      descEn: 'Automate 100% of your night: ASTAP astrometry, Plate Solving, advanced sequencer, Dithering, and Meridian Flip.',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        'Automatisez 100 % de votre nuit : astrométrie ASTAP, Plate Solving, séquenceur avancé, Dithering et retournement au méridien.',
+      descEn:
+        'Automate 100% of your night: ASTAP astrometry, Plate Solving, advanced sequencer, Dithering, and Meridian Flip.',
+      image:
+        'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module3,
       calculatorType: 'none' as CalculatorType,
       content: {
         fr: {
-          intro: "Pourquoi passer la nuit dehors par -10°C alors qu'un mini-PC sous N.I.N.A. ou un boîtier ASIAIR peut tout orchestrer au pixel près ?",
+          intro:
+            "Pourquoi passer la nuit dehors par -10°C alors qu'un mini-PC sous N.I.N.A. ou un boîtier ASIAIR peut tout orchestrer au pixel près ?",
           slides: [
             {
               title: 'Chapitre 1 : Plate Solving Astrométrique (ASTAP)',
               subtitle: 'Centrer une nébuleuse invisible en moins de 3 secondes',
-              bullets: ['Le solveur mesure les triangles stellaires et trouve les coordonnées exactes à 0.1 arc-sec près.'],
-              proTip: 'Renseignez toujours la focale exacte dans votre profil logiciel.',
+              bullets: [
+                'Le solveur mesure les triangles stellaires et trouve les coordonnées exactes à 0.1 arc-sec près.',
+              ],
+              proTip:
+                'Renseignez toujours la focale exacte dans votre profil logiciel.',
             },
           ] as Slide[],
           courseSections: [
@@ -994,10 +1197,16 @@ export default function App() {
           steps: ['1. Installer ASTAP et le catalogue D50.'],
           quiz: [
             {
-              question: 'Quelle est la cause numéro 1 d’un échec du Plate Solving ?',
-              options: ['Une focale ou taille de pixel mal renseignée', 'Un filtre manquant', 'Une batterie chargée'],
+              question:
+                'Quelle est la cause numéro 1 d’un échec du Plate Solving ?',
+              options: [
+                'Une focale ou taille de pixel mal renseignée',
+                'Un filtre manquant',
+                'Une batterie chargée',
+              ],
               correct: 0,
-              explanation: 'Le solveur a besoin de paramètres de champ exacts.',
+              explanation:
+                'Le solveur a besoin de paramètres de champ exacts.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1005,12 +1214,18 @@ export default function App() {
               id: 'mod3-pdf1',
               name: 'Architecture de Séquence N.I.N.A. & ASIAIR (PDF)',
               title: 'Blueprint Complet',
-              sections: [{ title: '1. Démarrage', content: ['Refroidissement caméra et Plate Solve.'] }],
+              sections: [
+                {
+                  title: '1. Démarrage',
+                  content: ['Refroidissement caméra et Plate Solve.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Automate your dusk-to-dawn imaging sessions using N.I.N.A. or ASIAIR.',
+          intro:
+            'Automate your dusk-to-dawn imaging sessions using N.I.N.A. or ASIAIR.',
           slides: [
             {
               title: 'Chapter 1: Astrometric Plate Solving',
@@ -1030,7 +1245,11 @@ export default function App() {
           quiz: [
             {
               question: 'What is the #1 cause of Plate Solving failure?',
-              options: ['Incorrect focal length or pixel size', 'Missing filter', 'Full battery'],
+              options: [
+                'Incorrect focal length or pixel size',
+                'Missing filter',
+                'Full battery',
+              ],
               correct: 0,
               explanation: 'Accurate field of view parameters are essential.',
             },
@@ -1040,7 +1259,12 @@ export default function App() {
               id: 'mod3-pdf1-en',
               name: 'N.I.N.A. & ASIAIR Sequence Blueprint (PDF)',
               title: 'Sequence Architecture',
-              sections: [{ title: '1. Startup', content: ['Cool camera and plate solve.'] }],
+              sections: [
+                {
+                  title: '1. Startup',
+                  content: ['Cool camera and plate solve.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -1055,20 +1279,27 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: 'Capteurs CMOS (IMX533, IMX571), Gain HCG, Darks/Flats/Bias et imagerie SHO (Palette Hubble) ou Dual-Band HOO en ville.',
-      descEn: 'CMOS sensors (IMX533, IMX571), HCG Gain, Darks/Flats/Bias, and SHO (Hubble Palette) or Dual-Band HOO city imaging.',
-      image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        'Capteurs CMOS (IMX533, IMX571), Gain HCG, Darks/Flats/Bias et imagerie SHO (Palette Hubble) ou Dual-Band HOO en ville.',
+      descEn:
+        'CMOS sensors (IMX533, IMX571), HCG Gain, Darks/Flats/Bias, and SHO (Hubble Palette) or Dual-Band HOO city imaging.',
+      image:
+        'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module4,
       calculatorType: 'exposure' as CalculatorType,
       content: {
         fr: {
-          intro: "Photographier des nébuleuses depuis un jardin en pleine ville (Bortle 7-8) est possible grâce aux capteurs CMOS refroidis et aux filtres à bande étroite.",
+          intro:
+            'Photographier des nébuleuses depuis un jardin en pleine ville (Bortle 7-8) est possible grâce aux capteurs CMOS refroidis et aux filtres à bande étroite.',
           slides: [
             {
               title: 'Chapitre 1 : Capteurs CMOS Refroidis & Gain HCG',
               subtitle: 'Comprendre les courbes des capteurs Sony',
-              bullets: ['Le refroidissement à -10°C réduit drastiquement le bruit thermique.'],
-              proTip: 'Gardez une puissance Peltier stable entre 40% et 70%.',
+              bullets: [
+                'Le refroidissement à -10°C réduit drastiquement le bruit thermique.',
+              ],
+              proTip:
+                'Gardez une puissance Peltier stable entre 40% et 70%.',
             },
           ] as Slide[],
           courseSections: [
@@ -1081,10 +1312,16 @@ export default function App() {
           steps: ['1. Configurer la caméra sur le mode HCG.'],
           quiz: [
             {
-              question: 'Que se passe-t-il au gain 100 (HCG) sur un capteur IMX571 ?',
-              options: ['Le bruit de lecture chute drastiquement', 'La taille des pixels double', 'La caméra chauffe'],
+              question:
+                'Que se passe-t-il au gain 100 (HCG) sur un capteur IMX571 ?',
+              options: [
+                'Le bruit de lecture chute drastiquement',
+                'La taille des pixels double',
+                'La caméra chauffe',
+              ],
               correct: 0,
-              explanation: 'Le mode HCG active un amplificateur interne réduisant le bruit.',
+              explanation:
+                'Le mode HCG active un amplificateur interne réduisant le bruit.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1092,12 +1329,18 @@ export default function App() {
               id: 'mod4-pdf1',
               name: 'Abaque Gain CMOS, Temps de Pose & Calibration (PDF)',
               title: 'Référence Capteurs CMOS',
-              sections: [{ title: '1. Réglages', content: ['Gain 100, Offset 50, -10°C.'] }],
+              sections: [
+                {
+                  title: '1. Réglages',
+                  content: ['Gain 100, Offset 50, -10°C.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Capture breathtaking nebulae from light-polluted city backyards using TEC-cooled CMOS cameras.',
+          intro:
+            'Capture breathtaking nebulae from light-polluted city backyards using TEC-cooled CMOS cameras.',
           slides: [
             {
               title: 'Chapter 1: Cooled CMOS & HCG Gain',
@@ -1117,7 +1360,11 @@ export default function App() {
           quiz: [
             {
               question: 'What happens electronically at Gain 100 (HCG mode)?',
-              options: ['Read noise drops sharply', 'Pixel size doubles', 'Cooling shuts off'],
+              options: [
+                'Read noise drops sharply',
+                'Pixel size doubles',
+                'Cooling shuts off',
+              ],
               correct: 0,
               explanation: 'High Conversion Gain reduces read noise significantly.',
             },
@@ -1127,7 +1374,12 @@ export default function App() {
               id: 'mod4-pdf1-en',
               name: 'CMOS Gain, Sub-Exposure & Calibration Reference (PDF)',
               title: 'Sensor Reference Guide',
-              sections: [{ title: '1. Settings', content: ['Gain 100, Offset 50, -10°C.'] }],
+              sections: [
+                {
+                  title: '1. Settings',
+                  content: ['Gain 100, Offset 50, -10°C.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -1142,20 +1394,27 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: 'Obtenir des étoiles ponctuelles : courbe en V (HFR), calcul de la CFZ, compensation du backlash et suivi PHD2 sub-arcseconde.',
-      descEn: 'Achieve pinpoint stars: V-curve autofocus (HFR), CFZ calculation, backlash compensation, and sub-arcsecond PHD2 guiding.',
-      image: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        'Obtenir des étoiles ponctuelles : courbe en V (HFR), calcul de la CFZ, compensation du backlash et suivi PHD2 sub-arcseconde.',
+      descEn:
+        'Achieve pinpoint stars: V-curve autofocus (HFR), CFZ calculation, backlash compensation, and sub-arcsecond PHD2 guiding.',
+      image:
+        'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module5,
       calculatorType: 'focus' as CalculatorType,
       content: {
         fr: {
-          intro: "Maîtrisez l'Autofocus motorisé (EAF) et le calibrage de PHD2 Guiding pour des étoiles d'une finesse absolue.",
+          intro:
+            "Maîtrisez l'Autofocus motorisé (EAF) et le calibrage de PHD2 Guiding pour des étoiles d'une finesse absolue.",
           slides: [
             {
               title: 'Chapitre 1 : La Courbe en V (Autofocus EAF & HFR)',
               subtitle: 'Une mise au point au micron près',
-              bullets: ['Le moteur ajuste le foyer en mesurant le HFR sur tout le champ stellaire.'],
-              proTip: 'Réglez un pas de focalisation adapté à votre rapport f/D.',
+              bullets: [
+                'Le moteur ajuste le foyer en mesurant le HFR sur tout le champ stellaire.',
+              ],
+              proTip:
+                'Réglez un pas de focalisation adapté à votre rapport f/D.',
             },
           ] as Slide[],
           courseSections: [
@@ -1168,10 +1427,16 @@ export default function App() {
           steps: ['1. Calculer la CFZ et configurer l’EAF.'],
           quiz: [
             {
-              question: 'Comment évolue la tolérance de mise au point (CFZ) avec un télescope à f/4 au lieu de f/8 ?',
-              options: ['Elle devient 4 fois plus étroite et exigeante', 'Elle devient 10 fois plus large', 'Aucun impact'],
+              question:
+                'Comment évolue la tolérance de mise au point (CFZ) avec un télescope à f/4 au lieu de f/8 ?',
+              options: [
+                'Elle devient 4 fois plus étroite et exigeante',
+                'Elle devient 10 fois plus large',
+                'Aucun impact',
+              ],
               correct: 0,
-              explanation: 'La CFZ est proportionnelle au carré du rapport f/D.',
+              explanation:
+                'La CFZ est proportionnelle au carré du rapport f/D.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1179,17 +1444,25 @@ export default function App() {
               id: 'mod5-pdf1',
               name: 'Abaque Réglages EAF & Diagnostic PHD2 Guiding (PDF)',
               title: 'Guide de Terrain : EAF & PHD2',
-              sections: [{ title: '1. V-Curve', content: ['Utiliser la méthode Overshoot.'] }],
+              sections: [
+                {
+                  title: '1. V-Curve',
+                  content: ['Utiliser la méthode Overshoot.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Master motorized EAF V-curves and surgical PHD2 guiding for pinpoint stars.',
+          intro:
+            'Master motorized EAF V-curves and surgical PHD2 guiding for pinpoint stars.',
           slides: [
             {
               title: 'Chapter 1: V-Curve Autofocus',
               subtitle: 'Micron-level automated focus',
-              bullets: ['The EAF moves stepper increments while measuring star HFR.'],
+              bullets: [
+                'The EAF moves stepper increments while measuring star HFR.',
+              ],
               proTip: 'Set proper step size.',
             },
           ] as Slide[],
@@ -1203,8 +1476,13 @@ export default function App() {
           steps: ['1. Calculate CFZ in simulator.'],
           quiz: [
             {
-              question: 'How does CFZ change when switching from f/8 to a fast f/4 telescope?',
-              options: ['Focus tolerance becomes 4 times narrower', 'Focus zone becomes wider', 'No effect'],
+              question:
+                'How does CFZ change when switching from f/8 to a fast f/4 telescope?',
+              options: [
+                'Focus tolerance becomes 4 times narrower',
+                'Focus zone becomes wider',
+                'No effect',
+              ],
               correct: 0,
               explanation: 'CFZ scales with the square of the focal ratio.',
             },
@@ -1214,7 +1492,12 @@ export default function App() {
               id: 'mod5-pdf1-en',
               name: 'EAF V-Curve & PHD2 Harmonic Mount Settings (PDF)',
               title: 'Field Guide',
-              sections: [{ title: '1. Settings', content: ['Use overshoot backlash compensation.'] }],
+              sections: [
+                {
+                  title: '1. Settings',
+                  content: ['Use overshoot backlash compensation.'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -1229,20 +1512,27 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: "De l'empilement brut au chef-d'œuvre : GraXpert AI, SPCC, déconvolution, Starless et GHS.",
-      descEn: 'From raw stack to masterpiece: GraXpert AI, SPCC, deconvolution, Starless, and GHS.',
-      image: 'https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        "De l'empilement brut au chef-d'œuvre : GraXpert AI, SPCC, déconvolution, Starless et GHS.",
+      descEn:
+        'From raw stack to masterpiece: GraXpert AI, SPCC, deconvolution, Starless, and GHS.',
+      image:
+        'https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.module6,
       calculatorType: 'compare' as CalculatorType,
       content: {
         fr: {
-          intro: "L'acquisition ne représente que 50 % d'une astrophoto : maîtrisez le workflow moderne Siril & PixInsight pour sublimer vos images.",
+          intro:
+            "L'acquisition ne représente que 50 % d'une astrophoto : maîtrisez le workflow moderne Siril & PixInsight pour sublimer vos images.",
           slides: [
             {
               title: 'Chapitre 1 : Prétraitement & Stade Linéaire Pur',
               subtitle: 'GraXpert AI, SPCC et calibration colorimétrique',
-              bullets: ['Traitez toujours vos images au stade linéaire avant d’étirer l’histogramme.'],
-              proTip: 'Recadrez toujours les bords d’empilement avant d’extraire les gradients.',
+              bullets: [
+                'Traitez toujours vos images au stade linéaire avant d’étirer l’histogramme.',
+              ],
+              proTip:
+                'Recadrez toujours les bords d’empilement avant d’extraire les gradients.',
             },
           ] as Slide[],
           courseSections: [
@@ -1255,10 +1545,16 @@ export default function App() {
           steps: ['1. Empiler, recadrer et extraire les gradients.'],
           quiz: [
             {
-              question: 'Pourquoi faut-il recadrer les bords d’empilement avant GraXpert ?',
-              options: ['Pour éviter que les bordures sombres faussent le modèle de gradient', 'Pour agrandir les étoiles', 'Obligatoire pour les fichiers FITS'],
+              question:
+                'Pourquoi faut-il recadrer les bords d’empilement avant GraXpert ?',
+              options: [
+                'Pour éviter que les bordures sombres faussent le modèle de gradient',
+                'Pour agrandir les étoiles',
+                'Obligatoire pour les fichiers FITS',
+              ],
               correct: 0,
-              explanation: 'Les bordures de dithering ont un signal faible qui perturbe le calcul.',
+              explanation:
+                'Les bordures de dithering ont un signal faible qui perturbe le calcul.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1266,12 +1562,18 @@ export default function App() {
               id: 'mod6-pdf1',
               name: 'Mémento Workflow Complet Siril & PixInsight (PDF)',
               title: 'Checklist de Traitement Astrophysique',
-              sections: [{ title: '1. Linéaire', content: ['Crop -> GraXpert -> SPCC -> Starless'] }],
+              sections: [
+                {
+                  title: '1. Linéaire',
+                  content: ['Crop -> GraXpert -> SPCC -> Starless'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Master the modern Siril & PixInsight workflow from raw stack to breathtaking masterpiece.',
+          intro:
+            'Master the modern Siril & PixInsight workflow from raw stack to breathtaking masterpiece.',
           slides: [
             {
               title: 'Chapter 1: Linear Stage Processing',
@@ -1290,8 +1592,13 @@ export default function App() {
           steps: ['1. Stack, crop and remove gradients.'],
           quiz: [
             {
-              question: 'Why crop stacking borders before gradient extraction?',
-              options: ['Low-signal dithered borders distort background models', 'To make stars larger', 'Required for FITS'],
+              question:
+                'Why crop stacking borders before gradient extraction?',
+              options: [
+                'Low-signal dithered borders distort background models',
+                'To make stars larger',
+                'Required for FITS',
+              ],
               correct: 0,
               explanation: 'Edge overlap artifacts distort background models.',
             },
@@ -1301,7 +1608,12 @@ export default function App() {
               id: 'mod6-pdf1-en',
               name: 'Complete Siril & PixInsight Workflow (PDF)',
               title: 'Processing Checklist',
-              sections: [{ title: '1. Linear', content: ['Crop -> GraXpert -> SPCC -> Starless'] }],
+              sections: [
+                {
+                  title: '1. Linear',
+                  content: ['Crop -> GraXpert -> SPCC -> Starless'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -1316,20 +1628,27 @@ export default function App() {
       price: 9.99,
       badgeFr: '⚡ SUPER PROMO',
       badgeEn: '⚡ SPECIAL PROMO',
-      descFr: 'Voyager léger sous les ciels Bortle 1 : traqueurs nomades, règle NPF, Samyang 135mm f/2 et arches de la Voie Lactée.',
-      descEn: 'Travel light under Bortle 1 skies: portable star trackers, NPF rule, Samyang 135mm f/2, and Milky Way arches.',
-      image: 'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=900&q=80',
+      descFr:
+        'Voyager léger sous les ciels Bortle 1 : traqueurs nomades, règle NPF, Samyang 135mm f/2 et arches de la Voie Lactée.',
+      descEn:
+        'Travel light under Bortle 1 skies: portable star trackers, NPF rule, Samyang 135mm f/2, and Milky Way arches.',
+      image:
+        'https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=900&q=80',
       links: paymentLinks.bonus,
       calculatorType: 'npf' as CalculatorType,
       content: {
         fr: {
-          intro: "Voyagez léger et capturez la Voie Lactée sous les plus beaux ciels étoilés du monde.",
+          intro:
+            'Voyagez léger et capturez la Voie Lactée sous les plus beaux ciels étoilés du monde.',
           slides: [
             {
               title: 'Chapitre 1 : Objectifs Rapides & Règle NPF',
               subtitle: 'Maîtriser le grand champ sans filé',
-              bullets: ['Fermez votre objectif d’un cran pour éliminer la coma dans les coins.'],
-              proTip: 'Verrouillez votre bague de mise au point avec du ruban adhésif.',
+              bullets: [
+                'Fermez votre objectif d’un cran pour éliminer la coma dans les coins.',
+              ],
+              proTip:
+                'Verrouillez votre bague de mise au point avec du ruban adhésif.',
             },
           ] as Slide[],
           courseSections: [
@@ -1342,10 +1661,16 @@ export default function App() {
           steps: ['1. Calculer le temps NPF et préparer son trépied.'],
           quiz: [
             {
-              question: 'Quelle est la limite de Watt-heures (Wh) par batterie en cabine d’avion (norme IATA) ?',
-              options: ['100 Wh maximum par batterie', '1000 Wh en soute', 'Interdit en avion'],
+              question:
+                'Quelle est la limite de Watt-heures (Wh) par batterie en cabine d’avion (norme IATA) ?',
+              options: [
+                '100 Wh maximum par batterie',
+                '1000 Wh en soute',
+                'Interdit en avion',
+              ],
               correct: 0,
-              explanation: 'Les batteries au lithium de moins de 100 Wh sont autorisées en cabine.',
+              explanation:
+                'Les batteries au lithium de moins de 100 Wh sont autorisées en cabine.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1353,17 +1678,27 @@ export default function App() {
               id: 'mod7-pdf1',
               name: 'Checklist Bagage Cabine IATA & Règle NPF (PDF)',
               title: 'Checklist Officielle : Voyage & Grand Champ',
-              sections: [{ title: '1. Transport', content: ['Toutes les batteries Li-ion en cabine (< 100 Wh).'] }],
+              sections: [
+                {
+                  title: '1. Transport',
+                  content: [
+                    'Toutes les batteries Li-ion en cabine (< 100 Wh).',
+                  ],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
         en: {
-          intro: 'Travel light and capture stunning Milky Way panoramas under pristine dark skies.',
+          intro:
+            'Travel light and capture stunning Milky Way panoramas under pristine dark skies.',
           slides: [
             {
               title: 'Chapter 1: Fast Lenses & NPF Rule',
               subtitle: 'Sharp widefield imaging',
-              bullets: ['Stop down fast lenses by one stop to eliminate corner coma.'],
+              bullets: [
+                'Stop down fast lenses by one stop to eliminate corner coma.',
+              ],
               proTip: 'Tape down your focus ring securely.',
             },
           ] as Slide[],
@@ -1374,13 +1709,19 @@ export default function App() {
               highlight: 'NPF Formula: t = (35 × N + 30 × P) ÷ F',
             },
           ] as LessonSection[],
-          steps: ['1. Calculate Npf limit and prepare your tracker.'],
+          steps: ['1. Calculate NPF limit and prepare your tracker.'],
           quiz: [
             {
-              question: 'What is the maximum Watt-hour (Wh) rating per lithium battery allowed in carry-on bags (IATA)?',
-              options: ['100 Wh maximum per battery', '1000 Wh in checked bags', 'Prohibited'],
+              question:
+                'What is the maximum Watt-hour (Wh) rating per lithium battery allowed in carry-on bags (IATA)?',
+              options: [
+                '100 Wh maximum per battery',
+                '1000 Wh in checked bags',
+                'Prohibited',
+              ],
               correct: 0,
-              explanation: 'IATA allows lithium batteries under 100Wh in cabin luggage.',
+              explanation:
+                'IATA allows lithium batteries under 100Wh in cabin luggage.',
             },
           ] as QuizQuestion[],
           downloads: [
@@ -1388,7 +1729,12 @@ export default function App() {
               id: 'mod7-pdf1-en',
               name: 'Carry-On IATA Astro Travel & NPF Rule Checklist (PDF)',
               title: 'Expedition Checklist',
-              sections: [{ title: '1. Transport', content: ['Keep all Li-ion batteries in cabin (< 100 Wh).'] }],
+              sections: [
+                {
+                  title: '1. Transport',
+                  content: ['Keep all Li-ion batteries in cabin (< 100 Wh).'],
+                },
+              ],
             },
           ] as DownloadDoc[],
         },
@@ -1416,6 +1762,9 @@ export default function App() {
     }
   };
 
+  const isModuleUnlocked = (id: number) =>
+    unlockedModules.map(Number).includes(Number(id));
+
   const openModuleDetail = (id: number, preview = false) => {
     setSelectedModuleId(id);
     setIsPreviewMode(preview);
@@ -1423,13 +1772,12 @@ export default function App() {
     setSelectedAnswers({});
     setQuizSubmitted(false);
     setJustPurchasedModule(false);
+    setPopupBlockedMsg(null);
     setActiveTab('module-detail');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const currentModule = modules.find((m) => m.id === selectedModuleId);
-  const isModuleUnlocked = (id: number) =>
-    unlockedModules.map(Number).includes(Number(id));
 
   // 1. Calculateur Optique Module 1 (Echantillonnage)
   const safeFocal = calcFocal > 0 ? calcFocal : 1;
@@ -1457,13 +1805,24 @@ export default function App() {
   const safeFD = calcFokusFD > 0 ? calcFokusFD : 1;
   const safeMicronStep = calcMicronStep > 0 ? calcMicronStep : 1;
   const cfzMicrons = Math.round(2.68 * safeFD * safeFD);
-  const recommendedSteps = Math.max(5, Math.round((cfzMicrons * 1.6) / safeMicronStep));
+  const recommendedSteps = Math.max(
+    5,
+    Math.round((cfzMicrons * 1.6) / safeMicronStep)
+  );
 
   // 5. Calculateur Regle NPF Module 7
   const safeNpfFocal = npfFocal > 0 ? npfFocal : 1;
-  const npfSeconds = ((35 * npfAperture + 30 * npfPixel) / safeNpfFocal).toFixed(1);
+  const npfSeconds = ((35 * npfAperture + 30 * npfPixel) / safeNpfFocal).toFixed(
+    1
+  );
 
-  // Calcul du score Quiz du module actif
+  const activeSlides = currentModule ? currentModule.content[lang].slides : [];
+  const safeSlideIndex =
+    activeSlides.length > 0
+      ? Math.min(currentSlideIndex, activeSlides.length - 1)
+      : 0;
+  const activeSlide = activeSlides[safeSlideIndex];
+
   const activeQuizList = currentModule ? currentModule.content[lang].quiz : [];
   const correctQuizCount = activeQuizList.reduce((acc, q, idx) => {
     return selectedAnswers[idx] === q.correct ? acc + 1 : acc;
@@ -1471,12 +1830,13 @@ export default function App() {
 
   const progressPercentage = Math.round((completedModules.length / 7) * 100);
 
-  // Filtrage du lexique
   const filteredGlossary = GLOSSARY_TERMS.filter((item) => {
     const term = lang === 'fr' ? item.termFr : item.termEn;
     const def = lang === 'fr' ? item.defFr : item.defEn;
     const query = glossarySearch.toLowerCase();
-    return term.toLowerCase().includes(query) || def.toLowerCase().includes(query);
+    return (
+      term.toLowerCase().includes(query) || def.toLowerCase().includes(query)
+    );
   });
 
   return (
@@ -1517,7 +1877,7 @@ export default function App() {
               <div className="flex md:hidden items-center space-x-2">
                 <button
                   type="button"
-                  onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+                  onClick={() => handleToggleLang(lang === 'fr' ? 'en' : 'fr')}
                   className={`px-2 py-1.5 rounded-xl text-xs font-bold border transition ${
                     nightVision
                       ? 'bg-rose-950 border-rose-800 text-rose-300'
@@ -1541,7 +1901,11 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('pack')}
-                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg text-white animate-pulse"
+                  className={`px-3 py-1.5 rounded-xl font-bold text-xs shadow-lg text-white animate-pulse ${
+                    nightVision
+                      ? 'bg-rose-800 border border-rose-600'
+                      : 'bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600'
+                  }`}
                 >
                   {currentT.packBtnShort}
                 </button>
@@ -1597,7 +1961,11 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setFieldMode(true)}
-                className="px-3 py-2 rounded-xl text-xs font-bold border border-cyan-500/40 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-900/60 transition flex items-center gap-1.5"
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
+                  nightVision
+                    ? 'border-rose-800 bg-rose-950/60 text-rose-200 hover:bg-rose-900/60'
+                    : 'border-cyan-500/40 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-900/60'
+                }`}
                 title="Mode plein écran épuré pour le terrain"
               >
                 🌙 {lang === 'fr' ? 'Mode Nomade' : 'Field Mode'}
@@ -1616,7 +1984,7 @@ export default function App() {
               </button>
               <button
                 type="button"
-                onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+                onClick={() => handleToggleLang(lang === 'fr' ? 'en' : 'fr')}
                 className={`px-3 py-2 rounded-xl text-xs font-bold border transition ${
                   nightVision
                     ? 'bg-rose-950 border-rose-800 text-rose-300'
@@ -1628,7 +1996,11 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setActiveTab('pack')}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 font-bold text-xs shadow-lg hover:opacity-95 transition text-white animate-pulse"
+                className={`px-3.5 py-2 rounded-xl font-bold text-xs shadow-lg hover:opacity-95 transition text-white animate-pulse ${
+                  nightVision
+                    ? 'bg-rose-800 border border-rose-600'
+                    : 'bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600'
+                }`}
               >
                 {currentT.packBtnShort}
               </button>
@@ -1680,7 +2052,11 @@ export default function App() {
                   <button
                     type="button"
                     onClick={generateCertificate}
-                    className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow transition flex items-center gap-1"
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black shadow transition flex items-center gap-1 ${
+                      nightVision
+                        ? 'bg-rose-700 hover:bg-rose-600 text-white'
+                        : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                    }`}
                   >
                     🏆 {lang === 'fr' ? 'Certificat' : 'Certificate'}
                   </button>
@@ -1693,28 +2069,65 @@ export default function App() {
 
       {/* BARRE HAUTE EN MODE NOMADE (PLEIN ÉCRAN TERRAIN) */}
       {fieldMode && (
-        <div className={`p-4 border-b flex items-center justify-between sticky top-0 z-50 shadow-2xl ${nightVision ? 'bg-rose-950 border-rose-900 text-white' : 'bg-slate-950 border-cyan-500/40 text-cyan-300'}`}>
+        <div
+          className={`p-4 border-b flex items-center justify-between sticky top-0 z-50 shadow-2xl ${
+            nightVision
+              ? 'bg-rose-950 border-rose-900 text-white'
+              : 'bg-slate-950 border-cyan-500/40 text-cyan-300'
+          }`}
+        >
           <div className="flex items-center gap-3">
             <span className="text-xl">🔭</span>
             <div>
-              <h2 className="text-xs md:text-sm font-black uppercase tracking-wider">{lang === 'fr' ? 'Astroberb — Mode Nomade Terrain' : 'Astroberb Field Mode'}</h2>
-              <p className="text-[10px] text-slate-400">{lang === 'fr' ? 'Interface épurée pour vos nuits sous les étoiles' : 'Streamlined interface for observation nights'}</p>
+              <h2 className="text-xs md:text-sm font-black uppercase tracking-wider">
+                {lang === 'fr'
+                  ? 'Astroberb — Mode Nomade Terrain'
+                  : 'Astroberb Field Mode'}
+              </h2>
+              <p className="text-[10px] text-slate-400">
+                {lang === 'fr'
+                  ? 'Interface épurée pour vos nuits sous les étoiles'
+                  : 'Streamlined interface for observation nights'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setNightVision(!nightVision)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${nightVision ? 'bg-rose-900 border-rose-700 text-white' : 'bg-slate-900 border-slate-700 text-rose-400'}`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
+                nightVision
+                  ? 'bg-rose-900 border-rose-700 text-white'
+                  : 'bg-slate-900 border-slate-700 text-rose-400'
+              }`}
             >
               🔴 {nightVision ? 'Mode Nuit ON' : 'Mode Nuit'}
             </button>
             <button
               type="button"
               onClick={() => setFieldMode(false)}
-              className="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition shadow"
+              className={`px-4 py-1.5 rounded-xl font-black text-xs transition shadow ${
+                nightVision
+                  ? 'bg-rose-700 hover:bg-rose-600 text-white'
+                  : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950'
+              }`}
             >
               {currentT.exitFieldMode}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {popupBlockedMsg && (
+        <div className="max-w-4xl mx-auto mt-4 px-4 w-full">
+          <div className="p-4 rounded-2xl bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs md:text-sm flex items-center justify-between gap-4">
+            <span>⚠️ {popupBlockedMsg}</span>
+            <button
+              type="button"
+              onClick={() => setPopupBlockedMsg(null)}
+              className="font-bold underline shrink-0"
+            >
+              {currentT.closeBtn}
             </button>
           </div>
         </div>
@@ -1726,19 +2139,39 @@ export default function App() {
         {activeTab === 'glossary' && (
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center space-y-3">
-              <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-extrabold uppercase tracking-widest border border-cyan-500/30">
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest border ${
+                  nightVision
+                    ? 'bg-rose-900/40 text-rose-300 border-rose-800'
+                    : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                }`}
+              >
                 📚 Dictionnaire Technique
               </span>
-              <h2 className="text-3xl md:text-4xl font-black">{lang === 'fr' ? 'Le Lexique Astrophotographie' : 'Astrophotography Glossary'}</h2>
-              <p className={`text-sm md:text-base max-w-xl mx-auto ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
-                {lang === 'fr' ? 'Retrouvez toutes les définitions des termes techniques utilisés dans nos masterclasses.' : 'Find definitions for all technical terms used in our masterclasses.'}
+              <h2 className="text-3xl md:text-4xl font-black">
+                {lang === 'fr'
+                  ? 'Le Lexique Astrophotographie'
+                  : 'Astrophotography Glossary'}
+              </h2>
+              <p
+                className={`text-sm md:text-base max-w-xl mx-auto ${
+                  nightVision ? 'text-rose-200' : 'text-slate-300'
+                }`}
+              >
+                {lang === 'fr'
+                  ? 'Retrouvez toutes les définitions des termes techniques utilisés dans nos masterclasses.'
+                  : 'Find definitions for all technical terms used in our masterclasses.'}
               </p>
               <div className="pt-2 max-w-md mx-auto">
                 <input
                   type="text"
                   value={glossarySearch}
                   onChange={(e) => setGlossarySearch(e.target.value)}
-                  placeholder={lang === 'fr' ? 'Rechercher un terme (ex: Backfocus, Tilt...)' : 'Search a term (e.g. Backfocus, Tilt...)'}
+                  placeholder={
+                    lang === 'fr'
+                      ? 'Rechercher un terme (ex: Backfocus, Tilt...)'
+                      : 'Search a term (e.g. Backfocus, Tilt...)'
+                  }
                   className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white text-sm focus:outline-none focus:border-cyan-400"
                 />
               </div>
@@ -1746,27 +2179,53 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredGlossary.map((item, idx) => (
-                <div key={idx} className={`p-5 rounded-3xl border space-y-2 backdrop-blur-md ${nightVision ? 'bg-rose-950/30 border-rose-900' : 'bg-slate-900/80 border-slate-800'}`}>
+                <div
+                  key={idx}
+                  className={`p-5 rounded-3xl border space-y-2 backdrop-blur-md ${
+                    nightVision
+                      ? 'bg-rose-950/30 border-rose-900'
+                      : 'bg-slate-900/80 border-slate-800'
+                  }`}
+                >
                   <div className="flex items-center justify-between">
-                    <h3 className={`font-black text-base md:text-lg ${nightVision ? 'text-rose-300' : 'text-cyan-300'}`}>
+                    <h3
+                      className={`font-black text-base md:text-lg ${
+                        nightVision ? 'text-rose-300' : 'text-cyan-300'
+                      }`}
+                    >
                       {lang === 'fr' ? item.termFr : item.termEn}
                     </h3>
                     <button
                       type="button"
-                      onClick={() => openModuleDetail(item.moduleRef, false)}
-                      className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-600/60 hover:bg-indigo-600 text-white transition"
+                      onClick={() =>
+                        openModuleDetail(
+                          item.moduleRef,
+                          !isModuleUnlocked(item.moduleRef)
+                        )
+                      }
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg text-white transition ${
+                        nightVision
+                          ? 'bg-rose-800 hover:bg-rose-700'
+                          : 'bg-indigo-600/80 hover:bg-indigo-600'
+                      }`}
                     >
                       Module {item.moduleRef} ➔
                     </button>
                   </div>
-                  <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                  <p
+                    className={`text-xs md:text-sm leading-relaxed ${
+                      nightVision ? 'text-rose-200' : 'text-slate-300'
+                    }`}
+                  >
                     {lang === 'fr' ? item.defFr : item.defEn}
                   </p>
                 </div>
               ))}
               {filteredGlossary.length === 0 && (
                 <div className="col-span-full text-center py-12 text-slate-400 text-sm">
-                  {lang === 'fr' ? 'Aucun terme trouvé pour cette recherche.' : 'No term found for this query.'}
+                  {lang === 'fr'
+                    ? 'Aucun terme trouvé pour cette recherche.'
+                    : 'No term found for this query.'}
                 </div>
               )}
             </div>
@@ -1807,28 +2266,80 @@ export default function App() {
 
               {/* SECTION BÉNÉFICES CONCRETS */}
               <div className="max-w-5xl mx-auto pt-6 pb-2">
-                <h3 className={`text-xl md:text-2xl font-black mb-6 ${nightVision ? 'text-rose-200' : 'text-white'}`}>
+                <h3
+                  className={`text-xl md:text-2xl font-black mb-6 ${
+                    nightVision ? 'text-rose-200' : 'text-white'
+                  }`}
+                >
                   {currentT.benefitsTitle}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                  <div className={`p-6 rounded-3xl border space-y-3 ${nightVision ? 'bg-rose-950/40 border-rose-900/60' : 'bg-slate-950/60 border-cyan-500/30'}`}>
+                  <div
+                    className={`p-6 rounded-3xl border space-y-3 ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-slate-950/60 border-cyan-500/30'
+                    }`}
+                  >
                     <div className="text-3xl">🎯</div>
-                    <h4 className="font-extrabold text-base text-cyan-400">{currentT.benefit1Title}</h4>
-                    <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                    <h4
+                      className={`font-extrabold text-base ${
+                        nightVision ? 'text-rose-300' : 'text-cyan-400'
+                      }`}
+                    >
+                      {currentT.benefit1Title}
+                    </h4>
+                    <p
+                      className={`text-xs md:text-sm leading-relaxed ${
+                        nightVision ? 'text-rose-200' : 'text-slate-300'
+                      }`}
+                    >
                       {currentT.benefit1Desc}
                     </p>
                   </div>
-                  <div className={`p-6 rounded-3xl border space-y-3 ${nightVision ? 'bg-rose-950/40 border-rose-900/60' : 'bg-slate-950/60 border-indigo-500/30'}`}>
+                  <div
+                    className={`p-6 rounded-3xl border space-y-3 ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-slate-950/60 border-indigo-500/30'
+                    }`}
+                  >
                     <div className="text-3xl">🌌</div>
-                    <h4 className="font-extrabold text-base text-indigo-400">{currentT.benefit2Title}</h4>
-                    <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                    <h4
+                      className={`font-extrabold text-base ${
+                        nightVision ? 'text-rose-300' : 'text-indigo-400'
+                      }`}
+                    >
+                      {currentT.benefit2Title}
+                    </h4>
+                    <p
+                      className={`text-xs md:text-sm leading-relaxed ${
+                        nightVision ? 'text-rose-200' : 'text-slate-300'
+                      }`}
+                    >
                       {currentT.benefit2Desc}
                     </p>
                   </div>
-                  <div className={`p-6 rounded-3xl border space-y-3 ${nightVision ? 'bg-rose-950/40 border-rose-900/60' : 'bg-slate-950/60 border-emerald-500/30'}`}>
+                  <div
+                    className={`p-6 rounded-3xl border space-y-3 ${
+                      nightVision
+                        ? 'bg-rose-950/40 border-rose-900/60'
+                        : 'bg-slate-950/60 border-emerald-500/30'
+                    }`}
+                  >
                     <div className="text-3xl">🎨</div>
-                    <h4 className="font-extrabold text-base text-emerald-400">{currentT.benefit3Title}</h4>
-                    <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-200' : 'text-slate-300'}`}>
+                    <h4
+                      className={`font-extrabold text-base ${
+                        nightVision ? 'text-rose-300' : 'text-emerald-400'
+                      }`}
+                    >
+                      {currentT.benefit3Title}
+                    </h4>
+                    <p
+                      className={`text-xs md:text-sm leading-relaxed ${
+                        nightVision ? 'text-rose-200' : 'text-slate-300'
+                      }`}
+                    >
                       {currentT.benefit3Desc}
                     </p>
                   </div>
@@ -1869,7 +2380,9 @@ export default function App() {
                     playsInline
                     preload="metadata"
                     className={`w-full h-full object-cover ${
-                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                      nightVision
+                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
+                        : ''
                     }`}
                   >
                     {lang === 'fr'
@@ -1902,7 +2415,9 @@ export default function App() {
                     playsInline
                     preload="metadata"
                     className={`w-full h-full object-cover ${
-                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                      nightVision
+                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
+                        : ''
                     }`}
                   >
                     {lang === 'fr'
@@ -1982,13 +2497,23 @@ export default function App() {
               >
                 <div className="w-24 h-24 shrink-0 rounded-2xl bg-black border-2 border-cyan-400/60 flex items-center justify-center shadow-2xl relative overflow-hidden group">
                   <div className="absolute inset-0 bg-cyan-500/10 animate-pulse" />
-                  <span className="text-5xl group-hover:scale-110 transition-transform duration-300">🔭</span>
+                  <span className="text-5xl group-hover:scale-110 transition-transform duration-300">
+                    🔭
+                  </span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className={`text-lg md:text-xl font-black ${nightVision ? 'text-rose-300' : 'text-cyan-300'}`}>
+                  <h3
+                    className={`text-lg md:text-xl font-black ${
+                      nightVision ? 'text-rose-300' : 'text-cyan-300'
+                    }`}
+                  >
                     {currentT.originStoryTitle}
                   </h3>
-                  <p className={`text-xs md:text-sm leading-relaxed ${nightVision ? 'text-rose-100' : 'text-slate-300'}`}>
+                  <p
+                    className={`text-xs md:text-sm leading-relaxed ${
+                      nightVision ? 'text-rose-100' : 'text-slate-300'
+                    }`}
+                  >
                     {currentT.originStoryText}
                   </p>
                 </div>
@@ -1997,9 +2522,7 @@ export default function App() {
               <div className="pt-2 flex flex-col sm:flex-row justify-center items-center gap-4">
                 <button
                   type="button"
-                  onClick={() =>
-                    handleOpenLink(paymentLinks.packIntegral.stripe)
-                  }
+                  onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
                   className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl animate-pulse ${
                     nightVision
                       ? 'bg-rose-600 text-white hover:bg-rose-500'
@@ -2010,9 +2533,7 @@ export default function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    handleOpenLink(paymentLinks.packIntegral.paypal)
-                  }
+                  onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
                   className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 transition shadow-xl ${
                     nightVision
                       ? 'bg-rose-800 text-white hover:bg-rose-700'
@@ -2151,7 +2672,9 @@ export default function App() {
                     playsInline
                     preload="metadata"
                     className={`w-full h-full object-cover ${
-                      nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+                      nightVision
+                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
+                        : ''
                     }`}
                   >
                     {lang === 'fr'
@@ -2205,7 +2728,9 @@ export default function App() {
                           </span>
 
                           <div className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-xl bg-indigo-600/90 backdrop-blur-md shadow-lg flex items-center gap-2 text-white">
-                            <span className="font-black text-sm text-cyan-300">{mod.priceDisplay}</span>
+                            <span className="font-black text-sm text-cyan-300">
+                              {mod.priceDisplay}
+                            </span>
                           </div>
 
                           {isDone && (
@@ -2313,19 +2838,23 @@ export default function App() {
                           Pack Intégral
                         </div>
                         <div className="flex items-center justify-center gap-3 pt-1">
-                          <span className="text-2xl font-black text-cyan-300">49,99 $ CAD</span>
+                          <span className="text-2xl font-black text-cyan-300">
+                            49,99 $ CAD
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="p-6 space-y-3 relative z-10">
                       <h4 className="font-bold text-lg leading-snug text-amber-200">
-                        {lang === 'fr' ? "Accès Complet à Tous les Modules" : "Full Access to All Modules"}
+                        {lang === 'fr'
+                          ? 'Accès Complet à Tous les Modules'
+                          : 'Full Access to All Modules'}
                       </h4>
                       <p className="text-sm text-slate-300 leading-relaxed">
-                        {lang === 'fr' 
-                          ? "Débloquez instantanément les 7 masterclasses, les 6 simulateurs optiques interactifs, les quiz et les guides PDF A4 imprimables." 
-                          : "Instantly unlock all 7 masterclasses, 6 interactive optical simulators, quizzes, and printable A4 PDF guides."}
+                        {lang === 'fr'
+                          ? 'Débloquez instantanément les 7 masterclasses, les 6 simulateurs optiques interactifs, les quiz et les guides PDF A4 imprimables.'
+                          : 'Instantly unlock all 7 masterclasses, 6 interactive optical simulators, quizzes, and printable A4 PDF guides.'}
                       </p>
                     </div>
                   </div>
@@ -2334,14 +2863,18 @@ export default function App() {
                     <div className="grid grid-cols-2 gap-2.5">
                       <button
                         type="button"
-                        onClick={() => handleOpenLink(paymentLinks.packIntegral.stripe)}
+                        onClick={() =>
+                          handleOpenLink(paymentLinks.packIntegral.stripe)
+                        }
                         className="py-3 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-black text-slate-950 shadow-md text-center transition flex items-center justify-center gap-1 animate-pulse"
                       >
                         <span>💳</span> {currentT.buyStripe}
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleOpenLink(paymentLinks.packIntegral.paypal)}
+                        onClick={() =>
+                          handleOpenLink(paymentLinks.packIntegral.paypal)
+                        }
                         className="py-3 px-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white shadow-md text-center transition flex items-center justify-center gap-1"
                       >
                         <span>🅿️</span> {currentT.buyPayPal}
@@ -2349,7 +2882,6 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
 
@@ -2444,7 +2976,7 @@ export default function App() {
         )}
 
         {/* VUE DETAILLEE D'UN MODULE */}
-        {activeTab === 'module-detail' && currentModule && (
+        {activeTab === 'module-detail' && currentModule && activeSlide && (
           <div
             className={`max-w-4xl mx-auto space-y-12 border rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md ${
               nightVision
@@ -2460,7 +2992,8 @@ export default function App() {
                     {currentT.previewBannerTitle}
                   </span>
                   <span className="text-xs font-bold text-cyan-300">
-                    {currentModule.priceDisplay} CAD (ou Pack 7-en-1 à 49.99$ CAD)
+                    {currentModule.priceDisplay} CAD (ou Pack 7-en-1 à 49.99$
+                    CAD)
                   </span>
                 </div>
                 <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
@@ -2593,28 +3126,27 @@ export default function App() {
                   <span>🎬</span> {currentT.studioHeader}
                 </h3>
                 <span className="text-xs font-mono px-3 py-1 rounded-lg bg-black/40 border border-white/10">
-                  {lang === 'fr' ? 'Chapitre' : 'Chapter'}{' '}
-                  {currentSlideIndex + 1} /{' '}
-                  {currentModule.content[lang].slides.length}
+                  {lang === 'fr' ? 'Chapitre' : 'Chapter'} {safeSlideIndex + 1}{' '}
+                  / {activeSlides.length}
                 </span>
               </div>
 
               <div className="rounded-3xl bg-black/50 border border-white/10 p-6 md:p-10 shadow-2xl space-y-6">
                 <div className="space-y-1">
                   <h4 className="text-xl md:text-2xl font-black text-white">
-                    {currentModule.content[lang].slides[currentSlideIndex].title}
+                    {activeSlide.title}
                   </h4>
                   <p
                     className={`text-xs md:text-sm font-semibold ${
                       nightVision ? 'text-rose-400' : 'text-cyan-400'
                     }`}
                   >
-                    {currentModule.content[lang].slides[currentSlideIndex].subtitle}
+                    {activeSlide.subtitle}
                   </p>
                 </div>
 
                 <ul className="space-y-3">
-                  {currentModule.content[lang].slides[currentSlideIndex].bullets.map((b, i) => (
+                  {activeSlide.bullets.map((b, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl text-sm md:text-base leading-relaxed"
@@ -2641,13 +3173,13 @@ export default function App() {
                   <strong className="block mb-1 font-extrabold">
                     {currentT.proTipLabel}
                   </strong>
-                  {currentModule.content[lang].slides[currentSlideIndex].proTip}
+                  {activeSlide.proTip}
                 </div>
 
                 <div className="flex items-center justify-between pt-2">
                   <button
                     type="button"
-                    disabled={currentSlideIndex === 0}
+                    disabled={safeSlideIndex === 0}
                     onClick={() =>
                       setCurrentSlideIndex((prev) => Math.max(0, prev - 1))
                     }
@@ -2656,14 +3188,18 @@ export default function App() {
                     {currentT.prevSlide}
                   </button>
                   <div className="flex gap-1.5">
-                    {currentModule.content[lang].slides.map((_, idx) => (
+                    {activeSlides.map((_, idx) => (
                       <button
                         key={idx}
                         type="button"
-                        disabled={isPreviewMode && !isModuleUnlocked(currentModule.id) && idx > 0}
+                        disabled={
+                          isPreviewMode &&
+                          !isModuleUnlocked(currentModule.id) &&
+                          idx > 0
+                        }
                         onClick={() => setCurrentSlideIndex(idx)}
                         className={`w-2.5 h-2.5 rounded-full transition ${
-                          currentSlideIndex === idx
+                          safeSlideIndex === idx
                             ? nightVision
                               ? 'bg-rose-500 scale-125'
                               : 'bg-cyan-400 scale-125'
@@ -2676,15 +3212,11 @@ export default function App() {
                     type="button"
                     disabled={
                       (isPreviewMode && !isModuleUnlocked(currentModule.id)) ||
-                      currentSlideIndex ===
-                        currentModule.content[lang].slides.length - 1
+                      safeSlideIndex === activeSlides.length - 1
                     }
                     onClick={() =>
                       setCurrentSlideIndex((prev) =>
-                        Math.min(
-                          currentModule.content[lang].slides.length - 1,
-                          prev + 1
-                        )
+                        Math.min(activeSlides.length - 1, prev + 1)
                       )
                     }
                     className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-xs font-bold text-white transition"
@@ -2943,7 +3475,9 @@ export default function App() {
                     />
                   </div>
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 text-[10px] font-bold text-slate-300">
-                    {lang === 'fr' ? 'AVANT : Brute Linéaire' : 'BEFORE: Linear Stack'}
+                    {lang === 'fr'
+                      ? 'AVANT : Brute Linéaire'
+                      : 'BEFORE: Linear Stack'}
                   </span>
                   <span className="absolute top-3 right-3 px-2.5 py-1 rounded bg-cyan-500/90 text-[10px] font-black text-slate-950">
                     {lang === 'fr'
@@ -3302,7 +3836,9 @@ export default function App() {
             </p>
             <div className="space-y-1">
               <div className="flex items-center justify-center gap-3">
-                <span className="text-4xl md:text-5xl font-black text-cyan-400">49,99 $ CAD</span>
+                <span className="text-4xl md:text-5xl font-black text-cyan-400">
+                  49,99 $ CAD
+                </span>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
