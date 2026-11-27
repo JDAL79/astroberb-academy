@@ -69,6 +69,11 @@ const escapeHtml = (str: string): string =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+const clampNumber = (raw: number, min: number, max: number, fallback: number): number => {
+  if (Number.isNaN(raw) || !Number.isFinite(raw)) return fallback;
+  return Math.max(min, Math.min(max, raw));
+};
+
 const GLOSSARY_TERMS: GlossaryItem[] = [
   {
     termFr: 'Backfocus',
@@ -179,6 +184,7 @@ export default function App() {
   const [studentName, setStudentName] = useState<string>('');
   const [unlockedModules, setUnlockedModules] = useState<number[]>([]);
   const [completedModules, setCompletedModules] = useState<number[]>([]);
+  const [quizScores, setQuizScores] = useState<Record<number, { score: number; total: number }>>({});
   const [vipStatus, setVipStatus] = useState<'success' | 'error' | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'vip' | 'pack' | 'success' | 'module-detail' | 'glossary'>('home');
   const [glossarySearch, setGlossarySearch] = useState<string>('');
@@ -235,6 +241,15 @@ export default function App() {
   }, [lang]);
 
   useEffect(() => {
+    if (!legalModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLegalModal(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [legalModal]);
+
+  useEffect(() => {
     let currentUnlocked: number[] = [];
     let currentCompleted: number[] = [];
     try {
@@ -248,6 +263,13 @@ export default function App() {
         const parsedComp = JSON.parse(savedComp);
         if (Array.isArray(parsedComp)) currentCompleted = parsedComp.map(Number);
       }
+      const savedScores = localStorage.getItem('astroberb_quiz_scores');
+      if (savedScores) {
+        const parsedScores = JSON.parse(savedScores);
+        if (parsedScores && typeof parsedScores === 'object') {
+          setQuizScores(parsedScores);
+        }
+      }
       const savedName = localStorage.getItem('astroberb_student_name');
       if (savedName) setStudentName(savedName);
     } catch (e) {
@@ -258,7 +280,6 @@ export default function App() {
     const unlockParam = params.get('unlock');
     const successParam = params.get('success');
 
-    // Note : la validation de paiement doit idéalement être vérifiée côté serveur via webhook
     if (unlockParam === 'all' || successParam === 'true') {
       currentUnlocked = [1, 2, 3, 4, 5, 6, 7];
       try {
@@ -324,12 +345,15 @@ export default function App() {
 
   const handleCopyCode = (code: string) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code).then(() => {
-        setCopiedCode(code);
-        setTimeout(() => setCopiedCode(null), 2500);
-      }).catch(() => {
-        // Fallback silencieux si clipboard indisponible
-      });
+      navigator.clipboard
+        .writeText(code)
+        .then(() => {
+          setCopiedCode(code);
+          setTimeout(() => setCopiedCode(null), 2500);
+        })
+        .catch(() => {
+          // Fallback silencieux si clipboard indisponible
+        });
     }
   };
 
@@ -341,7 +365,7 @@ export default function App() {
         src={LOGO_URL}
         alt="Astroberb Academy Logo"
         className={`w-full h-full object-contain ${
-          nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75' : ''
+          nightVision ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-50' : ''
         }`}
       />
     </div>
@@ -414,9 +438,7 @@ export default function App() {
       }</p>`,
       `<div class="name">${safeName}</div>`,
       '<div class="footer">',
-      `<div>${
-        lang === 'fr' ? 'Délivré le' : 'Issued on'
-      } : ${formattedDate}</div>`,
+      `<div>${lang === 'fr' ? 'Délivré le' : 'Issued on'} : ${formattedDate}</div>`,
       `<div>Modules validés : ${completedModules.length} / 7 • Support : ${safeEmail}</div>`,
       `<div><span class="signature">L'Équipe Astroberb</span><br/>${
         lang === 'fr'
@@ -571,6 +593,7 @@ export default function App() {
       fullCourseTitle: 'Cours Théorique Approfondi & Retours de Terrain',
       tutorialSteps: 'Protocole Opérationnel & Checklist Personnelle',
       resourcesPdf: 'Fiches Techniques PDF (Générateur A4 Imprimable)',
+      pdfBadge: 'PDF Officiel A4 Imprimable',
       generatePdfBtn: 'Générer & Télécharger le PDF',
       successBadge: 'Paiement Validé avec Succès',
       successTitle: 'Bienvenue dans la famille Astroberb Academy !',
@@ -613,6 +636,10 @@ export default function App() {
       calcPayloadLabel: 'Poids total équipé du tube optique (kg) :',
       calcRadiusLabel: "Déport du centre de gravité par rapport à l'axe AD (cm) :",
       calcTorqueResult: 'Couple exercé sur le réducteur harmonique : ',
+      calcTorqueHigh:
+        '⚠️ Couple élevé : Ajoutez un contrepoids de 3 à 5 kg sur la barre pour soulager le réducteur et stabiliser le trépied.',
+      calcTorqueOk:
+        '✨ Charge nominale parfaite : Aucun contrepoids requis sur Juwei-17 / UMi-17S / AM5 (lestez uniquement le trépied).',
       calcFocusTitle: '🔬 Simulateur EAF : Zone Critique de Mise au Point (CFZ)',
       calcFocusFDLabel: "Rapport d'ouverture du tube (f/D) :",
       calcFocusStepLabel: 'Déplacement EAF par pas (µm/pas) :',
@@ -622,7 +649,12 @@ export default function App() {
         '⏱️ CMOS Simulator: Temps de Pose Unitaire Optimal (Swamp Factor)',
       calcBortleLabel: 'Qualité de votre ciel (Échelle de Bortle 1 à 9) :',
       calcFilterLabel: 'Type de filtre utilisé :',
+      filterBroadband: 'UV/IR Cut — Large Bande (Galaxies / Amas)',
+      filterDualband: 'Dual-Band 7nm (Ha/OIII Couleur)',
+      filterSho: 'Bande Étroite 3nm (SHO Monochrome)',
       calcExpResult: 'Temps de pose unitaire recommandé (à f/5, Gain 100) : ',
+      calcExpAdvice:
+        '✨ Ce temps de pose submerge le bruit de lecture (Gain 100) sans saturer le cœur des étoiles.',
       calcCompareTitle:
         '🎨 Comparateur Interactif : Brute Linéaire vs Traitement Final (GraXpert + SPCC + GHS)',
       calcNpfTitle:
@@ -631,6 +663,7 @@ export default function App() {
       calcNpfApertureLabel: 'Ouverture du diaphragme (f/) :',
       calcNpfResult: "Temps de pose max sans filé d'étoiles : ",
       quizTitle: '📝 Quiz de Validation des Connaissances',
+      quizBestScore: 'Meilleur score enregistré : ',
       quizSubmit: 'Valider mes réponses',
       quizScore: 'Votre Score : ',
       quizRetry: 'Réinitialiser le quiz',
@@ -721,6 +754,7 @@ export default function App() {
       fullCourseTitle: 'In-Depth Theoretical Course & Field Notes',
       tutorialSteps: 'Operational Protocol & Personal Checklist',
       resourcesPdf: 'PDF Technical Sheets (Printable A4 Generator)',
+      pdfBadge: 'Official Printable A4 PDF',
       generatePdfBtn: 'Generate & Download PDF',
       successBadge: 'Payment Successful',
       successTitle: 'Welcome to the Astroberb Academy Family!',
@@ -762,6 +796,10 @@ export default function App() {
       calcPayloadLabel: 'Total Rigged Payload Weight (kg):',
       calcRadiusLabel: 'Center of Gravity Offset from RA Axis (cm):',
       calcTorqueResult: 'Torque Load on Strainwave Gear: ',
+      calcTorqueHigh:
+        '⚠️ High torque load: Add a 3kg to 5kg counterweight to stabilize your tripod and assist the strainwave gear.',
+      calcTorqueOk:
+        '✨ Optimal torque load: No counterweight needed on Juwei-17 / UMi-17S / AM5 (ballast tripod center only).',
       calcFocusTitle: '🔬 EAF Simulator: Critical Focus Zone (CFZ)',
       calcFocusFDLabel: 'Telescope Focal Ratio (f/D):',
       calcFocusStepLabel: 'Focuser Travel per Step (µm/step):',
@@ -771,7 +809,12 @@ export default function App() {
         '⏱️ CMOS Simulator: Optimal Sub-Exposure Calculator (Swamp Factor)',
       calcBortleLabel: 'Sky Darkness (Bortle Scale 1 to 9):',
       calcFilterLabel: 'Filter Type:',
+      filterBroadband: 'UV/IR Cut — Broadband (Galaxies / Clusters)',
+      filterDualband: 'Dual-Band 7nm (Ha/OIII Color)',
+      filterSho: 'Narrowband 3nm (SHO Mono)',
       calcExpResult: 'Recommended Sub-Exposure (at f/5, Gain 100): ',
+      calcExpAdvice:
+        '✨ This sub-exposure swamps sensor read noise (Gain 100) without clipping bright star cores.',
       calcCompareTitle:
         '🎨 Interactive Before / After: Raw Linear Stack vs. Final Processed (GraXpert + SPCC + GHS)',
       calcNpfTitle:
@@ -780,6 +823,7 @@ export default function App() {
       calcNpfApertureLabel: 'Lens Aperture (f/):',
       calcNpfResult: 'Max Untracked Exposure: ',
       quizTitle: '📝 Knowledge Validation Quiz',
+      quizBestScore: 'Saved best score: ',
       quizSubmit: 'Submit Answers',
       quizScore: 'Your Score: ',
       quizRetry: 'Reset Quiz',
@@ -909,6 +953,13 @@ export default function App() {
               highlight:
                 "Formule fondamentale : Échantillonnage (''/px) = (206,265 × Taille_Pixel_µm) ÷ Focale_mm",
             },
+            {
+              heading:
+                '2. Rigidité du Train Optique & Élimination des Flexions',
+              body: "Un train optique vissé (filetages M42, M48 ou M54) élimine le jeu des bagues à compression et protège la perpendicularité du capteur. Évitez les empilements de bagues allongées fines sur de longues focales : préférez une bague unique usinée avec précision et vérifiez l'alignement à l'aide d'une analyse d'aberration (HFR dans les 4 coins).",
+              highlight:
+                'Astuce terrain : Marquez vos bagues vissées au crayon-feutre fin pour repérer tout dévissage après le transport.',
+            },
           ] as LessonSection[],
           steps: [
             "1. Calculer son échantillonnage dans le simulateur ci-dessus pour viser la plage optimale de 0,8'' à 2,0'' par pixel.",
@@ -928,6 +979,18 @@ export default function App() {
               explanation:
                 'Le rapport f/D dicte la concentration de photons par unité de surface sur le capteur.',
             },
+            {
+              question:
+                'Comment corriger des étoiles qui s’étirent en rayons vers le centre dans les 4 coins ?',
+              options: [
+                'Augmenter légèrement la distance de backfocus (ajouter des cales)',
+                'Réduire le gain de la caméra à 0',
+                'Tourner le pare-buée de 90 degrés',
+              ],
+              correct: 0,
+              explanation:
+                'Des étoiles pointant radialement vers le centre indiquent que le capteur est trop proche du correcteur.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -941,6 +1004,7 @@ export default function App() {
                   content: [
                     "Formule officielle : Échantillonnage (''/px) = (206,265 × Taille du pixel en µm) ÷ Focale effective en mm.",
                     "Ciel standard (Seeing 2.5'' - 3.0'') : Visez entre 1.0''/px et 2.0''/px pour un équilibre idéal.",
+                    'Correction verre de filtre : Ajoutez environ 1/3 de l’épaisseur du filtre au tirage mécanique.',
                   ],
                 },
               ],
@@ -992,10 +1056,17 @@ export default function App() {
               highlight:
                 "Core Formula: Pixel Scale (''/px) = (206.265 × Pixel_Size_µm) ÷ Focal_Length_mm",
             },
+            {
+              heading: '2. Optical Train Rigidity & Flexure Prevention',
+              body: 'Threaded M42/M48/M54 connections eliminate compression-ring slop and preserve sensor orthogonality. Inspect four-corner HFR values on short test frames before starting long sequences.',
+              highlight:
+                'Field tip: Mark threaded collars with a fine marker so you can spot loosening after travel.',
+            },
           ] as LessonSection[],
           steps: [
             "1. Calculate your pixel scale in the simulator above to target 0.8'' to 2.0'' per pixel.",
             '2. Assemble a fully threaded M48/M54 optical train and verify 55.0mm backfocus.',
+            '3. Inspect star shapes in all four corners on a 10-second test frame.',
           ],
           quiz: [
             {
@@ -1009,6 +1080,18 @@ export default function App() {
               explanation:
                 'Focal ratio (f/D) controls photon concentration per unit area on the sensor.',
             },
+            {
+              question:
+                'How do you fix corner stars stretching radially inward toward the center?',
+              options: [
+                'Slightly increase backfocus spacing with thin spacers',
+                'Set camera gain to 0',
+                'Rotate the dew shield by 90 degrees',
+              ],
+              correct: 0,
+              explanation:
+                'Radially inward star elongation indicates the sensor is slightly too close to the flattener/reducer.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1020,6 +1103,7 @@ export default function App() {
                   title: '1. Mathematical Formula & Seeing Targets',
                   content: [
                     "Formula: Pixel Scale (''/px) = (206.265 × Pixel Size in µm) ÷ Effective Focal Length in mm.",
+                    'Filter glass offset: Add ~1/3 of filter thickness to mechanical backfocus spacing.',
                   ],
                 },
               ],
@@ -1061,6 +1145,17 @@ export default function App() {
               proTip:
                 'Au-delà de 12 kg de charge utile, ajoutez tout de même une petite barre et un contrepoids de 3 à 5 kg pour éviter le basculement du trépied !',
             },
+            {
+              title: 'Chapitre 2 : Mise en Station Polaire & Guidage PHD2 Rapide',
+              subtitle: 'Viser sous 0.5 arc-minute d’erreur polaire et 0.5s de pose guide',
+              bullets: [
+                'Un alignement polaire précis (< 1 arc-min) limite la dérive de champ et évite les rotations d’étoiles sur les poses longues.',
+                'Sur un réducteur harmonique, l’erreur périodique évolue plus vite : utilisez des poses de guidage courtes (0,5 s à 1,0 s) et une agressivité RA modérée (0.55 - 0.70).',
+                'Lestez toujours le crochet central du trépied carbone pour abaisser le centre de gravité face au vent.',
+              ],
+              proTip:
+                'Évitez de sur-corriger le seeing avec une agressivité RA à 1.0 : laissez PHD2 lisser les fluctuations atmosphériques.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1072,7 +1167,9 @@ export default function App() {
             },
           ] as LessonSection[],
           steps: [
-            '1. Orienter le trépied vers le Nord, le mettre de niveau et suspendre un poids de lestage.',
+            '1. Orienter le trépied vers le Nord, le mettre de niveau et suspendre un poids de lestage au centre.',
+            '2. Réaliser la mise en station polaire assistée (N.I.N.A. TPPA / ASIAIR) sous 1 arc-minute.',
+            '3. Lancer la calibration PHD2 près de l’équateur céleste et vérifier un guidage RMS stable.',
           ],
           quiz: [
             {
@@ -1087,6 +1184,18 @@ export default function App() {
               explanation:
                 "L'erreur périodique des réducteurs harmoniques exige une fréquence de correction élevée (0,5s à 1,0s).",
             },
+            {
+              question:
+                'Pourquoi lester le centre d’un trépied léger avec une monture harmonique ?',
+              options: [
+                'Pour abaisser le centre de gravité et éviter le basculement',
+                'Pour augmenter la focale du télescope',
+                'Pour refroidir le capteur CMOS',
+              ],
+              correct: 0,
+              explanation:
+                'Sans contrepoids latéral, le centre de gravité est plus haut : un lest central stabilise l’ensemble.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1096,8 +1205,11 @@ export default function App() {
                 'Protocole Opérationnel : Juwei-17 / UMi-17S / AM5 & Alignement Polaire',
               sections: [
                 {
-                  title: '1. Sécurité Mécanique',
-                  content: ['Lestage obligatoire du trépied carbone.'],
+                  title: '1. Sécurité Mécanique & Guidage',
+                  content: [
+                    'Lestage obligatoire du trépied carbone.',
+                    'Poses de guidage PHD2 recommandées : 0,5 s à 1,0 s.',
+                  ],
                 },
               ],
             },
@@ -1111,20 +1223,37 @@ export default function App() {
               title: 'Chapter 1: Worm Gears vs. Strainwave Harmonic Drives',
               subtitle: 'High torque, zero backlash, no counterweights',
               bullets: [
-                'Harmonic mounts carry heavy payloads without heavy counterweights.',
+                'Classic worm-gear mounts carry heavy loads but require bulky counterweights and careful balance.',
+                'Harmonic strainwave drives deliver high torque in a compact body with virtually zero backlash.',
+                'Lightweight rigs can image without counterweights while keeping setup fast and portable.',
               ],
               proTip:
-                'For heavy payloads, add a small 3-5kg counterweight for extra safety.',
+                'For heavy payloads above 12 kg, add a 3–5 kg counterweight to stabilize the tripod.',
+            },
+            {
+              title: 'Chapter 2: Polar Alignment & Fast PHD2 Guiding',
+              subtitle: 'Sub-arcminute alignment and snappy guide exposures',
+              bullets: [
+                'Keep polar alignment error under 1 arcminute to prevent field drift during long integrations.',
+                'Use 0.5s to 1.0s guide exposures on harmonic mounts to track periodic error slopes cleanly.',
+                'Hang a central weight on your tripod hook to lower the center of gravity.',
+              ],
+              proTip:
+                'Avoid chasing seeing with overly high RA aggression; let PHD2 smooth out air turbulence.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. Hardware Deep Dive',
-              body: 'Strainwave reducers provide exceptional portability.',
-              highlight: 'Safety Rule: Always ballast your tripod.',
+              body: 'Strainwave reducers provide exceptional portability and high payload-to-weight ratios for field astronomers.',
+              highlight: 'Safety Rule: Always ballast your tripod and supply clean 12V power.',
             },
           ] as LessonSection[],
-          steps: ['1. Point tripod North and level.'],
+          steps: [
+            '1. Point tripod North, level it, and hang a center ballast weight.',
+            '2. Complete polar alignment under 1 arcminute before focusing.',
+            '3. Calibrate PHD2 near celestial equator and declination 0.',
+          ],
           quiz: [
             {
               question:
@@ -1138,6 +1267,18 @@ export default function App() {
               explanation:
                 'Fast periodic error slopes on harmonic drives require frequent 0.5s - 1.0s guide pulses.',
             },
+            {
+              question:
+                'Why hang ballast weight from the center of a tripod with a harmonic mount?',
+              options: [
+                'To lower center of gravity and prevent tip-over',
+                'To shorten focal length',
+                'To cool the camera sensor',
+              ],
+              correct: 0,
+              explanation:
+                'Center ballast lowers the center of mass and adds stability against wind.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1147,7 +1288,10 @@ export default function App() {
               sections: [
                 {
                   title: '1. Mechanical & Power Safety',
-                  content: ['Mandatory tripod ballast.'],
+                  content: [
+                    'Mandatory tripod ballast for wind stability.',
+                    'Recommended PHD2 guide exposure: 0.5s to 1.0s.',
+                  ],
                 },
               ],
             },
@@ -1182,19 +1326,34 @@ export default function App() {
               subtitle: 'Centrer une nébuleuse invisible en moins de 3 secondes',
               bullets: [
                 'Le solveur mesure les triangles stellaires et trouve les coordonnées exactes à 0.1 arc-sec près.',
+                'Permet de recadrer automatiquement votre cible chaque nuit sur plusieurs sessions.',
               ],
               proTip:
-                'Renseignez toujours la focale exacte dans votre profil logiciel.',
+                'Renseignez toujours la focale exacte et la taille des pixels dans votre profil logiciel.',
+            },
+            {
+              title: 'Chapitre 2 : Dithering & Retournement au Méridien Sécurisé',
+              subtitle: 'Éliminer le walking noise et franchir le méridien sans accroc',
+              bullets: [
+                'Le dithering décale légèrement la monture entre deux poses (ex: 3 à 5 px sur la caméra imageuse) pour lisser le bruit de trame.',
+                'Configurez une marge de sécurité avant et après le méridien ainsi qu’un recentrage + refocalisation automatique après le flip.',
+              ],
+              proTip:
+                'Ajoutez un temps de stabilisation de 5 à 10 secondes après chaque dithering avant de relancer la pose.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. ZWO ASIAIR vs Mini-PC N.I.N.A.',
-              body: 'ASIAIR offre une simplicité clé en main, tandis que N.I.N.A. sur Mini-PC offre une liberté multi-marques totale.',
+              body: 'ASIAIR offre une simplicité clé en main dans l’écosystème ZWO, tandis que N.I.N.A. sur Mini-PC offre une liberté multi-marques totale et un séquenceur avancé.',
               highlight: 'ASIAIR = Simplicité | N.I.N.A. = Liberté totale',
             },
           ] as LessonSection[],
-          steps: ['1. Installer ASTAP et le catalogue D50.'],
+          steps: [
+            '1. Installer ASTAP et le catalogue d’étoiles adapté (D50 / G17).',
+            '2. Configurer le dithering (3 à 5 px) et les déclencheurs de refocalisation (HFR ou dérive de température).',
+            '3. Tester le retournement au méridien en journée ou en début de soirée.',
+          ],
           quiz: [
             {
               question:
@@ -1208,6 +1367,17 @@ export default function App() {
               explanation:
                 'Le solveur a besoin de paramètres de champ exacts.',
             },
+            {
+              question: 'À quoi sert principalement le Dithering ?',
+              options: [
+                'À éliminer le bruit de trame (walking noise) lors de l’empilement',
+                'À augmenter le diamètre du télescope',
+                'À remplacer la mise en station polaire',
+              ],
+              correct: 0,
+              explanation:
+                'Décaler légèrement le cadrage entre les poses évite l’alignement du bruit fixe.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1216,8 +1386,11 @@ export default function App() {
               title: 'Blueprint Complet',
               sections: [
                 {
-                  title: '1. Démarrage',
-                  content: ['Refroidissement caméra et Plate Solve.'],
+                  title: '1. Démarrage & Séquence',
+                  content: [
+                    'Refroidissement caméra, Plate Solve, autofocus et dithering.',
+                    'Retournement au méridien avec recentrage automatique.',
+                  ],
                 },
               ],
             },
@@ -1230,18 +1403,35 @@ export default function App() {
             {
               title: 'Chapter 1: Astrometric Plate Solving',
               subtitle: 'Centering targets automatically',
-              bullets: ['ASTAP matches star patterns in seconds.'],
-              proTip: 'Always verify your focal length in settings.',
+              bullets: [
+                'ASTAP matches star patterns in seconds to pinpoint exact sky coordinates.',
+                'Enables repeatable framing across multi-night projects.',
+              ],
+              proTip: 'Always verify your focal length and pixel size in your profile.',
+            },
+            {
+              title: 'Chapter 2: Dithering & Safe Meridian Flips',
+              subtitle: 'Eliminating walking noise and automating meridian crossings',
+              bullets: [
+                'Dithering shifts framing slightly between subs to suppress fixed-pattern walking noise.',
+                'Set clear meridian flip margins plus automatic recentering and refocus after flipping.',
+              ],
+              proTip:
+                'Allow a short settle delay after dithering so guiding stabilizes before exposure starts.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. ASIAIR vs N.I.N.A.',
-              body: 'Choose based on your hardware preferences.',
+              body: 'ASIAIR provides streamlined mobile control, whereas N.I.N.A. on a mini-PC delivers broad multi-vendor hardware support and deep sequencing.',
               highlight: 'Turnkey vs Open flexibility.',
             },
           ] as LessonSection[],
-          steps: ['1. Install ASTAP and D50 catalog.'],
+          steps: [
+            '1. Install ASTAP and star database.',
+            '2. Enable dithering and autofocus triggers (HFR or temperature delta).',
+            '3. Verify meridian flip behavior before leaving the rig unattended.',
+          ],
           quiz: [
             {
               question: 'What is the #1 cause of Plate Solving failure?',
@@ -1253,6 +1443,17 @@ export default function App() {
               correct: 0,
               explanation: 'Accurate field of view parameters are essential.',
             },
+            {
+              question: 'What problem does dithering primarily solve?',
+              options: [
+                'Fixed-pattern walking noise in stacked images',
+                'Low battery voltage',
+                'Optical chromatic aberration',
+              ],
+              correct: 0,
+              explanation:
+                'Shifting the frame slightly between exposures prevents fixed sensor noise from aligning.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1261,8 +1462,11 @@ export default function App() {
               title: 'Sequence Architecture',
               sections: [
                 {
-                  title: '1. Startup',
-                  content: ['Cool camera and plate solve.'],
+                  title: '1. Startup & Sequence',
+                  content: [
+                    'Cool camera, plate solve, focus, and dither.',
+                    'Meridian flip with automatic target recentering.',
+                  ],
                 },
               ],
             },
@@ -1297,19 +1501,33 @@ export default function App() {
               subtitle: 'Comprendre les courbes des capteurs Sony',
               bullets: [
                 'Le refroidissement à -10°C réduit drastiquement le bruit thermique.',
+                'Au seuil HCG (ex: Gain 100 sur IMX571), le bruit de lecture chute fortement tout en conservant une belle dynamique.',
               ],
               proTip:
-                'Gardez une puissance Peltier stable entre 40% et 70%.',
+                'Gardez une puissance Peltier stable entre 40% et 70% selon la saison.',
+            },
+            {
+              title: 'Chapitre 2 : Flats, Darks, Bias & Filtres Dual-Band / SHO',
+              subtitle: 'Calibrer proprement et isoler les raies d’émission',
+              bullets: [
+                'Les Flats corrigent le vignettage et les poussières du train optique : exposez-les autour de 30–50 % de la pleine échelle.',
+                'Les filtres Dual-Band (Ha + OIII) ou SHO (SII, Ha, OIII) bloquent l’essentiel de la pollution lumineuse urbaine.',
+              ],
+              proTip:
+                'Ne modifiez jamais la mise au point ni l’orientation de la caméra entre vos poses et vos Flats.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. Capteurs IMX533 / IMX571',
-              body: 'Ces capteurs modernes disposent d’un rendement quantique élevé et d’un bruit de lecture minime.',
+              body: 'Ces capteurs modernes disposent d’un rendement quantique élevé, d’une absence d’amp-glow notable et d’un bruit de lecture minime.',
               highlight: 'Gain = 100 | Offset = 50 | Temp = -10°C',
             },
           ] as LessonSection[],
-          steps: ['1. Configurer la caméra sur le mode HCG.'],
+          steps: [
+            '1. Configurer la caméra sur le mode HCG (ex: Gain 100) et un Offset constant.',
+            '2. Capturer des Flats propres à la même configuration optique et vérifier leur histogramme.',
+          ],
           quiz: [
             {
               question:
@@ -1323,6 +1541,17 @@ export default function App() {
               explanation:
                 'Le mode HCG active un amplificateur interne réduisant le bruit.',
             },
+            {
+              question: 'Quel défaut optique corrigent principalement les Flats ?',
+              options: [
+                'Le vignettage et les ombres de poussières',
+                'L’erreur périodique de la monture',
+                'La turbulence atmosphérique',
+              ],
+              correct: 0,
+              explanation:
+                'Les Flats mesurent l’illumination relative et les poussières sur le chemin optique.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1331,8 +1560,11 @@ export default function App() {
               title: 'Référence Capteurs CMOS',
               sections: [
                 {
-                  title: '1. Réglages',
-                  content: ['Gain 100, Offset 50, -10°C.'],
+                  title: '1. Réglages & Calibration',
+                  content: [
+                    'Gain 100 (HCG), Offset 50, capteur refroidi à -10°C.',
+                    'Capturer Flats, Dark-Flats/Bias et Darks à la même température.',
+                  ],
                 },
               ],
             },
@@ -1345,18 +1577,33 @@ export default function App() {
             {
               title: 'Chapter 1: Cooled CMOS & HCG Gain',
               subtitle: 'Mastering Sony sensor physics',
-              bullets: ['TEC cooling at -10°C drastically cuts thermal noise.'],
-              proTip: 'Keep TEC power stable.',
+              bullets: [
+                'TEC cooling at -10°C drastically cuts thermal dark current.',
+                'Crossing the HCG threshold (e.g. Gain 100) lowers read noise while preserving dynamic range.',
+              ],
+              proTip: 'Keep TEC power stable with headroom for summer nights.',
+            },
+            {
+              title: 'Chapter 2: Calibration Frames & Narrowband Filters',
+              subtitle: 'Clean calibration and emission-line isolation',
+              bullets: [
+                'Flats correct vignetting and dust motes; keep their peak roughly in the 30–50% ADU range.',
+                'Dual-band and SHO filters reject broadband skyglow to reveal emission nebulae.',
+              ],
+              proTip: 'Keep focus and camera rotation unchanged when shooting Flats.',
             },
           ] as Slide[],
           courseSections: [
             {
-              heading: '1. Modern Zero-Amp-Glow Sensors',
-              body: 'Starvis sensors offer high quantum efficiency and low read noise.',
+              heading: '1. Modern Low-Noise CMOS Sensors',
+              body: 'Modern BSI CMOS sensors combine high quantum efficiency with very low read noise.',
               highlight: 'Gain = 100 | Offset = 50 | Temp = -10°C',
             },
           ] as LessonSection[],
-          steps: ['1. Set camera to HCG gain.'],
+          steps: [
+            '1. Set camera to HCG gain and a consistent offset.',
+            '2. Capture well-exposed Flats and matching calibration frames.',
+          ],
           quiz: [
             {
               question: 'What happens electronically at Gain 100 (HCG mode)?',
@@ -1368,6 +1615,17 @@ export default function App() {
               correct: 0,
               explanation: 'High Conversion Gain reduces read noise significantly.',
             },
+            {
+              question: 'What do Flat frames primarily correct?',
+              options: [
+                'Vignetting and dust shadows',
+                'Mount periodic error',
+                'Atmospheric seeing',
+              ],
+              correct: 0,
+              explanation:
+                'Flats map uneven illumination and dust shadows across the optical path.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1376,8 +1634,11 @@ export default function App() {
               title: 'Sensor Reference Guide',
               sections: [
                 {
-                  title: '1. Settings',
-                  content: ['Gain 100, Offset 50, -10°C.'],
+                  title: '1. Settings & Calibration',
+                  content: [
+                    'Gain 100 (HCG), Offset 50, cooled to -10°C.',
+                    'Match Flats and dark calibration frames to your imaging setup.',
+                  ],
                 },
               ],
             },
@@ -1411,10 +1672,21 @@ export default function App() {
               title: 'Chapitre 1 : La Courbe en V (Autofocus EAF & HFR)',
               subtitle: 'Une mise au point au micron près',
               bullets: [
-                'Le moteur ajuste le foyer en mesurant le HFR sur tout le champ stellaire.',
+                'Le moteur ajuste le foyer en mesurant le HFR moyen des étoiles sur tout le champ.',
+                'La dilatation thermique en cours de nuit décale le point de focus : relancez un autofocus périodiquement.',
               ],
               proTip:
-                'Réglez un pas de focalisation adapté à votre rapport f/D.',
+                'Réglez un pas de focalisation adapté à votre rapport f/D et compensez le jeu mécanique.',
+            },
+            {
+              title: 'Chapitre 2 : Lecture des Graphiques PHD2',
+              subtitle: 'Distinguer l’erreur de guidage, le seeing et le backlash',
+              bullets: [
+                'Observez séparément les courbes RA et DEC : un décrochage brusque en DEC signale souvent du jeu mécanique ou un mauvais équilibrage.',
+                'Évitez de courir après un seeing agité en augmentant l’exposant ou la prédiction selon votre monture.',
+              ],
+              proTip:
+                'Vérifiez toujours la qualité de votre étoile guide (SNR et absence de saturation) avant de lancer la session.',
             },
           ] as Slide[],
           courseSections: [
@@ -1424,7 +1696,10 @@ export default function App() {
               highlight: 'À f/4 : CFZ = 43 µm | À f/7 : CFZ = 131 µm',
             },
           ] as LessonSection[],
-          steps: ['1. Calculer la CFZ et configurer l’EAF.'],
+          steps: [
+            '1. Calculer la CFZ et configurer le pas (Step Size) de l’EAF.',
+            '2. Lancer l’assistant de guidage PHD2 pour calibrer les paramètres de base.',
+          ],
           quiz: [
             {
               question:
@@ -1438,6 +1713,17 @@ export default function App() {
               explanation:
                 'La CFZ est proportionnelle au carré du rapport f/D.',
             },
+            {
+              question: 'Que mesure le HFR (Half Flux Radius) d’une étoile ?',
+              options: [
+                'Le rayon contenant 50 % de l’énergie lumineuse de l’étoile',
+                'La température de surface de l’étoile',
+                'La distance en années-lumière',
+              ],
+              correct: 0,
+              explanation:
+                'Plus le HFR est faible (à seeing constant), plus la mise au point est précise.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1446,8 +1732,11 @@ export default function App() {
               title: 'Guide de Terrain : EAF & PHD2',
               sections: [
                 {
-                  title: '1. V-Curve',
-                  content: ['Utiliser la méthode Overshoot.'],
+                  title: '1. V-Curve & Suivi',
+                  content: [
+                    'Utiliser la méthode Overshoot pour absorber le backlash.',
+                    'Surveiller la stabilité RMS en RA et DEC dans PHD2.',
+                  ],
                 },
               ],
             },
@@ -1461,9 +1750,19 @@ export default function App() {
               title: 'Chapter 1: V-Curve Autofocus',
               subtitle: 'Micron-level automated focus',
               bullets: [
-                'The EAF moves stepper increments while measuring star HFR.',
+                'The focuser steps through positions while tracking star HFR across the frame.',
+                'Temperature drops during the night shift focus position and require periodic refocusing.',
               ],
-              proTip: 'Set proper step size.',
+              proTip: 'Set step size carefully and use backlash compensation.',
+            },
+            {
+              title: 'Chapter 2: Reading PHD2 Guiding Graphs',
+              subtitle: 'Separating seeing from mechanical issues',
+              bullets: [
+                'Inspect RA and DEC behavior independently to spot backlash or drift.',
+                'Do not over-react to fast atmospheric seeing fluctuations.',
+              ],
+              proTip: 'Pick a non-saturated guide star with healthy SNR.',
             },
           ] as Slide[],
           courseSections: [
@@ -1473,7 +1772,10 @@ export default function App() {
               highlight: 'At f/4: CFZ = 43 µm | At f/7: CFZ = 131 µm',
             },
           ] as LessonSection[],
-          steps: ['1. Calculate CFZ in simulator.'],
+          steps: [
+            '1. Calculate CFZ and configure EAF step size.',
+            '2. Run PHD2 guiding assistant to baseline parameters.',
+          ],
           quiz: [
             {
               question:
@@ -1486,6 +1788,17 @@ export default function App() {
               correct: 0,
               explanation: 'CFZ scales with the square of the focal ratio.',
             },
+            {
+              question: 'What does star HFR (Half Flux Radius) represent?',
+              options: [
+                'Radius enclosing 50% of the star’s flux',
+                'Surface temperature in Kelvin',
+                'Distance in parsecs',
+              ],
+              correct: 0,
+              explanation:
+                'Lower HFR (under steady seeing) indicates sharper focus.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1495,7 +1808,10 @@ export default function App() {
               sections: [
                 {
                   title: '1. Settings',
-                  content: ['Use overshoot backlash compensation.'],
+                  content: [
+                    'Use overshoot backlash compensation.',
+                    'Monitor RA and DEC RMS trends in PHD2.',
+                  ],
                 },
               ],
             },
@@ -1530,19 +1846,33 @@ export default function App() {
               subtitle: 'GraXpert AI, SPCC et calibration colorimétrique',
               bullets: [
                 'Traitez toujours vos images au stade linéaire avant d’étirer l’histogramme.',
+                'La calibration photométrique (SPCC) aligne les couleurs sur les étoiles de référence pour un rendu naturel.',
               ],
               proTip:
                 'Recadrez toujours les bords d’empilement avant d’extraire les gradients.',
+            },
+            {
+              title: 'Chapitre 2 : Séparation d’Étoiles & Étirement GHS',
+              subtitle: 'Révéler les nébuleuses sans brûler les étoiles',
+              bullets: [
+                'Séparer le fond nébulaire (starless) des étoiles permet d’étirer le signal faible sans faire gonfler les étoiles.',
+                'L’étirement hyperbolique généralisé (GHS) permet de cibler précisément le point d’inflexion et les hautes lumières.',
+              ],
+              proTip:
+                'Gardez un fond de ciel légèrement sombre mais jamais écrêté à zéro (évitez le noir absolu).',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. Étude de Cas : Traitement d’une Galaxie Spirale',
-              body: 'Les galaxies demandent un étirement minutieux avec GHS et une protection des hautes lumières.',
+              body: 'Les galaxies demandent un étirement minutieux avec GHS et une protection des hautes lumières pour préserver la structure des bras spiraux et du cœur.',
               highlight: 'Formule PixelMath : ~((~starless) * (~stars))',
             },
           ] as LessonSection[],
-          steps: ['1. Empiler, recadrer et extraire les gradients.'],
+          steps: [
+            '1. Empiler, recadrer et extraire les gradients en linéaire.',
+            '2. Calibrer les couleurs (SPCC), extraire les étoiles et étirer avec GHS.',
+          ],
           quiz: [
             {
               question:
@@ -1556,6 +1886,18 @@ export default function App() {
               explanation:
                 'Les bordures de dithering ont un signal faible qui perturbe le calcul.',
             },
+            {
+              question:
+                'Quel est l’avantage principal de traiter la nébuleuse et les étoiles séparément ?',
+              options: [
+                'Étirer le signal faible sans faire gonfler excessivement les étoiles',
+                'Supprimer la nécessité des Flats',
+                'Réduire la taille du fichier sur le disque',
+              ],
+              correct: 0,
+              explanation:
+                'Traiter séparément permet d’adapter le contraste de chaque couche.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1564,8 +1906,11 @@ export default function App() {
               title: 'Checklist de Traitement Astrophysique',
               sections: [
                 {
-                  title: '1. Linéaire',
-                  content: ['Crop -> GraXpert -> SPCC -> Starless'],
+                  title: '1. Linéaire & Non-Linéaire',
+                  content: [
+                    'Crop -> GraXpert -> SPCC -> Starless -> GHS -> Assemblage.',
+                    'Préserver un léger bruit résiduel naturel sur le fond de ciel.',
+                  ],
                 },
               ],
             },
@@ -1578,18 +1923,33 @@ export default function App() {
             {
               title: 'Chapter 1: Linear Stage Processing',
               subtitle: 'GraXpert AI, SPCC, and calibration',
-              bullets: ['Process data while in the linear state before stretching.'],
+              bullets: [
+                'Process data while in the linear state before stretching.',
+                'Spectrophotometric color calibration grounds star and nebula colors accurately.',
+              ],
               proTip: 'Always crop dithered borders first.',
+            },
+            {
+              title: 'Chapter 2: Star Separation & GHS Stretching',
+              subtitle: 'Bringing out faint structures with controlled highlights',
+              bullets: [
+                'Separating stars from starless signal lets you stretch faint nebulosity without bloating stars.',
+                'Generalized Hyperbolic Stretch (GHS) offers fine control over midtones and highlights.',
+              ],
+              proTip: 'Avoid clipping background pixels to pure black.',
             },
           ] as Slide[],
           courseSections: [
             {
               heading: '1. Processing Spiral Galaxies',
-              body: 'Manage extreme dynamic range using GHS and highlight protection.',
+              body: 'Manage extreme dynamic range using GHS and highlight protection to retain core and spiral arm detail.',
               highlight: 'PixelMath Screen Blend: ~((~starless) * (~stars))',
             },
           ] as LessonSection[],
-          steps: ['1. Stack, crop and remove gradients.'],
+          steps: [
+            '1. Stack, crop, and remove gradients in linear space.',
+            '2. Color-calibrate, separate stars, and stretch with GHS.',
+          ],
           quiz: [
             {
               question:
@@ -1602,6 +1962,18 @@ export default function App() {
               correct: 0,
               explanation: 'Edge overlap artifacts distort background models.',
             },
+            {
+              question:
+                'Why process starless data and stars separately during stretching?',
+              options: [
+                'To boost faint nebulosity without bloating stars',
+                'To skip flat calibration',
+                'To lower image resolution',
+              ],
+              correct: 0,
+              explanation:
+                'Separate processing gives independent control over nebula contrast and star size.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1610,8 +1982,11 @@ export default function App() {
               title: 'Processing Checklist',
               sections: [
                 {
-                  title: '1. Linear',
-                  content: ['Crop -> GraXpert -> SPCC -> Starless'],
+                  title: '1. Linear & Non-Linear',
+                  content: [
+                    'Crop -> GraXpert -> SPCC -> Starless -> GHS -> Blend.',
+                    'Keep natural background grain rather than clipping to black.',
+                  ],
                 },
               ],
             },
@@ -1646,9 +2021,20 @@ export default function App() {
               subtitle: 'Maîtriser le grand champ sans filé',
               bullets: [
                 'Fermez votre objectif d’un cran pour éliminer la coma dans les coins.',
+                'La règle NPF calcule le temps de pose maximal sur trépied fixe selon votre focale, ouverture et taille de pixel.',
               ],
               proTip:
-                'Verrouillez votre bague de mise au point avec du ruban adhésif.',
+                'Verrouillez votre bague de mise au point avec du ruban adhésif après votre focus sur étoile brillante.',
+            },
+            {
+              title: 'Chapitre 2 : Préparer un Voyage Astro en Avion',
+              subtitle: 'Sécurité des batteries & protection du matériel',
+              bullets: [
+                'Gardez les optiques, caméras et batteries lithium en bagage cabine.',
+                'Vérifiez la capacité en Watt-heures (Wh) de chaque batterie selon la réglementation aérienne.',
+              ],
+              proTip:
+                'Emportez un adaptateur secteur/allume-cigare et une lampe frontale à lumière rouge.',
             },
           ] as Slide[],
           courseSections: [
@@ -1658,7 +2044,10 @@ export default function App() {
               highlight: 'Formule NPF : t = (35 × N + 30 × P) ÷ F',
             },
           ] as LessonSection[],
-          steps: ['1. Calculer le temps NPF et préparer son trépied.'],
+          steps: [
+            '1. Calculer le temps NPF dans le simulateur et régler l’intervalomètre.',
+            '2. Préparer le bagage cabine avec protection anti-chocs pour l’optique.',
+          ],
           quiz: [
             {
               question:
@@ -1672,6 +2061,18 @@ export default function App() {
               explanation:
                 'Les batteries au lithium de moins de 100 Wh sont autorisées en cabine.',
             },
+            {
+              question:
+                'Pourquoi fermer légèrement l’ouverture d’un objectif grand champ lumineux ?',
+              options: [
+                'Pour améliorer la netteté et réduire la coma dans les coins',
+                'Pour réduire le nombre de pixels du capteur',
+                'Pour accélérer la rotation de la Terre',
+              ],
+              correct: 0,
+              explanation:
+                'Fermer d’un cran atténue les aberrations marginales des objectifs rapides.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1680,9 +2081,10 @@ export default function App() {
               title: 'Checklist Officielle : Voyage & Grand Champ',
               sections: [
                 {
-                  title: '1. Transport',
+                  title: '1. Transport & Terrain',
                   content: [
                     'Toutes les batteries Li-ion en cabine (< 100 Wh).',
+                    'Vérifier la mise au point de nuit et bloquer la bague.',
                   ],
                 },
               ],
@@ -1698,8 +2100,18 @@ export default function App() {
               subtitle: 'Sharp widefield imaging',
               bullets: [
                 'Stop down fast lenses by one stop to eliminate corner coma.',
+                'The NPF rule estimates untracked exposure time from aperture, pixel pitch, and focal length.',
               ],
-              proTip: 'Tape down your focus ring securely.',
+              proTip: 'Tape down your focus ring securely after focusing on a bright star.',
+            },
+            {
+              title: 'Chapter 2: Flying With Astro Gear',
+              subtitle: 'Battery rules and carry-on packing',
+              bullets: [
+                'Keep optics, cameras, and lithium batteries in carry-on luggage.',
+                'Check battery Watt-hour (Wh) limits before traveling.',
+              ],
+              proTip: 'Pack a red headlamp and spare cables in a dedicated pouch.',
             },
           ] as Slide[],
           courseSections: [
@@ -1709,7 +2121,10 @@ export default function App() {
               highlight: 'NPF Formula: t = (35 × N + 30 × P) ÷ F',
             },
           ] as LessonSection[],
-          steps: ['1. Calculate NPF limit and prepare your tracker.'],
+          steps: [
+            '1. Calculate your NPF exposure limit and test on a 10-second frame.',
+            '2. Pack fragile optics and batteries in your carry-on bag.',
+          ],
           quiz: [
             {
               question:
@@ -1723,6 +2138,17 @@ export default function App() {
               explanation:
                 'IATA allows lithium batteries under 100Wh in cabin luggage.',
             },
+            {
+              question: 'Why stop down a fast widefield lens slightly?',
+              options: [
+                'To improve corner sharpness and reduce coma',
+                'To lower sensor read noise',
+                'To eliminate dew completely',
+              ],
+              correct: 0,
+              explanation:
+                'Stopping down slightly improves edge aberration performance.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1731,8 +2157,11 @@ export default function App() {
               title: 'Expedition Checklist',
               sections: [
                 {
-                  title: '1. Transport',
-                  content: ['Keep all Li-ion batteries in cabin (< 100 Wh).'],
+                  title: '1. Transport & Field',
+                  content: [
+                    'Keep all Li-ion batteries in cabin (< 100 Wh).',
+                    'Tape focus ring after achieving sharp focus.',
+                  ],
                 },
               ],
             },
@@ -1780,30 +2209,34 @@ export default function App() {
   const currentModule = modules.find((m) => m.id === selectedModuleId);
 
   // 1. Calculateur Optique Module 1 (Echantillonnage)
-  const safeFocal = calcFocal > 0 ? calcFocal : 1;
-  const pixelScaleResult = ((206.265 * calcPixel) / safeFocal).toFixed(2);
+  const safeFocal = clampNumber(calcFocal, 10, 5000, 500);
+  const safePixel = clampNumber(calcPixel, 0.5, 20, 3.76);
+  const pixelScaleResult = ((206.265 * safePixel) / safeFocal).toFixed(2);
   let calcVerdict = currentT.calcVerdictGreat;
   const scaleNum = parseFloat(pixelScaleResult);
   if (scaleNum < 0.8) calcVerdict = currentT.calcVerdictOver;
   else if (scaleNum > 2.0) calcVerdict = currentT.calcVerdictUnder;
 
   // 2. Calculateur Couple Module 2 (Monture Harmonique)
-  const torqueNm = (calcPayloadKg * 9.81 * (calcTubeRadiusCm / 100)).toFixed(1);
+  const safePayloadKg = clampNumber(calcPayloadKg, 0.5, 40, 9.5);
+  const safeTubeRadiusCm = clampNumber(calcTubeRadiusCm, 1, 60, 14);
+  const torqueNm = (safePayloadKg * 9.81 * (safeTubeRadiusCm / 100)).toFixed(1);
   const torqueNum = parseFloat(torqueNm);
-  const needsCounterweight = torqueNum > 14.5 || calcPayloadKg > 12;
+  const needsCounterweight = torqueNum > 14.5 || safePayloadKg > 12;
 
   // 3. Calculateur Temps de Pose Module 4 (Swamp Factor CMOS)
+  const safeBortle = clampNumber(calcBortle, 1, 9, 5);
   const baseDarkSkySec =
     calcFilterBand === 'broadband' ? 180 : calcFilterBand === 'dualband' ? 300 : 360;
-  const bortleFactor = Math.pow(1.42, calcBortle - 3);
+  const bortleFactor = Math.pow(1.42, safeBortle - 3);
   const recommendedSubSec = Math.max(
     15,
     Math.min(600, Math.round(baseDarkSkySec / bortleFactor / 15) * 15)
   );
 
   // 4. Calculateur EAF Module 5 (Zone Critique CFZ & Step Size)
-  const safeFD = calcFokusFD > 0 ? calcFokusFD : 1;
-  const safeMicronStep = calcMicronStep > 0 ? calcMicronStep : 1;
+  const safeFD = clampNumber(calcFokusFD, 1.2, 25, 4.8);
+  const safeMicronStep = clampNumber(calcMicronStep, 0.2, 50, 2.5);
   const cfzMicrons = Math.round(2.68 * safeFD * safeFD);
   const recommendedSteps = Math.max(
     5,
@@ -1811,10 +2244,13 @@ export default function App() {
   );
 
   // 5. Calculateur Regle NPF Module 7
-  const safeNpfFocal = npfFocal > 0 ? npfFocal : 1;
-  const npfSeconds = ((35 * npfAperture + 30 * npfPixel) / safeNpfFocal).toFixed(
-    1
-  );
+  const safeNpfFocal = clampNumber(npfFocal, 8, 400, 24);
+  const safeNpfAperture = clampNumber(npfAperture, 1.0, 22, 2.0);
+  const safeNpfPixel = clampNumber(npfPixel, 0.5, 15, 3.76);
+  const npfSeconds = (
+    (35 * safeNpfAperture + 30 * safeNpfPixel) /
+    safeNpfFocal
+  ).toFixed(1);
 
   const activeSlides = currentModule ? currentModule.content[lang].slides : [];
   const safeSlideIndex =
@@ -1828,6 +2264,23 @@ export default function App() {
     return selectedAnswers[idx] === q.correct ? acc + 1 : acc;
   }, 0);
 
+  const handleSubmitQuiz = () => {
+    setQuizSubmitted(true);
+    if (!currentModule || activeQuizList.length === 0) return;
+    const prevBest = quizScores[currentModule.id]?.score ?? 0;
+    const bestScore = Math.max(prevBest, correctQuizCount);
+    const updatedScores = {
+      ...quizScores,
+      [currentModule.id]: { score: bestScore, total: activeQuizList.length },
+    };
+    setQuizScores(updatedScores);
+    try {
+      localStorage.setItem('astroberb_quiz_scores', JSON.stringify(updatedScores));
+    } catch {
+      // Ignorer
+    }
+  };
+
   const progressPercentage = Math.round((completedModules.length / 7) * 100);
 
   const filteredGlossary = GLOSSARY_TERMS.filter((item) => {
@@ -1838,6 +2291,10 @@ export default function App() {
       term.toLowerCase().includes(query) || def.toLowerCase().includes(query)
     );
   });
+
+  const mediaNightClass = nightVision
+    ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-50'
+    : '';
 
   return (
     <div
@@ -2379,11 +2836,7 @@ export default function App() {
                     controls
                     playsInline
                     preload="metadata"
-                    className={`w-full h-full object-cover ${
-                      nightVision
-                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
-                        : ''
-                    }`}
+                    className={`w-full h-full object-cover ${mediaNightClass}`}
                   >
                     {lang === 'fr'
                       ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
@@ -2414,11 +2867,7 @@ export default function App() {
                     controls
                     playsInline
                     preload="metadata"
-                    className={`w-full h-full object-cover ${
-                      nightVision
-                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
-                        : ''
-                    }`}
+                    className={`w-full h-full object-cover ${mediaNightClass}`}
                   >
                     {lang === 'fr'
                       ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
@@ -2671,11 +3120,7 @@ export default function App() {
                     controls
                     playsInline
                     preload="metadata"
-                    className={`w-full h-full object-cover ${
-                      nightVision
-                        ? 'sepia hue-rotate-[-50deg] saturate-200 brightness-75'
-                        : ''
-                    }`}
+                    className={`w-full h-full object-cover ${mediaNightClass}`}
                   >
                     {lang === 'fr'
                       ? 'Votre navigateur ne supporte pas la lecture de vidéos HTML5.'
@@ -2696,6 +3141,7 @@ export default function App() {
                 {modules.map((mod) => {
                   const unlocked = isModuleUnlocked(mod.id);
                   const isDone = completedModules.includes(mod.id);
+                  const bestQuiz = quizScores[mod.id];
                   return (
                     <div
                       key={mod.id}
@@ -2719,7 +3165,7 @@ export default function App() {
                           <img
                             src={mod.image}
                             alt={lang === 'fr' ? mod.titleFr : mod.titleEn}
-                            className="w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-90"
+                            className={`w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-90 ${mediaNightClass}`}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
@@ -2761,6 +3207,12 @@ export default function App() {
                           >
                             {lang === 'fr' ? mod.descFr : mod.descEn}
                           </p>
+                          {bestQuiz && (
+                            <div className="text-[11px] font-mono text-emerald-400 pt-1">
+                              📝 {currentT.quizBestScore}
+                              {bestQuiz.score}/{bestQuiz.total}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -2939,38 +3391,40 @@ export default function App() {
                 { q: currentT.faq1Q, a: currentT.faq1A },
                 { q: currentT.faq2Q, a: currentT.faq2A },
                 { q: currentT.faq3Q, a: currentT.faq3A },
-              ].map((faq, idx) => (
-                <div
-                  key={idx}
-                  className={`border rounded-2xl overflow-hidden transition ${
-                    nightVision
-                      ? 'bg-rose-950/30 border-rose-900'
-                      : 'bg-slate-900/80 border-slate-800'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenFaqIndex(openFaqIndex === idx ? null : idx)
-                    }
-                    className="w-full p-4 text-left font-bold text-sm md:text-base flex justify-between items-center"
+              ].map((faq, idx) => {
+                const isOpen = openFaqIndex === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`border rounded-2xl overflow-hidden transition ${
+                      nightVision
+                        ? 'bg-rose-950/30 border-rose-900'
+                        : 'bg-slate-900/80 border-slate-800'
+                    }`}
                   >
-                    <span>{faq.q}</span>
-                    <span>{openFaqIndex === idx ? '−' : '+'}</span>
-                  </button>
-                  {openFaqIndex === idx && (
-                    <div
-                      className={`p-4 pt-0 text-xs md:text-sm leading-relaxed border-t ${
-                        nightVision
-                          ? 'border-rose-900/50 text-rose-200'
-                          : 'border-slate-800 text-slate-300'
-                      }`}
+                    <button
+                      type="button"
+                      aria-expanded={isOpen}
+                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                      className="w-full p-4 text-left font-bold text-sm md:text-base flex justify-between items-center"
                     >
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
+                      <span>{faq.q}</span>
+                      <span>{isOpen ? '−' : '+'}</span>
+                    </button>
+                    {isOpen && (
+                      <div
+                        className={`p-4 pt-0 text-xs md:text-sm leading-relaxed border-t ${
+                          nightVision
+                            ? 'border-rose-900/50 text-rose-200'
+                            : 'border-slate-800 text-slate-300'
+                        }`}
+                      >
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -3245,6 +3699,7 @@ export default function App() {
                       min="10"
                       max="5000"
                       value={calcFocal}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setCalcFocal(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -3259,6 +3714,7 @@ export default function App() {
                       min="0.5"
                       max="20"
                       value={calcPixel}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setCalcPixel(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -3291,9 +3747,10 @@ export default function App() {
                     <input
                       type="number"
                       step="0.5"
-                      min="1"
-                      max="30"
+                      min="0.5"
+                      max="40"
                       value={calcPayloadKg}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setCalcPayloadKg(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -3305,9 +3762,10 @@ export default function App() {
                     <input
                       type="number"
                       step="1"
-                      min="5"
-                      max="40"
+                      min="1"
+                      max="60"
                       value={calcTubeRadiusCm}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) =>
                         setCalcTubeRadiusCm(Number(e.target.value))
                       }
@@ -3328,12 +3786,8 @@ export default function App() {
                     }`}
                   >
                     {needsCounterweight
-                      ? lang === 'fr'
-                        ? '⚠️ Couple élevé : Ajoutez un contrepoids de 3 à 5 kg sur la barre pour soulager le réducteur et stabiliser le trépied.'
-                        : '⚠️ High torque load: Add a 3kg to 5kg counterweight to stabilize your tripod and assist the strainwave gear.'
-                      : lang === 'fr'
-                      ? '✨ Charge nominale parfaite : Aucun contrepoids requis sur Juwei-17 / UMi-17S / AM5 (lestez uniquement le trépied).'
-                      : '✨ Optimal torque load: No counterweight needed on Juwei-17 / UMi-17S / AM5 (ballast tripod center only).'}
+                      ? currentT.calcTorqueHigh
+                      : currentT.calcTorqueOk}
                   </p>
                 </div>
               </div>
@@ -3347,13 +3801,13 @@ export default function App() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold mb-1.5">
-                      {currentT.calcBortleLabel} (Bortle {calcBortle})
+                      {currentT.calcBortleLabel} (Bortle {safeBortle})
                     </label>
                     <input
                       type="range"
                       min="1"
                       max="9"
-                      value={calcBortle}
+                      value={safeBortle}
                       onChange={(e) => setCalcBortle(Number(e.target.value))}
                       className="w-full accent-cyan-400 mt-3"
                     />
@@ -3371,15 +3825,9 @@ export default function App() {
                       }
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white text-xs font-bold focus:outline-none"
                     >
-                      <option value="broadband">
-                        UV/IR Cut — Large Bande (Galaxies / Amas)
-                      </option>
-                      <option value="dualband">
-                        Dual-Band 7nm (Ha/OIII Couleur)
-                      </option>
-                      <option value="sho">
-                        Bande Étroite 3nm (SHO Monochrome)
-                      </option>
+                      <option value="broadband">{currentT.filterBroadband}</option>
+                      <option value="dualband">{currentT.filterDualband}</option>
+                      <option value="sho">{currentT.filterSho}</option>
                     </select>
                   </div>
                 </div>
@@ -3391,9 +3839,7 @@ export default function App() {
                     </span>
                   </div>
                   <p className="text-xs text-emerald-400 font-bold">
-                    {lang === 'fr'
-                      ? '✨ Ce temps de pose submerge le bruit de lecture (Gain 100) sans saturer le cœur des étoiles.'
-                      : '✨ This sub-exposure swamps sensor read noise (Gain 100) without clipping bright star cores.'}
+                    {currentT.calcExpAdvice}
                   </p>
                 </div>
               </div>
@@ -3413,8 +3859,9 @@ export default function App() {
                       type="number"
                       step="0.1"
                       min="1.2"
-                      max="20"
+                      max="25"
                       value={calcFokusFD}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setCalcFokusFD(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -3426,9 +3873,10 @@ export default function App() {
                     <input
                       type="number"
                       step="0.1"
-                      min="0.5"
-                      max="20"
+                      min="0.2"
+                      max="50"
                       value={calcMicronStep}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) =>
                         setCalcMicronStep(Number(e.target.value))
                       }
@@ -3462,7 +3910,7 @@ export default function App() {
                   <img
                     src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
                     alt="Final Processed"
-                    className="w-full h-full object-cover saturate-150 contrast-125"
+                    className={`w-full h-full object-cover saturate-150 contrast-125 ${mediaNightClass}`}
                   />
                   <div
                     className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-cyan-400"
@@ -3471,7 +3919,7 @@ export default function App() {
                     <img
                       src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1000&q=80"
                       alt="Raw Linear"
-                      className="w-full h-full object-cover brightness-[0.18] contrast-75 saturate-0"
+                      className={`w-full h-full object-cover brightness-[0.18] contrast-75 saturate-0 ${mediaNightClass}`}
                     />
                   </div>
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 text-[10px] font-bold text-slate-300">
@@ -3507,8 +3955,9 @@ export default function App() {
                     <input
                       type="number"
                       min="8"
-                      max="200"
+                      max="400"
                       value={npfFocal}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setNpfFocal(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
                     />
@@ -3520,9 +3969,10 @@ export default function App() {
                     <input
                       type="number"
                       step="0.2"
-                      min="1.2"
-                      max="11"
+                      min="1.0"
+                      max="22"
                       value={npfAperture}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setNpfAperture(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
                     />
@@ -3534,9 +3984,10 @@ export default function App() {
                     <input
                       type="number"
                       step="0.1"
-                      min="1"
-                      max="12"
+                      min="0.5"
+                      max="15"
                       value={npfPixel}
+                      onWheel={(e) => e.currentTarget.blur()}
                       onChange={(e) => setNpfPixel(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-2xl bg-black border border-white/20 text-white font-mono text-sm"
                     />
@@ -3616,12 +4067,21 @@ export default function App() {
                     <h3 className="text-lg font-bold flex items-center gap-2">
                       {currentT.quizTitle}
                     </h3>
-                    {quizSubmitted && (
-                      <span className="px-3.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
-                        {currentT.quizScore} {correctQuizCount} /{' '}
-                        {activeQuizList.length}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {quizScores[currentModule.id] && (
+                        <span className="px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-mono">
+                          {currentT.quizBestScore}
+                          {quizScores[currentModule.id].score}/
+                          {quizScores[currentModule.id].total}
+                        </span>
+                      )}
+                      {quizSubmitted && (
+                        <span className="px-3.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
+                          {currentT.quizScore} {correctQuizCount} /{' '}
+                          {activeQuizList.length}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-6">
@@ -3696,7 +4156,7 @@ export default function App() {
                     {!quizSubmitted ? (
                       <button
                         type="button"
-                        onClick={() => setQuizSubmitted(true)}
+                        onClick={handleSubmitQuiz}
                         className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg"
                       >
                         {currentT.quizSubmit}
@@ -3728,7 +4188,7 @@ export default function App() {
                       >
                         <div className="space-y-1.5">
                           <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-extrabold">
-                            PDF Officiel A4 Imprimable
+                            {currentT.pdfBadge}
                           </span>
                           <h4 className="font-bold text-sm md:text-base leading-snug pt-1">
                             {doc.name}
@@ -3972,7 +4432,11 @@ export default function App() {
       )}
 
       {legalModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+        >
           <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 md:p-8 space-y-4 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-lg font-bold text-white">
