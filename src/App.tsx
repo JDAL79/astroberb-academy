@@ -944,6 +944,17 @@ export default function App() {
               proTip:
                 "Si vous insérez un filtre de 2 mm d'épaisseur dans votre train optique, ajoutez +0,67 mm (1/3 de l'épaisseur du verre) à votre distance de backfocus cible (soit 55,7 mm).",
             },
+            {
+              title: 'Chapitre 4 : Aide-Mémoire Train Optique & Buée',
+              subtitle: 'Éviter les flexions mécaniques et la condensation sur la lentille frontale',
+              bullets: [
+                'Privilégiez des raccords vissés (M42, M48, M54) plutôt que des coulant 1.25" ou 2" serrés par vis latérales qui créent du tilt.',
+                'Un pare-buée suffisamment long retarde le refroidissement radiatif de la lentille frontale, mais ne remplace pas un ruban chauffant régulé.',
+                'Sur un Newton rapide, vérifiez la rigidité du porte-oculaire et l’alignement du miroir secondaire avant chaque sortie.',
+              ],
+              proTip:
+                'Gardez toujours un jeu de bagues d’espacement fines (0.2 mm, 0.5 mm, 1.0 mm) dans votre mallette d’accessoires.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -960,11 +971,19 @@ export default function App() {
               highlight:
                 'Astuce terrain : Marquez vos bagues vissées au crayon-feutre fin pour repérer tout dévissage après le transport.',
             },
+            {
+              heading:
+                '3. Procédure Pas à Pas : Caler le Backfocus & Diagnostiquer le Tilt',
+              body: "Commencez par assembler votre train optique selon la spécification constructeur du réducteur ou correcteur (souvent 55,0 mm depuis la bague M48/M54). En début de nuit, pointez un champ riche en étoiles, faites une mise au point précise au centre, puis lancez une pose de 10 à 15 secondes. Comparez le HFR et l'élongation des étoiles dans les 4 coins : si les 4 coins présentent une déformation radiale identique, ajustez l'épaisseur des bagues ; si un seul coin est nettement moins net que les autres, ajustez la platine de tilt.",
+              highlight:
+                'Règle pratique : Commencez toujours par régler le backfocus global avant de toucher aux vis de tilt.',
+            },
           ] as LessonSection[],
           steps: [
             "1. Calculer son échantillonnage dans le simulateur ci-dessus pour viser la plage optimale de 0,8'' à 2,0'' par pixel.",
-            '2. Assembler le train optique 100 % vissé (M48/M54) et mesurer les 55,0 mm de backfocus au pied à coulisse.',
-            '3. Inspecter la forme des étoiles dans les 4 coins sur une pose test de 10 secondes.',
+            '2. Assembler le train optique 100 % vissé (M48/M54) et mesurer les 55,0 mm de backfocus au pied à coulisse (en ajoutant +0,67 mm pour un filtre de 2 mm).',
+            '3. Inspecter la forme et le HFR des étoiles dans les 4 coins sur une pose test de 10 à 15 secondes.',
+            '4. Vérifier le pare-buée, le ruban chauffant et le serrage des colliers avant de lancer la séquence.',
           ],
           quiz: [
             {
@@ -991,6 +1010,18 @@ export default function App() {
               explanation:
                 'Des étoiles pointant radialement vers le centre indiquent que le capteur est trop proche du correcteur.',
             },
+            {
+              question:
+                'Quel ajustement approximatif faut-il prévoir avec un filtre en verre de 2 mm d’épaisseur ?',
+              options: [
+                'Ajouter environ +0,67 mm (1/3 de l’épaisseur) au backfocus mécanique',
+                'Retirer 10 mm de bagues allongées',
+                'Aucun ajustement n’est possible',
+              ],
+              correct: 0,
+              explanation:
+                'La réfraction dans le verre recule le plan focal d’environ un tiers de l’épaisseur du filtre.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1005,6 +1036,36 @@ export default function App() {
                     "Formule officielle : Échantillonnage (''/px) = (206,265 × Taille du pixel en µm) ÷ Focale effective en mm.",
                     "Ciel standard (Seeing 2.5'' - 3.0'') : Visez entre 1.0''/px et 2.0''/px pour un équilibre idéal.",
                     'Correction verre de filtre : Ajoutez environ 1/3 de l’épaisseur du filtre au tirage mécanique.',
+                  ],
+                },
+                {
+                  title: '2. Aide-Mémoire Diagnostic des Coins',
+                  content: [
+                    '4 coins étirés vers le centre : Capteur trop près -> ajouter des bagues fines (0.5 à 1 mm).',
+                    '4 coins étirés tangentiellement : Capteur trop loin -> retirer des cales.',
+                    '1 seul coin flou / HFR élevé : Tilt mécanique à corriger sur la platine dédiée.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod1-pdf2',
+              name: 'Aide-Mémoire : Choix du Tube Optique & Préparation Terrain (PDF)',
+              title: 'Aide-Mémoire : Formules Optiques, Rigidité & Préparation de Session',
+              sections: [
+                {
+                  title: '1. Choisir Selon les Cibles',
+                  content: [
+                    '300 - 500 mm (f/4.5 - f/5.5) : Grandes nébuleuses d’émission, complexes moléculaires et grands champs.',
+                    '700 - 1200+ mm : Galaxies compactes, amas globulaires et nébuleuses planétaires.',
+                  ],
+                },
+                {
+                  title: '2. Procédure de Contrôle Avant la Nuit',
+                  content: [
+                    'Vérifier que tous les raccords critiques sont vissés (M42/M48/M54).',
+                    'Tester la fixation des colliers sur la queue d’aronde et la rigidité du porte-oculaire.',
+                    'Positionner le ruban chauffant à proximité de la lentille frontale ou de la lame de fermeture.',
                   ],
                 },
               ],
@@ -1048,6 +1109,17 @@ export default function App() {
               proTip:
                 'Add roughly one-third of filter glass thickness (e.g. +0.67mm for a 2mm filter) to your backfocus spacing.',
             },
+            {
+              title: 'Chapter 4: Rigidity & Dew Control Cheat Sheet',
+              subtitle: 'Preventing mechanical flexure and nighttime condensation',
+              bullets: [
+                'Prefer threaded connections (M42, M48, M54) over compression collars that can introduce tilt.',
+                'A well-sized dew shield slows radiative cooling on the objective, paired with a regulated dew strap.',
+                'Check focuser tension and optical alignment before imaging sessions.',
+              ],
+              proTip:
+                'Keep thin spacer rings (0.2mm, 0.5mm, 1.0mm) in your field kit for rapid spacing adjustments.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1062,11 +1134,18 @@ export default function App() {
               highlight:
                 'Field tip: Mark threaded collars with a fine marker so you can spot loosening after travel.',
             },
+            {
+              heading: '3. Step-by-Step Procedure: Backfocus & Tilt Tuning',
+              body: 'Start at the reducer/flattener specified spacing (commonly 55.0mm). At dusk, focus at center on a star-rich field and capture a 10–15s test frame. Compare star shape and HFR in all four corners: adjust spacers for symmetrical corner issues, and adjust tilt only when one corner stands out.',
+              highlight:
+                'Practical rule: Dial in backfocus spacing first before adjusting tilt screws.',
+            },
           ] as LessonSection[],
           steps: [
             "1. Calculate your pixel scale in the simulator above to target 0.8'' to 2.0'' per pixel.",
-            '2. Assemble a fully threaded M48/M54 optical train and verify 55.0mm backfocus.',
-            '3. Inspect star shapes in all four corners on a 10-second test frame.',
+            '2. Assemble a fully threaded M48/M54 optical train and verify 55.0mm backfocus (+0.67mm for a 2mm filter).',
+            '3. Inspect star shapes and HFR in all four corners on a 10–15 second test frame.',
+            '4. Confirm dew shield, dew strap, and dovetail clamping before starting automation.',
           ],
           quiz: [
             {
@@ -1092,6 +1171,18 @@ export default function App() {
               explanation:
                 'Radially inward star elongation indicates the sensor is slightly too close to the flattener/reducer.',
             },
+            {
+              question:
+                'Roughly how much backfocus adjustment is needed for a 2mm glass filter?',
+              options: [
+                'Add about +0.67mm (1/3 of glass thickness) to mechanical spacing',
+                'Remove 10mm of extension tubes',
+                'No adjustment is ever needed',
+              ],
+              correct: 0,
+              explanation:
+                'Light refraction through glass shifts the focal plane by roughly one-third of filter thickness.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1104,6 +1195,35 @@ export default function App() {
                   content: [
                     "Formula: Pixel Scale (''/px) = (206.265 × Pixel Size in µm) ÷ Effective Focal Length in mm.",
                     'Filter glass offset: Add ~1/3 of filter thickness to mechanical backfocus spacing.',
+                  ],
+                },
+                {
+                  title: '2. Four-Corner Diagnostic Cheat Sheet',
+                  content: [
+                    'Radial inward elongation in corners: Sensor too close -> add thin spacers (0.5–1.0mm).',
+                    'Tangential elongation in corners: Sensor too far -> remove spacers.',
+                    'Single-corner blur: Check mechanical sensor tilt.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod1-pdf2-en',
+              name: 'Cheat Sheet: Telescope Selection & Pre-Night Rig Check (PDF)',
+              title: 'Field Cheat Sheet: Optical Formulas, Rigidity & Setup Procedure',
+              sections: [
+                {
+                  title: '1. Matching Focal Length to Targets',
+                  content: [
+                    '300–500mm (f/4.5–f/5.5): Wide emission nebulae, dust clouds, and large starfields.',
+                    '700–1200+mm: Compact galaxies, globular clusters, and planetary nebulae.',
+                  ],
+                },
+                {
+                  title: '2. Pre-Night Mechanical Checklist',
+                  content: [
+                    'Verify all key optical adapters are securely threaded.',
+                    'Check dovetail bar seating, focuser lock/tension, and dew heater placement.',
                   ],
                 },
               ],
@@ -1156,6 +1276,17 @@ export default function App() {
               proTip:
                 'Évitez de sur-corriger le seeing avec une agressivité RA à 1.0 : laissez PHD2 lisser les fluctuations atmosphériques.',
             },
+            {
+              title: 'Chapitre 3 : Câblage Anti-Accrochage & Sécurité Alimentation',
+              subtitle: 'Protéger vos ports USB et éviter les déconnexions durant la nuit',
+              bullets: [
+                'Laissez toujours une boucle souple suffisante autour de l’axe AD et de la tête de monture pour absorber les mouvements de suivi et retournements.',
+                'Fixez les câbles sur le tube optique ou la platine avec des attaches velcro souples afin qu’aucun câble ne tire sur la caméra ou l’EAF.',
+                'Utilisez une source d’alimentation 12V stable et vérifiez les connecteurs avant de quitter le poste.',
+              ],
+              proTip:
+                'Faites pivoter manuellement le setup en position est/ouest (alimentation coupée ou frein déverrouillé selon notice) pour vérifier qu’aucun câble ne se tend.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1165,11 +1296,19 @@ export default function App() {
               highlight:
                 'Sécurité absolue : Toujours alimenter la monture en 12V - 5A stable et lester le trépied au centre.',
             },
+            {
+              heading:
+                '2. Procédure Complète de Mise en Station & Calibration PHD2',
+              body: "Installez le trépied de niveau, pointez approximativement vers le pôle céleste et accrochez un lest central. Lancez l'alignement polaire assisté (ex. Three-Point Polar Alignment dans N.I.N.A. ou mise en station ASIAIR) : corrigez d'abord l'azimut, puis l'altitude, et répétez une passe rapide pour descendre sous 0,5' à 1,0'. Pointez ensuite une zone proche de l'équateur céleste (déclinaison proche de 0°) et lancez la calibration PHD2 avec une pose de 0,5 s à 1,0 s.",
+              highlight:
+                'Repère qualité : Une calibration PHD2 propre affiche des axes RA et DEC presque perpendiculaires sans dérive excessive.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Orienter le trépied vers le Nord, le mettre de niveau et suspendre un poids de lestage au centre.',
             '2. Réaliser la mise en station polaire assistée (N.I.N.A. TPPA / ASIAIR) sous 1 arc-minute.',
-            '3. Lancer la calibration PHD2 près de l’équateur céleste et vérifier un guidage RMS stable.',
+            '3. Sécuriser le passage des câbles avec des boucles souples autour des axes.',
+            '4. Lancer la calibration PHD2 près de l’équateur céleste (0.5s - 1.0s) et vérifier un guidage RMS stable.',
           ],
           quiz: [
             {
@@ -1196,6 +1335,18 @@ export default function App() {
               explanation:
                 'Sans contrepoids latéral, le centre de gravité est plus haut : un lest central stabilise l’ensemble.',
             },
+            {
+              question:
+                'Quelle précaution est indispensable pour le câblage sur une monture équatoriale ?',
+              options: [
+                'Laisser des boucles souples et fixer les câbles pour éviter toute traction',
+                'Tendre les câbles au maximum entre le trépied et la caméra',
+                'Débrancher la caméra dès que le guidage démarre',
+              ],
+              correct: 0,
+              explanation:
+                'Des câbles trop courts ou mal fixés peuvent se tendre lors du suivi ou du retournement au méridien.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1207,8 +1358,31 @@ export default function App() {
                 {
                   title: '1. Sécurité Mécanique & Guidage',
                   content: [
-                    'Lestage obligatoire du trépied carbone.',
-                    'Poses de guidage PHD2 recommandées : 0,5 s à 1,0 s.',
+                    'Lestage obligatoire du trépied carbone au centre.',
+                    'Poses de guidage PHD2 recommandées : 0,5 s à 1,0 s avec agressivité RA modérée.',
+                    'Calibration PHD2 effectuée près de l’équateur céleste.',
+                  ],
+                },
+                {
+                  title: '2. Aide-Mémoire Câblage & Fin de Nuit',
+                  content: [
+                    'Prévoir des boucles libres autour de l’axe AD et du porte-oculaire.',
+                    'Vérifier la tension d’alimentation 12V et ranger la monture en position parc en fin de nuit.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod2-pdf2',
+              name: 'Guide Diagnostic : Corriger un Guidage PHD2 Irrégulier (PDF)',
+              title: 'Guide Pratique : Lire les Courbes RA/DEC & Résoudre les Décrochages',
+              sections: [
+                {
+                  title: '1. Causes Fréquentes à Vérifier',
+                  content: [
+                    'Câble qui tire ou s’accroche lors du suivi.',
+                    'Mise en station polaire imprécise (> 2–3 arc-min) créant une dérive continue en DEC.',
+                    'Étoile guide saturée ou trop faible sur un fond brumeux.',
                   ],
                 },
               ],
@@ -1241,6 +1415,17 @@ export default function App() {
               proTip:
                 'Avoid chasing seeing with overly high RA aggression; let PHD2 smooth out air turbulence.',
             },
+            {
+              title: 'Chapter 3: Cable Management & Power Safety',
+              subtitle: 'Preventing snags and dropouts during unattended hours',
+              bullets: [
+                'Leave generous slack loops around the RA axis and focuser so cables never pull tight.',
+                'Secure cables along the OTA with soft ties to avoid flexure on the camera or guide scope.',
+                'Verify stable 12V power connections before starting multi-hour sequences.',
+              ],
+              proTip:
+                'Simulate slews and meridian flip clearance before dark so cables cannot snag.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1248,11 +1433,18 @@ export default function App() {
               body: 'Strainwave reducers provide exceptional portability and high payload-to-weight ratios for field astronomers.',
               highlight: 'Safety Rule: Always ballast your tripod and supply clean 12V power.',
             },
+            {
+              heading: '2. Step-by-Step Polar Alignment & PHD2 Calibration',
+              body: 'Level the tripod, point roughly North, and hang a center ballast weight. Run polar alignment (such as N.I.N.A. TPPA or ASIAIR polar align), adjusting azimuth then altitude until error is well below 1 arcminute. Slew near celestial equator (declination near 0°) and calibrate PHD2 using 0.5s–1.0s exposures.',
+              highlight:
+                'Quality benchmark: Clean RA and DEC calibration vectors with minimal drift indicate a healthy baseline.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Point tripod North, level it, and hang a center ballast weight.',
             '2. Complete polar alignment under 1 arcminute before focusing.',
-            '3. Calibrate PHD2 near celestial equator and declination 0.',
+            '3. Route cables with slack loops and secure them cleanly to the rig.',
+            '4. Calibrate PHD2 near celestial equator (0.5s–1.0s) and verify steady RMS guiding.',
           ],
           quiz: [
             {
@@ -1279,6 +1471,17 @@ export default function App() {
               explanation:
                 'Center ballast lowers the center of mass and adds stability against wind.',
             },
+            {
+              question: 'Why should cables have slack loops on an imaging rig?',
+              options: [
+                'To prevent pulling or snagging during tracking and meridian flips',
+                'To cool the USB hub',
+                'To increase telescope aperture',
+              ],
+              correct: 0,
+              explanation:
+                'Slack loops prevent cable tension from shifting framing or disconnecting ports mid-night.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1291,6 +1494,29 @@ export default function App() {
                   content: [
                     'Mandatory tripod ballast for wind stability.',
                     'Recommended PHD2 guide exposure: 0.5s to 1.0s.',
+                    'Calibrate near celestial equator before imaging targets.',
+                  ],
+                },
+                {
+                  title: '2. Cable & Session Wrap-Up Cheat Sheet',
+                  content: [
+                    'Keep slack loops clear of moving gears and dovetail clamps.',
+                    'Park the mount cleanly at the end of the night.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod2-pdf2-en',
+              name: 'Troubleshooting Guide: Fixing Rough PHD2 Guiding (PDF)',
+              title: 'Field Guide: Reading RA/DEC Graphs & Resolving Guiding Spikes',
+              sections: [
+                {
+                  title: '1. Top Things to Check First',
+                  content: [
+                    'Snagged or taut cables pulling on the mount or guide camera.',
+                    'Polar misalignment causing steady DEC drift.',
+                    'Saturated or low-SNR guide star.',
                   ],
                 },
               ],
@@ -1341,6 +1567,16 @@ export default function App() {
               proTip:
                 'Ajoutez un temps de stabilisation de 5 à 10 secondes après chaque dithering avant de relancer la pose.',
             },
+            {
+              title: 'Chapitre 3 : Séquenceur Nuit Complète & Fin de Session',
+              subtitle: 'Du crépuscule à l’aube avec gestion des impondérables',
+              bullets: [
+                'Structurez votre séquence en blocs : refroidissement, mise au point, centrage astrométrique, boucle d’acquisition, puis parcage.',
+                'Prévoyez une surveillance du guidage et de la mise au point pour rejeter automatiquement les poses dégradées par un passage nuageux.',
+              ],
+              proTip:
+                'Vérifiez l’heure astronomique de l’aube afin d’arrêter les poses avant que le ciel ne blanchisse.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1348,11 +1584,18 @@ export default function App() {
               body: 'ASIAIR offre une simplicité clé en main dans l’écosystème ZWO, tandis que N.I.N.A. sur Mini-PC offre une liberté multi-marques totale et un séquenceur avancé.',
               highlight: 'ASIAIR = Simplicité | N.I.N.A. = Liberté totale',
             },
+            {
+              heading: '2. Procédure de Séquence Nocturne Fiable',
+              body: "Démarrez par le refroidissement progressif du capteur vers la température cible (ex. -10°C), puis effectuez la mise au point initiale. Pointez la cible, exécutez le Plate Solving avec recentrage jusqu'à une tolérance serrée (ex. < 1 à 2 arc-minutes), démarrez l'autoguidage puis lancez la boucle de poses avec dithering périodique. En fin de séquence, réchauffez doucement la caméra et parquez la monture.",
+              highlight:
+                'Bon réflexe : Toujours vérifier le cadrage sur une première pose brute avant de se coucher.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Installer ASTAP et le catalogue d’étoiles adapté (D50 / G17).',
             '2. Configurer le dithering (3 à 5 px) et les déclencheurs de refocalisation (HFR ou dérive de température).',
-            '3. Tester le retournement au méridien en journée ou en début de soirée.',
+            '3. Tester le retournement au méridien et vérifier le recentrage automatique après le flip.',
+            '4. Programmer le parcage de fin de nuit et le réchauffage du capteur.',
           ],
           quiz: [
             {
@@ -1378,18 +1621,51 @@ export default function App() {
               explanation:
                 'Décaler légèrement le cadrage entre les poses évite l’alignement du bruit fixe.',
             },
+            {
+              question:
+                'Quelle étape est recommandée juste après un retournement au méridien ?',
+              options: [
+                'Recentrer par Plate Solving et relancer l’autoguidage / mise au point si nécessaire',
+                'Couper l’alimentation de la caméra',
+                'Supprimer les images précédentes',
+              ],
+              correct: 0,
+              explanation:
+                'Le retournement modifie l’orientation mécanique : un recentrage garantit le même cadrage.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod3-pdf1',
               name: 'Architecture de Séquence N.I.N.A. & ASIAIR (PDF)',
-              title: 'Blueprint Complet',
+              title: 'Blueprint Complet : Séquence Nocturne Automatisée',
               sections: [
                 {
                   title: '1. Démarrage & Séquence',
                   content: [
                     'Refroidissement caméra, Plate Solve, autofocus et dithering.',
                     'Retournement au méridien avec recentrage automatique.',
+                  ],
+                },
+                {
+                  title: '2. Fin de Nuit Sécurisée',
+                  content: [
+                    'Arrêt des poses avant l’aube astronomique.',
+                    'Réchauffement progressif du capteur et parcage de la monture.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod3-pdf2',
+              name: 'Aide-Mémoire Dithering, Plate Solve & Flip Méridien (PDF)',
+              title: 'Aide-Mémoire Terrain : Automatisation Sans Accroc',
+              sections: [
+                {
+                  title: '1. Réglages Clés',
+                  content: [
+                    'Dithering de 3 à 5 pixels sur l’imageur avec temps de pose de stabilisation.',
+                    'Vérifier la cohérence focale / taille de pixel dans le profil du logiciel.',
                   ],
                 },
               ],
@@ -1419,6 +1695,16 @@ export default function App() {
               proTip:
                 'Allow a short settle delay after dithering so guiding stabilizes before exposure starts.',
             },
+            {
+              title: 'Chapter 3: Full-Night Sequencing & Dawn Shutdown',
+              subtitle: 'Structured automation from dusk to dawn',
+              bullets: [
+                'Organize sequences cleanly: cool camera, focus, plate-solve center, exposure loop, park.',
+                'Monitor guiding and focus trends so poor frames caused by clouds can be caught early.',
+              ],
+              proTip:
+                'End imaging exposures before morning twilight washes out faint target contrast.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1426,11 +1712,18 @@ export default function App() {
               body: 'ASIAIR provides streamlined mobile control, whereas N.I.N.A. on a mini-PC delivers broad multi-vendor hardware support and deep sequencing.',
               highlight: 'Turnkey vs Open flexibility.',
             },
+            {
+              heading: '2. Reliable Nightly Sequence Workflow',
+              body: 'Cool the sensor gradually to target temperature (e.g. -10°C), run initial focus, plate-solve and center on the target, start guiding, and begin the exposure loop with periodic dithering. At the end of the sequence, warm the sensor and park the mount.',
+              highlight:
+                'Good habit: Inspect an early sub-frame for framing and star roundness before turning in.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Install ASTAP and star database.',
             '2. Enable dithering and autofocus triggers (HFR or temperature delta).',
-            '3. Verify meridian flip behavior before leaving the rig unattended.',
+            '3. Verify meridian flip behavior and post-flip recentering.',
+            '4. Configure end-of-night mount parking and sensor warming.',
           ],
           quiz: [
             {
@@ -1454,6 +1747,17 @@ export default function App() {
               explanation:
                 'Shifting the frame slightly between exposures prevents fixed sensor noise from aligning.',
             },
+            {
+              question: 'What is best practice right after a meridian flip?',
+              options: [
+                'Plate-solve recenter and resume guiding/focus checks',
+                'Power off the camera immediately',
+                'Delete calibration frames',
+              ],
+              correct: 0,
+              explanation:
+                'Recentering after a meridian flip keeps framing consistent across the entire night.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1466,6 +1770,27 @@ export default function App() {
                   content: [
                     'Cool camera, plate solve, focus, and dither.',
                     'Meridian flip with automatic target recentering.',
+                  ],
+                },
+                {
+                  title: '2. Safe Shutdown',
+                  content: [
+                    'Stop exposures before astronomical dawn.',
+                    'Warm camera sensor and park mount cleanly.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod3-pdf2-en',
+              name: 'Cheat Sheet: Dithering, Plate Solve & Meridian Flip (PDF)',
+              title: 'Field Cheat Sheet: Smooth Nightly Automation',
+              sections: [
+                {
+                  title: '1. Key Settings',
+                  content: [
+                    'Use 3–5 pixel imager dithering with a brief settle delay.',
+                    'Confirm focal length and pixel pitch match your optical setup.',
                   ],
                 },
               ],
@@ -1516,6 +1841,17 @@ export default function App() {
               proTip:
                 'Ne modifiez jamais la mise au point ni l’orientation de la caméra entre vos poses et vos Flats.',
             },
+            {
+              title: 'Chapitre 3 : Choisir Entre Couleur (OSC), Dual-Band & SHO',
+              subtitle: 'Adapter votre stratégie selon la cible et la qualité du ciel',
+              bullets: [
+                'Large bande / OSC : Idéal pour les galaxies, nébuleuses par réflexion et amas stellaires sous un ciel plutôt sombre.',
+                'Dual-Band (Ha / OIII) : Redonne du relief aux nébuleuses en émission même sous un ciel urbain ou avec un peu de Lune.',
+                'SHO (Soufre, Hydrogène, Oxygène) : Permet de composer des palettes riches en nuances sur les nébuleuses d’émission.',
+              ],
+              proTip:
+                'Accumulez davantage de pose totale sur les signaux faibles (comme l’OIII ou le SII) pour éviter le bruit dans les extensions.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1523,10 +1859,19 @@ export default function App() {
               body: 'Ces capteurs modernes disposent d’un rendement quantique élevé, d’une absence d’amp-glow notable et d’un bruit de lecture minime.',
               highlight: 'Gain = 100 | Offset = 50 | Temp = -10°C',
             },
+            {
+              heading:
+                '2. Procédure de Calibration (Darks, Flats, Bias / Dark-Flats)',
+              body: "Une calibration rigoureuse prépare l'image avant tout étirement. Utilisez un Offset constant (ex. 50) pour éviter de tronquer les pixels sombres à zéro. Réalisez vos Flats à la même température et avec la même mise au point que votre session, en visant un niveau moyen autour de 30–50 % de la saturation sans saturer les canaux.",
+              highlight:
+                'Règle d’or : Conservez la même température et le même Gain/Offset pour vos Darks et vos Flats.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Configurer la caméra sur le mode HCG (ex: Gain 100) et un Offset constant.',
-            '2. Capturer des Flats propres à la même configuration optique et vérifier leur histogramme.',
+            '2. Ajuster le temps de pose unitaire selon le niveau de pollution lumineuse (Bortle) et le filtre.',
+            '3. Capturer des Flats propres à la même configuration optique et vérifier leur histogramme.',
+            '4. Réaliser des Darks et Bias/Dark-Flats pour nettoyer le signal lors du prétraitement.',
           ],
           quiz: [
             {
@@ -1552,18 +1897,51 @@ export default function App() {
               explanation:
                 'Les Flats mesurent l’illumination relative et les poussières sur le chemin optique.',
             },
+            {
+              question: 'Pourquoi faut-il conserver un Offset positif ?',
+              options: [
+                'Pour éviter d’écrêter à zéro les valeurs basses des pixels',
+                'Pour accélérer le transfert USB',
+                'Pour supprimer la buée sur le capteur',
+              ],
+              correct: 0,
+              explanation:
+                'Un Offset trop bas peut couper des informations dans les zones sombres de l’image.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod4-pdf1',
               name: 'Abaque Gain CMOS, Temps de Pose & Calibration (PDF)',
-              title: 'Référence Capteurs CMOS',
+              title: 'Référence Capteurs CMOS & Calibration',
               sections: [
                 {
                   title: '1. Réglages & Calibration',
                   content: [
                     'Gain 100 (HCG), Offset 50, capteur refroidi à -10°C.',
                     'Capturer Flats, Dark-Flats/Bias et Darks à la même température.',
+                    'Cibler environ 30–50 % de dynamique sur les Flats.',
+                  ],
+                },
+                {
+                  title: '2. Choix du Filtre Selon le Ciel',
+                  content: [
+                    'Galaxies & réflexion : privilégier la bande large sous un ciel préservé.',
+                    'Nébuleuses en émission en ville : Dual-Band ou SHO.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod4-pdf2',
+              name: 'Aide-Mémoire : Réaliser des Flats Parfaits sur le Terrain (PDF)',
+              title: 'Procédure Terrain : Flats Sans Artefacts',
+              sections: [
+                {
+                  title: '1. Étapes de Capture',
+                  content: [
+                    'Utiliser un panneau lumineux uniforme ou un écran blanc régulier.',
+                    'Garder la mise au point inchangée et éviter toute saturation des pixels.',
                   ],
                 },
               ],
@@ -1592,6 +1970,17 @@ export default function App() {
               ],
               proTip: 'Keep focus and camera rotation unchanged when shooting Flats.',
             },
+            {
+              title: 'Chapter 3: Broadband vs. Dual-Band & SHO Strategy',
+              subtitle: 'Matching filters to targets and sky conditions',
+              bullets: [
+                'Broadband / OSC suits galaxies, reflection nebulae, and star clusters under darker skies.',
+                'Dual-band (Ha / OIII) helps emission nebulae stand out even in light-polluted skies.',
+                'SHO narrowband lets you blend SII, Ha, and OIII channels for rich emission detail.',
+              ],
+              proTip:
+                'Gather extra integration time on weaker channels like OIII or SII for cleaner contrast.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1599,10 +1988,18 @@ export default function App() {
               body: 'Modern BSI CMOS sensors combine high quantum efficiency with very low read noise.',
               highlight: 'Gain = 100 | Offset = 50 | Temp = -10°C',
             },
+            {
+              heading: '2. Step-by-Step Calibration Frame Workflow',
+              body: 'Proper calibration sets up clean data before stretching. Keep a consistent Offset so dark pixels are not clipped to zero. Shoot Flats at the same focus and temperature as your lights, targeting roughly 30–50% of full well without clipping.',
+              highlight:
+                'Golden rule: Match Gain, Offset, and sensor temperature for your calibration library.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Set camera to HCG gain and a consistent offset.',
-            '2. Capture well-exposed Flats and matching calibration frames.',
+            '2. Tune sub-exposure duration to sky Bortle class and filter bandwidth.',
+            '3. Capture clean Flats matching focus and check histogram exposure.',
+            '4. Shoot Darks and Bias/Dark-Flats for clean calibration.',
           ],
           quiz: [
             {
@@ -1626,18 +2023,51 @@ export default function App() {
               explanation:
                 'Flats map uneven illumination and dust shadows across the optical path.',
             },
+            {
+              question: 'Why keep a positive Offset value?',
+              options: [
+                'To avoid clipping low-signal pixels down to zero',
+                'To speed up USB transfers',
+                'To warm the camera sensor',
+              ],
+              correct: 0,
+              explanation:
+                'Too low an offset can clip faint shadow data to zero.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
               id: 'mod4-pdf1-en',
               name: 'CMOS Gain, Sub-Exposure & Calibration Reference (PDF)',
-              title: 'Sensor Reference Guide',
+              title: 'Sensor & Calibration Reference Guide',
               sections: [
                 {
                   title: '1. Settings & Calibration',
                   content: [
                     'Gain 100 (HCG), Offset 50, cooled to -10°C.',
                     'Match Flats and dark calibration frames to your imaging setup.',
+                    'Target roughly 30–50% histogram exposure on Flats.',
+                  ],
+                },
+                {
+                  title: '2. Filter Selection Summary',
+                  content: [
+                    'Galaxies & reflection targets: Broadband under darker skies.',
+                    'Emission nebulae in city skies: Dual-band or SHO.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod4-pdf2-en',
+              name: 'Cheat Sheet: Capturing Artifact-Free Flats (PDF)',
+              title: 'Field Procedure: Clean Flats Without Clipping',
+              sections: [
+                {
+                  title: '1. Capture Steps',
+                  content: [
+                    'Use an even light panel or bright sky/screen illumination.',
+                    'Do not change focus between lights and Flats.',
                   ],
                 },
               ],
@@ -1688,6 +2118,16 @@ export default function App() {
               proTip:
                 'Vérifiez toujours la qualité de votre étoile guide (SNR et absence de saturation) avant de lancer la session.',
             },
+            {
+              title: 'Chapitre 3 : Mesurer et Compenser le Backlash EAF',
+              subtitle: 'Éviter l’hystérésis lorsque le moteur inverse son sens',
+              bullets: [
+                'Lorsqu’un moteur pas-à-pas change de direction, le jeu mécanique peut empêcher un petit déplacement de se traduire au foyer.',
+                'La méthode Overshoot (dépassement puis retour dans le même sens) garantit que le point final est toujours atteint dans le même sens mécanique.',
+              ],
+              proTip:
+                'Observez la forme de votre courbe en V : une branche asymétrique ou plate au fond révèle souvent un backlash mal compensé.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1695,10 +2135,19 @@ export default function App() {
               body: 'La CFZ représente la tolérance de mise au point. Sur un instrument ouvert à f/4, elle est extrêmement fine.',
               highlight: 'À f/4 : CFZ = 43 µm | À f/7 : CFZ = 131 µm',
             },
+            {
+              heading:
+                '2. Procédure de Réglage de la Courbe en V & Autoguidage',
+              body: "Commencez par régler la mise au point grossière manuellement sur une étoile ou la Lune, puis notez la position approximative. Définissez un Step Size permettant d'obtenir une courbe en V bien dessinée avec un HFR multiplié par environ 2 à 3 aux extrémités par rapport au minimum. Activez la compensation du backlash, puis lancez l'assistant de guidage PHD2 pour vérifier les paramètres de base.",
+              highlight:
+                'Indice d’une bonne courbe en V : Deux branches régulières qui convergent vers un minimum net.',
+            },
           ] as LessonSection[],
           steps: [
-            '1. Calculer la CFZ et configurer le pas (Step Size) de l’EAF.',
-            '2. Lancer l’assistant de guidage PHD2 pour calibrer les paramètres de base.',
+            '1. Calculer la CFZ dans le simulateur et régler le pas (Step Size) de l’EAF.',
+            '2. Configurer la compensation du backlash (overshoot) et vérifier la courbe en V.',
+            '3. Lancer l’assistant de guidage PHD2 pour calibrer les paramètres de base.',
+            '4. Activer la refocalisation automatique (changement de filtre, variation de température ou HFR).',
           ],
           quiz: [
             {
@@ -1724,6 +2173,18 @@ export default function App() {
               explanation:
                 'Plus le HFR est faible (à seeing constant), plus la mise au point est précise.',
             },
+            {
+              question:
+                'Quel intérêt présente la méthode Overshoot pour la mise au point ?',
+              options: [
+                'Approcher la position finale toujours dans le même sens mécanique',
+                'Doubler le diamètre du miroir',
+                'Supprimer la pollution lumineuse',
+              ],
+              correct: 0,
+              explanation:
+                'L’approche dans un sens unique réduit l’effet du jeu mécanique (backlash).',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1736,6 +2197,26 @@ export default function App() {
                   content: [
                     'Utiliser la méthode Overshoot pour absorber le backlash.',
                     'Surveiller la stabilité RMS en RA et DEC dans PHD2.',
+                  ],
+                },
+                {
+                  title: '2. Déclencheurs de Refocalisation',
+                  content: [
+                    'Relancer l’autofocus lors d’un changement de filtre ou d’une baisse de température sensible.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod5-pdf2',
+              name: 'Aide-Mémoire : Valider une Courbe en V & Étoile Guide (PDF)',
+              title: 'Aide-Mémoire Terrain : Netteté Stellaire & Stabilité du Suivi',
+              sections: [
+                {
+                  title: '1. Contrôle Rapide',
+                  content: [
+                    'Vérifier l’absence de saturation sur l’étoile guide.',
+                    'Contrôler que les points de la courbe en V forment une pente régulière.',
                   ],
                 },
               ],
@@ -1764,6 +2245,16 @@ export default function App() {
               ],
               proTip: 'Pick a non-saturated guide star with healthy SNR.',
             },
+            {
+              title: 'Chapter 3: Measuring & Compensating EAF Backlash',
+              subtitle: 'Preventing mechanical hysteresis on direction reversals',
+              bullets: [
+                'When a stepper motor reverses direction, mechanical play can delay focus movement.',
+                'Overshoot compensation moves past the target and settles in a consistent direction.',
+              ],
+              proTip:
+                'Watch for lopsided or flattened V-curves as a clue to uncompensated backlash.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1771,10 +2262,18 @@ export default function App() {
               body: 'CFZ is the narrow focal depth where optics remain diffraction-limited.',
               highlight: 'At f/4: CFZ = 43 µm | At f/7: CFZ = 131 µm',
             },
+            {
+              heading: '2. Step-by-Step V-Curve & Guiding Setup',
+              body: 'Start near rough manual focus, then pick a step size that produces a clear V-curve where outer HFR rises roughly 2–3x above the minimum. Enable backlash compensation, run PHD2 guiding assistant, and schedule autofocus triggers for filter changes or temperature shifts.',
+              highlight:
+                'Benchmark: Clean, symmetrical V-curve legs meeting at a sharp minimum.',
+            },
           ] as LessonSection[],
           steps: [
-            '1. Calculate CFZ and configure EAF step size.',
-            '2. Run PHD2 guiding assistant to baseline parameters.',
+            '1. Calculate CFZ in the simulator and set EAF step size.',
+            '2. Configure backlash compensation and inspect the V-curve.',
+            '3. Run PHD2 guiding assistant to baseline parameters.',
+            '4. Schedule autofocus triggers for temperature, HFR growth, or filter changes.',
           ],
           quiz: [
             {
@@ -1799,6 +2298,17 @@ export default function App() {
               explanation:
                 'Lower HFR (under steady seeing) indicates sharper focus.',
             },
+            {
+              question: 'Why use overshoot backlash compensation?',
+              options: [
+                'To approach final focus consistently in one direction',
+                'To increase telescope focal length',
+                'To eliminate skyglow',
+              ],
+              correct: 0,
+              explanation:
+                'Approaching from a single direction reduces mechanical backlash error.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1811,6 +2321,26 @@ export default function App() {
                   content: [
                     'Use overshoot backlash compensation.',
                     'Monitor RA and DEC RMS trends in PHD2.',
+                  ],
+                },
+                {
+                  title: '2. Refocus Triggers',
+                  content: [
+                    'Refocus when changing filters or when temperature/HFR shifts noticeably.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod5-pdf2-en',
+              name: 'Cheat Sheet: Validating V-Curves & Guide Stars (PDF)',
+              title: 'Field Cheat Sheet: Sharp Focus & Steady Guiding',
+              sections: [
+                {
+                  title: '1. Quick Checks',
+                  content: [
+                    'Avoid saturated guide stars.',
+                    'Verify smooth V-curve progression before starting long subs.',
                   ],
                 },
               ],
@@ -1861,6 +2391,16 @@ export default function App() {
               proTip:
                 'Gardez un fond de ciel légèrement sombre mais jamais écrêté à zéro (évitez le noir absolu).',
             },
+            {
+              title: 'Chapitre 3 : Finitions, Saturation & Équilibre Global',
+              subtitle: 'Éviter les sur-traitements et préserver le naturel de l’image',
+              bullets: [
+                'Appliquez la saturation progressivement sur les zones riches en signal plutôt que sur un fond de ciel bruité.',
+                'Faites des pauses de quelques minutes (ou comparez avec l’image brute) pour éviter de pousser les curseurs à l’excès.',
+              ],
+              proTip:
+                'Enregistrez des versions intermédiaires à chaque grande étape (linéaire calibré, starless étiré, final).',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1868,10 +2408,19 @@ export default function App() {
               body: 'Les galaxies demandent un étirement minutieux avec GHS et une protection des hautes lumières pour préserver la structure des bras spiraux et du cœur.',
               highlight: 'Formule PixelMath : ~((~starless) * (~stars))',
             },
+            {
+              heading:
+                '2. Procédure Pas à Pas : Du Fichier Empilé au Rendu Final',
+              body: "Après l'empilement calibré (Darks/Flats/Bias), recadrez légèrement les bords liés au dithering puis retirez les gradients de pollution lumineuse. Étalonnez les couleurs, séparez les étoiles si besoin, puis effectuez un étirement progressif en douceur. Réintégrez les étoiles avec retenue et ajustez le contraste local.",
+              highlight:
+                'Conseil qualité : Un fond de ciel légèrement nuancé paraît toujours plus naturel qu’un fond noir artificiel.',
+            },
           ] as LessonSection[],
           steps: [
-            '1. Empiler, recadrer et extraire les gradients en linéaire.',
+            '1. Empiler avec les images de calibration, recadrer et extraire les gradients en linéaire.',
             '2. Calibrer les couleurs (SPCC), extraire les étoiles et étirer avec GHS.',
+            '3. Réassembler les étoiles et affiner la saturation / contraste sans écrêtage.',
+            '4. Sauvegarder les étapes clés et exporter en haute qualité.',
           ],
           quiz: [
             {
@@ -1898,6 +2447,18 @@ export default function App() {
               explanation:
                 'Traiter séparément permet d’adapter le contraste de chaque couche.',
             },
+            {
+              question:
+                'Quel défaut faut-il éviter sur le fond de ciel lors du traitement ?',
+              options: [
+                'L’écrêter au noir absolu en perdant le signal subtil',
+                'Utiliser un écran calibré',
+                'Sauvegarder plusieurs étapes',
+              ],
+              correct: 0,
+              explanation:
+                'Un fond écrêté à zéro efface les extensions faibles et donne un aspect artificiel.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1910,6 +2471,26 @@ export default function App() {
                   content: [
                     'Crop -> GraXpert -> SPCC -> Starless -> GHS -> Assemblage.',
                     'Préserver un léger bruit résiduel naturel sur le fond de ciel.',
+                  ],
+                },
+                {
+                  title: '2. Bonnes Pratiques de Sauvegarde',
+                  content: [
+                    'Conserver les fichiers empilés bruts et les étapes intermédiaires.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod6-pdf2',
+              name: 'Aide-Mémoire : Éviter les Erreurs Classiques en Traitement (PDF)',
+              title: 'Aide-Mémoire : Équilibre des Couleurs, Étoiles & Contraste',
+              sections: [
+                {
+                  title: '1. Points de Vigilance',
+                  content: [
+                    'Ne pas saturer un fond de ciel bruité.',
+                    'Éviter de brûler le cœur des galaxies ou nébuleuses lumineuses.',
                   ],
                 },
               ],
@@ -1938,6 +2519,16 @@ export default function App() {
               ],
               proTip: 'Avoid clipping background pixels to pure black.',
             },
+            {
+              title: 'Chapter 3: Finishing Touches & Natural Balance',
+              subtitle: 'Avoiding over-processing and preserving detail',
+              bullets: [
+                'Apply color saturation selectively where signal is strong rather than boosting noisy sky background.',
+                'Take brief breaks and compare against intermediate states to avoid heavy-handed stretching.',
+              ],
+              proTip:
+                'Save milestone files at each major step so you can backtrack effortlessly.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -1945,10 +2536,18 @@ export default function App() {
               body: 'Manage extreme dynamic range using GHS and highlight protection to retain core and spiral arm detail.',
               highlight: 'PixelMath Screen Blend: ~((~starless) * (~stars))',
             },
+            {
+              heading: '2. Step-by-Step Workflow From Stack to Final Image',
+              body: 'Start from your calibrated stack, crop dithered edges, and remove sky gradients while still linear. Calibrate colors, separate stars if helpful, and apply gradual stretches before reblending stars gently.',
+              highlight:
+                'Quality benchmark: Natural background texture with intact star cores and faint outer detail.',
+            },
           ] as LessonSection[],
           steps: [
-            '1. Stack, crop, and remove gradients in linear space.',
+            '1. Stack calibrated frames, crop edges, and remove gradients in linear space.',
             '2. Color-calibrate, separate stars, and stretch with GHS.',
+            '3. Reblend stars and refine saturation/contrast without clipping.',
+            '4. Save milestone files and export your final image.',
           ],
           quiz: [
             {
@@ -1974,6 +2573,17 @@ export default function App() {
               explanation:
                 'Separate processing gives independent control over nebula contrast and star size.',
             },
+            {
+              question: 'What is a common stretching mistake to avoid?',
+              options: [
+                'Clipping the sky background to pure black and losing faint detail',
+                'Saving intermediate files',
+                'Checking star roundness',
+              ],
+              correct: 0,
+              explanation:
+                'Clipping the background to black wipes out subtle outer signal and looks unnatural.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -1986,6 +2596,26 @@ export default function App() {
                   content: [
                     'Crop -> GraXpert -> SPCC -> Starless -> GHS -> Blend.',
                     'Keep natural background grain rather than clipping to black.',
+                  ],
+                },
+                {
+                  title: '2. Milestone Saving',
+                  content: [
+                    'Keep raw stacks and key intermediate versions organized.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod6-pdf2-en',
+              name: 'Cheat Sheet: Avoiding Common Processing Pitfalls (PDF)',
+              title: 'Field Cheat Sheet: Color, Stars & Contrast Balance',
+              sections: [
+                {
+                  title: '1. Key Checkpoints',
+                  content: [
+                    'Avoid over-saturating noisy background areas.',
+                    'Protect bright galaxy cores and star centers during stretching.',
                   ],
                 },
               ],
@@ -2036,6 +2666,16 @@ export default function App() {
               proTip:
                 'Emportez un adaptateur secteur/allume-cigare et une lampe frontale à lumière rouge.',
             },
+            {
+              title: 'Chapitre 3 : Planifier un Panorama ou une Arche de Voie Lactée',
+              subtitle: 'Anticiper l’orientation du ciel et la lumière résiduelle',
+              bullets: [
+                'Repérez l’azimut de la cible et l’heure où elle est la plus haute et dégagée de la brume d’horizon.',
+                'En panorama multi-poses, prévoyez un chevauchement d’environ 25 à 30 % entre chaque cadre pour faciliter l’assemblage.',
+              ],
+              proTip:
+                'Faites une pose test avec l’avant-plan et le ciel à la même exposition ou selon votre méthode de composition.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -2043,10 +2683,19 @@ export default function App() {
               body: 'La formule NPF calcule le temps de pose limite en tenant compte de l’ouverture, de la focale et de la taille des pixels.',
               highlight: 'Formule NPF : t = (35 × N + 30 × P) ÷ F',
             },
+            {
+              heading:
+                '2. Procédure de Mise au Point Nocturne sur Objectif Photo',
+              body: "Basculez l'objectif en mise au point manuelle (MF) et désactivez la stabilisation optique si elle n'est pas nécessaire sur trépied. Visez une étoile brillante ou une planète en Live View à fort grossissement, ajustez lentement jusqu'à obtenir le point le plus fin possible, puis sécurisez la bague avec un morceau d'adhésif.",
+              highlight:
+                'Astuce terrain : L’autofocus de nuit hésite souvent ; la mise au point manuelle avec loupe Live View est plus fiable.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Calculer le temps NPF dans le simulateur et régler l’intervalomètre.',
-            '2. Préparer le bagage cabine avec protection anti-chocs pour l’optique.',
+            '2. Faire la mise au point manuelle en Live View sur une étoile brillante et bloquer la bague.',
+            '3. Préparer le bagage cabine avec protection anti-chocs pour l’optique.',
+            '4. Vérifier la météo locale et le dégagement de l’horizon avant le départ.',
           ],
           quiz: [
             {
@@ -2073,6 +2722,18 @@ export default function App() {
               explanation:
                 'Fermer d’un cran atténue les aberrations marginales des objectifs rapides.',
             },
+            {
+              question:
+                'Quelle méthode est la plus fiable pour la mise au point de nuit sur un objectif photo ?',
+              options: [
+                'La mise au point manuelle avec Live View zoomé sur une étoile brillante',
+                'L’autofocus continu dans le noir complet',
+                'Régler la bague sur le repère infini sans vérifier',
+              ],
+              correct: 0,
+              explanation:
+                'Les butées « infini » des objectifs varient souvent : le contrôle visuel zoomé sur étoile est indispensable.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -2085,6 +2746,26 @@ export default function App() {
                   content: [
                     'Toutes les batteries Li-ion en cabine (< 100 Wh).',
                     'Vérifier la mise au point de nuit et bloquer la bague.',
+                  ],
+                },
+                {
+                  title: '2. Préparation Grand Champ',
+                  content: [
+                    'Calculer la pose max avec la règle NPF et vérifier la netteté dans les coins.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod7-pdf2',
+              name: 'Aide-Mémoire : Réussir une Soirée Voie Lactée Nomade (PDF)',
+              title: 'Aide-Mémoire : Cadrage, Netteté & Organisation Terrain',
+              sections: [
+                {
+                  title: '1. Étapes Clés sur Place',
+                  content: [
+                    'Arriver de jour pour repérer l’avant-plan et la stabilité du sol.',
+                    'Prévoir des batteries de rechange au chaud avant la nuit.',
                   ],
                 },
               ],
@@ -2113,6 +2794,16 @@ export default function App() {
               ],
               proTip: 'Pack a red headlamp and spare cables in a dedicated pouch.',
             },
+            {
+              title: 'Chapter 3: Planning Milky Way & Panorama Shots',
+              subtitle: 'Timing sky visibility and overlapping frames',
+              bullets: [
+                'Check target azimuth and altitude so you shoot when the core or arch is well clear of low horizon haze.',
+                'For panoramas, overlap frames by roughly 25–30% for reliable stitching.',
+              ],
+              proTip:
+                'Scout your foreground and ground stability during daylight when possible.',
+            },
           ] as Slide[],
           courseSections: [
             {
@@ -2120,10 +2811,18 @@ export default function App() {
               body: 'Calculate untracked exposure limits precisely based on optics and sensor specs.',
               highlight: 'NPF Formula: t = (35 × N + 30 × P) ÷ F',
             },
+            {
+              heading: '2. Step-by-Step Nighttime Lens Focusing Procedure',
+              body: 'Switch the lens to manual focus (MF) and turn off stabilization when mounted on a tripod. Zoom in on Live View using a bright star, fine-tune focus to the smallest star profile, and secure the focus ring with tape.',
+              highlight:
+                'Field tip: Infinity hard-stops on lenses are rarely exact—always confirm on Live View.',
+            },
           ] as LessonSection[],
           steps: [
             '1. Calculate your NPF exposure limit and test on a 10-second frame.',
-            '2. Pack fragile optics and batteries in your carry-on bag.',
+            '2. Manual-focus on a zoomed Live View star and tape the focus ring.',
+            '3. Pack fragile optics and batteries in your carry-on bag.',
+            '4. Check sky clearness and horizon obstructions before heading out.',
           ],
           quiz: [
             {
@@ -2149,6 +2848,18 @@ export default function App() {
               explanation:
                 'Stopping down slightly improves edge aberration performance.',
             },
+            {
+              question:
+                'What is the most reliable way to focus a camera lens at night?',
+              options: [
+                'Manual focus using zoomed Live View on a bright star',
+                'Relying on autofocus in the dark',
+                'Turning to the infinity mark without checking',
+              ],
+              correct: 0,
+              explanation:
+                'Zoomed star Live View lets you find true focus regardless of lens barrel markings.',
+            },
           ] as QuizQuestion[],
           downloads: [
             {
@@ -2161,6 +2872,26 @@ export default function App() {
                   content: [
                     'Keep all Li-ion batteries in cabin (< 100 Wh).',
                     'Tape focus ring after achieving sharp focus.',
+                  ],
+                },
+                {
+                  title: '2. Widefield Planning',
+                  content: [
+                    'Use the NPF rule as a starting point and check corner stars.',
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'mod7-pdf2-en',
+              name: 'Cheat Sheet: Planning a Milky Way Field Session (PDF)',
+              title: 'Field Cheat Sheet: Framing, Focus & Portable Gear',
+              sections: [
+                {
+                  title: '1. On-Location Routine',
+                  content: [
+                    'Scout terrain in daylight and keep spare batteries warm.',
+                    'Overlap panorama frames by ~25–30%.',
                   ],
                 },
               ],
