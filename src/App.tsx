@@ -168,6 +168,55 @@ const GLOSSARY_TERMS: GlossaryItem[] = [
   },
 ];
 
+const FREE_SAMPLE_PDF: Record<'fr' | 'en', DownloadDoc> = {
+  fr: {
+    id: 'free-sample-guide-fr',
+    name: 'Échantillon Gratuit : Guide Rapide de Démarrage Sans Prise de Tête (PDF)',
+    title: 'Échantillon Gratuit Astroberb : Bien Démarrer en Astrophotographie',
+    sections: [
+      {
+        title: '1. La Méthode en 3 Temps',
+        content: [
+          'Avant la nuit : choisir une focale adaptée à vos cibles, vérifier le tirage/backfocus et préparer votre liste de câbles.',
+          'Pendant la nuit : mise en station soignée, mise au point nette et poses régulières avec dithering.',
+          'Après la nuit : calibration propre, retrait des gradients et étirement progressif sans écrêter le fond de ciel.',
+        ],
+      },
+      {
+        title: '2. Les 5 Pièges les Plus Fréquents à Éviter',
+        content: [
+          'Vouloir tout régler dans l’urgence une fois la nuit tombée.',
+          'Oublier la buée sur l’optique ou la tension des câbles autour de la monture.',
+          'Négliger les Flats ou forcer la saturation sur un fond de ciel bruité.',
+        ],
+      },
+    ],
+  },
+  en: {
+    id: 'free-sample-guide-en',
+    name: 'Free Sample: Hassle-Free Beginner Quickstart Guide (PDF)',
+    title: 'Astroberb Free Sample: Getting Started in Astrophotography',
+    sections: [
+      {
+        title: '1. The 3-Stage Routine',
+        content: [
+          'Before the night: match focal length to targets, check spacing/backfocus, and organize cables.',
+          'During the night: solid polar alignment, sharp focus, and consistent exposures with dithering.',
+          'After the night: clean calibration, gradient removal, and gentle stretching without clipping background.',
+        ],
+      },
+      {
+        title: '2. Five Common Pitfalls to Avoid',
+        content: [
+          'Trying to figure out settings in the dark under time pressure.',
+          'Overlooking dew prevention or cable snagging during slews.',
+          'Skipping Flats or over-stretching noisy sky backgrounds.',
+        ],
+      },
+    ],
+  },
+};
+
 export default function App() {
   const [lang, setLang] = useState<'fr' | 'en'>(() => {
     try {
@@ -533,9 +582,33 @@ export default function App() {
     fr: {
       title: 'Astroberb Academy',
       subtitle: "Le Collectif d'Astronomes Amateurs — Astrophotographie du Ciel Profond",
-      heroBadge: '⚡ SUPER PROMO • TOUT LE SAVOIR-FAIRE DU TERRAIN',
+      heroBadge: '⚡ SUPER PROMO • ENFIN SIMPLE & SANS PRISE DE TÊTE',
       heroDesc:
         "Bienvenue sur notre plateforme ! Nous sommes un groupe de passionnés d'astronomie réunis pour partager nos astuces de terrain : formules optiques, montures harmoniques (Juwei-17, UMi-17S, AM5), automatisation N.I.N.A./ASIAIR et traitement PixInsight & Siril.",
+      simplePathTitle: '✨ Votre Parcours Sans Prise de Tête en 3 Étapes',
+      simpleStep1Title: '1. Choisir & régler sans se tromper',
+      simpleStep1Desc:
+        'Comprenez votre matériel, vérifiez le tirage/backfocus et évitez les erreurs fréquentes dès le départ.',
+      simpleStep2Title: '2. Laisser la nuit tourner sereinement',
+      simpleStep2Desc:
+        'Mise en station, mise au point, guidage et séquences claires pour profiter de vos soirées.',
+      simpleStep3Title: '3. Révéler vos photos proprement',
+      simpleStep3Desc:
+        'Un fil conducteur clair du prétraitement jusqu’à l’étirement, sans brûler les étoiles ni noircir le ciel.',
+      freeSampleBtn: '📄 Télécharger la Fiche PDF Gratuite de Démarrage',
+      reassuranceTitle: 'Comment se passe votre accès après l’achat ?',
+      reassurance1: '1. Paiement sécurisé via Stripe ou PayPal',
+      reassurance2: '2. Accès immédiat + code multi-appareils',
+      reassurance3: '3. Accès à vie + fiches PDF imprimables',
+      compareTitle: 'Un Module (9,99 $) ou le Pack Intégral (49,99 $ CAD) ?',
+      compareSub:
+        'Commencez par un module ciblé ou débloquez l’ensemble du collectif en un seul clic.',
+      compareSingleTitle: 'Module à la Carte — 9,99 $ CAD',
+      compareSingleDesc:
+        'Idéal pour approfondir un point précis (optiques, monture, séquenceur, caméras, autofocus, traitement ou grand champ).',
+      comparePackTitle: 'Pack Intégral 7-en-1 — 49,99 $ CAD',
+      comparePackDesc:
+        'Les 7 modules complets, les 6 simulateurs interactifs, toutes les fiches PDF A4 imprimables, le suivi de progression et le certificat officiel.',
       benefitsTitle: 'Ce que vous saurez faire après les cours',
       benefit1Title: 'Maîtriser son matériel',
       benefit1Desc:
@@ -683,18 +756,42 @@ export default function App() {
       faq3Q: "Puis-je utiliser le site sur le terrain la nuit sans m'éblouir ?",
       faq3A:
         "Oui ! Cliquez sur le bouton Mode Nuit en haut de l'écran : toute l'interface bascule en spectre rouge pour préserver votre vision nocturne (rhodopsine).",
-      testimonialsTitle: '⭐ Ce que disent les membres de notre communauté',
-      t1: "« Grâce aux conseils du collectif sur les montures harmoniques et N.I.N.A., mon erreur RMS est passée sous la barre des 0.6'' et mes nuits tournent toutes seules ! »",
+      testimonialsTitle: '⭐ Retours concrets de nos membres sur le terrain',
+      t1: "« Avant, je passais une heure à chercher pourquoi mes étoiles s’étiraient dans les coins et pourquoi le suivi décrochait. Avec les guides du collectif, mes nuits sont enfin calées et régulières. »",
       t1Author: 'Marc D., Membre du collectif (Québec)',
-      t2: "« Le simulateur d'échantillonnage et les fiches PDF m'ont fait économiser des semaines de tests sur mon matériel. Merci l'équipe ! »",
+      t2: "« Le calculateur d’échantillonnage et les fiches PDF m’ont évité des réglages au hasard sur le terrain. Tout est expliqué clairement, étape par étape. »",
       t2Author: 'Stéphane L., Astrophotographe amateur',
     },
     en: {
       title: 'Astroberb Academy',
       subtitle: 'The Amateur Astronomers Collective — Master Deep Sky',
-      heroBadge: '⚡ SPECIAL PROMO • ALL FIELD EXPERTISE',
+      heroBadge: '⚡ SPECIAL PROMO • SIMPLE & HASSLE-FREE',
       heroDesc:
         'Welcome to our platform! We are a group of astronomy enthusiasts sharing our field tips: optical formulas, strainwave mounts (Juwei-17, UMi-17S, AM5), N.I.N.A./ASIAIR automation, and PixInsight & Siril processing.',
+      simplePathTitle: '✨ Your Hassle-Free Path in 3 Clear Steps',
+      simpleStep1Title: '1. Choose & dial in without guesswork',
+      simpleStep1Desc:
+        'Understand your optics, check backfocus spacing, and avoid common setup mistakes early.',
+      simpleStep2Title: '2. Let the night run smoothly',
+      simpleStep2Desc:
+        'Polar alignment, focus, guiding, and structured sequences so sessions stay steady.',
+      simpleStep3Title: '3. Bring out clean astro images',
+      simpleStep3Desc:
+        'A clear flow from calibration to stretching without blowing out stars or clipping sky background.',
+      freeSampleBtn: '📄 Download Free Beginner Quickstart PDF',
+      reassuranceTitle: 'How instant access works after checkout',
+      reassurance1: '1. Secure checkout via Stripe or PayPal',
+      reassurance2: '2. Immediate access + multi-device code',
+      reassurance3: '3. Lifetime access + printable PDF sheets',
+      compareTitle: 'Single Module ($9.99) or Full Bundle ($49.99 CAD)?',
+      compareSub:
+        'Start with one focused topic or unlock the entire collective curriculum at once.',
+      compareSingleTitle: 'Single Module — $9.99 CAD',
+      compareSingleDesc:
+        'Ideal for mastering one specific area: optics, harmonic mounts, automation, cooled cameras, focus/guiding, processing, or widefield.',
+      comparePackTitle: '7-in-1 Full Bundle — $49.99 CAD',
+      comparePackDesc:
+        'All 7 modules, all 6 interactive calculators, every printable A4 PDF cheat sheet, progress tracking, and official certificate.',
       benefitsTitle: 'What you will be able to do after the courses',
       benefit1Title: 'Master your gear',
       benefit1Desc:
@@ -843,10 +940,10 @@ export default function App() {
       faq3Q: 'Can I use this platform in the field at night?',
       faq3A:
         'Yes! Toggle the Night Mode button in the top bar to switch the entire interface to deep red wavelengths.',
-      testimonialsTitle: '⭐ What our community members say',
-      t1: "« Thanks to the collective's advice on harmonic mounts and N.I.N.A., my RMS guiding dropped below 0.6''! »",
+      testimonialsTitle: '⭐ Real-world feedback from members',
+      t1: "« I used to lose an hour troubleshooting corner stars and guiding hiccups. Following the collective's step-by-step guides made my nights much smoother. »",
       t1Author: 'Marc D., Community Member (Quebec)',
-      t2: "« The sampling simulator and PDF guides saved me weeks of testing. Thanks team! »",
+      t2: "« The pixel scale simulator and PDF sheets saved me from guessing in the dark. Everything is broken down clearly. »",
       t2Author: 'Stéphane L., Amateur Astrophotographer',
     },
   };
@@ -3452,6 +3549,77 @@ export default function App() {
                 {currentT.heroDesc}
               </p>
 
+              {/* PARCOURS SIMPLE EN 3 ÉTAPES + ÉCHANTILLON GRATUIT */}
+              <div className="max-w-5xl mx-auto pt-4 pb-2 space-y-5">
+                <h3
+                  className={`text-xl md:text-2xl font-black ${
+                    nightVision ? 'text-rose-200' : 'text-white'
+                  }`}
+                >
+                  {currentT.simplePathTitle}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                  <div
+                    className={`p-5 rounded-2xl border space-y-1.5 ${
+                      nightVision
+                        ? 'bg-rose-950/50 border-rose-800'
+                        : 'bg-slate-950/75 border-cyan-500/25'
+                    }`}
+                  >
+                    <h4 className="font-extrabold text-sm text-cyan-300">
+                      {currentT.simpleStep1Title}
+                    </h4>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.simpleStep1Desc}
+                    </p>
+                  </div>
+                  <div
+                    className={`p-5 rounded-2xl border space-y-1.5 ${
+                      nightVision
+                        ? 'bg-rose-950/50 border-rose-800'
+                        : 'bg-slate-950/75 border-indigo-500/25'
+                    }`}
+                  >
+                    <h4 className="font-extrabold text-sm text-indigo-300">
+                      {currentT.simpleStep2Title}
+                    </h4>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.simpleStep2Desc}
+                    </p>
+                  </div>
+                  <div
+                    className={`p-5 rounded-2xl border space-y-1.5 ${
+                      nightVision
+                        ? 'bg-rose-950/50 border-rose-800'
+                        : 'bg-slate-950/75 border-emerald-500/25'
+                    }`}
+                  >
+                    <h4 className="font-extrabold text-sm text-emerald-300">
+                      {currentT.simpleStep3Title}
+                    </h4>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentT.simpleStep3Desc}
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      generateAndDownloadPDF(
+                        FREE_SAMPLE_PDF[lang],
+                        lang === 'fr'
+                          ? 'Aperçu Gratuit Astroberb'
+                          : 'Astroberb Free Sample'
+                      )
+                    }
+                    className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-cyan-400/40 text-xs font-bold text-cyan-200 transition"
+                  >
+                    {currentT.freeSampleBtn}
+                  </button>
+                </div>
+              </div>
+
               {/* SECTION BÉNÉFICES CONCRETS */}
               <div className="max-w-5xl mx-auto pt-6 pb-2">
                 <h3
@@ -3724,6 +3892,24 @@ export default function App() {
                 </button>
               </div>
 
+              {/* RÉASSURANCE POST-PAIEMENT EN 3 POINTS */}
+              <div className="max-w-3xl mx-auto pt-2 space-y-2">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  {currentT.reassuranceTitle}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-300">
+                  <div className="px-3 py-2 rounded-xl bg-black/40 border border-white/10">
+                    {currentT.reassurance1}
+                  </div>
+                  <div className="px-3 py-2 rounded-xl bg-black/40 border border-white/10">
+                    {currentT.reassurance2}
+                  </div>
+                  <div className="px-3 py-2 rounded-xl bg-black/40 border border-white/10">
+                    {currentT.reassurance3}
+                  </div>
+                </div>
+              </div>
+
               {/* BOUTON DEMO GRATUITE MODULE 1 */}
               {!isModuleUnlocked(1) && (
                 <div className="pt-2">
@@ -3752,6 +3938,74 @@ export default function App() {
                 >
                   {currentT.taxNotice}
                 </span>
+              </div>
+            </div>
+
+            {/* COMPARATIF MODULE À LA CARTE VS PACK INTÉGRAL */}
+            <div
+              className={`p-6 md:p-8 rounded-3xl border space-y-6 ${
+                nightVision
+                  ? 'bg-rose-950/25 border-rose-900'
+                  : 'bg-slate-900/75 border-indigo-500/30'
+              }`}
+            >
+              <div className="text-center space-y-1.5 max-w-2xl mx-auto">
+                <h3 className="text-xl md:text-2xl font-black">
+                  {currentT.compareTitle}
+                </h3>
+                <p className="text-xs md:text-sm text-slate-300">
+                  {currentT.compareSub}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div
+                  className={`p-6 rounded-2xl border space-y-3 ${
+                    nightVision
+                      ? 'bg-black/40 border-rose-800/60'
+                      : 'bg-slate-950/70 border-slate-800'
+                  }`}
+                >
+                  <div className="text-sm font-black text-cyan-300">
+                    {currentT.compareSingleTitle}
+                  </div>
+                  <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+                    {currentT.compareSingleDesc}
+                  </p>
+                </div>
+                <div
+                  className={`p-6 rounded-2xl border space-y-3 ${
+                    nightVision
+                      ? 'bg-rose-950/50 border-rose-600'
+                      : 'bg-gradient-to-br from-amber-950/40 via-slate-950 to-indigo-950/40 border-amber-500/60'
+                  }`}
+                >
+                  <div className="text-sm font-black text-amber-300">
+                    {currentT.comparePackTitle}
+                  </div>
+                  <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
+                    {currentT.comparePackDesc}
+                  </p>
+                  <div className="pt-1 flex flex-wrap gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleOpenLink(paymentLinks.packIntegral.stripe)
+                      }
+                      className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition"
+                    >
+                      💳 {currentT.buyStripe}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleOpenLink(paymentLinks.packIntegral.paypal)
+                      }
+                      className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition"
+                    >
+                      🅿️ {currentT.buyPayPal}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
